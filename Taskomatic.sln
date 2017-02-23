@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Taskomatic.Gui", "Taskomatic.Gui\Taskomatic.Gui.csproj", "{869B83C8-984E-469F-AACF-7EAF5DB97D43}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{67D2633B-0C51-49ED-AA4D-0875A6D4BFE4}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{869B83C8-984E-469F-AACF-7EAF5DB97D43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{869B83C8-984E-469F-AACF-7EAF5DB97D43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{869B83C8-984E-469F-AACF-7EAF5DB97D43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{869B83C8-984E-469F-AACF-7EAF5DB97D43}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
