@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Taskomatic.Core;
 
 namespace Taskomatic.Gui
 {
@@ -9,6 +10,7 @@ namespace Taskomatic.Gui
         {
             this.InitializeComponent();
             App.AttachDevTools(this);
+            DataContext = new IssueListViewModel();
         }
 
         private void InitializeComponent()
