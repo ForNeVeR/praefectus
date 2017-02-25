@@ -10,13 +10,25 @@ using FileMode = System.IO.FileMode;
 
 namespace Taskomatic.Core
 {
-    public class IssueListViewModel
+    public class IssueListViewModel : ReactiveObject
     {
         private static readonly ProductHeaderValue Product = new ProductHeaderValue(
             "taskomatic",
             Assembly.GetExecutingAssembly().GetName().Version.ToString());
 
+        private IssueViewModel _selectedIssue;
+
         public ObservableCollection<IssueViewModel> Issues { get; } = new ObservableCollection<IssueViewModel>();
+
+        public IssueViewModel SelectedIssue
+        {
+            get { return _selectedIssue; }
+            set
+            {
+                _selectedIssue = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         public ReactiveCommand<object> LoadIssues { get; } = ReactiveCommand.Create();
 
@@ -32,7 +44,7 @@ namespace Taskomatic.Core
                 var issues = await client.Issue.GetAllForRepository(user, repo);
 
                 Issues.Clear();
-                foreach (var model in issues.Select(i => IssueViewModel.From(repo, i)))
+                foreach (var model in issues.Select(i => IssueViewModel.From(config, i)))
                 {
                     Issues.Add(model);
                 }

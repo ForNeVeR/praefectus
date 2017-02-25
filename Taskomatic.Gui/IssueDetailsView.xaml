@@ -1,0 +1,17 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Name: " />
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" />
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Local status: " />
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding LocalStatus.Value}" />
+    </Grid>
+</UserControl>

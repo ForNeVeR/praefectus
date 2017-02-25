@@ -175,6 +175,9 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <EmbeddedResource Include="MainWindow.xaml" />
+    <Compile Include="IssueDetailsView.xaml.cs">
+      <DependentUpon>IssueDetailsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -189,6 +192,11 @@
       <Project>{3415E384-9F0D-49F6-8742-E79A91C1B7BB}</Project>
       <Name>Taskomatic.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="IssueDetailsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

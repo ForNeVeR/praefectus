@@ -1,5 +1,6 @@
 ﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:core="clr-namespace:Taskomatic.Core;assembly=Taskomatic.Core"
+        xmlns:local="clr-namespace:Taskomatic.Gui;assembly=Taskomatic.Gui"
         MinWidth="500"
         MinHeight="300">
     <Grid>
@@ -7,13 +8,19 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <ListBox Grid.Row="0" Items="{Binding Issues}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <ListBox Grid.Row="0" Grid.Column="0" Items="{Binding Issues}" SelectedItem="{Binding SelectedIssue}">
             <ListBox.DataTemplates>
                 <DataTemplate DataType="core:IssueViewModel">
                     <TextBlock Text="{Binding FullInfo}"/>
                 </DataTemplate>
             </ListBox.DataTemplates>
         </ListBox>
-        <Button Grid.Row="1" Command="{Binding LoadIssues}">Import</Button>
+        <local:IssueDetailsView Grid.Row="0" Grid.Column="1" DataContext="{Binding SelectedIssue}" />
+
+        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Command="{Binding LoadIssues}">Load issues</Button>
     </Grid>
 </Window>
