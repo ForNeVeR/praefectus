@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -16,7 +16,7 @@ namespace Taskomatic.Core
             "taskomatic",
             Assembly.GetExecutingAssembly().GetName().Version.ToString());
 
-        public List<IssueViewModel> Issues { get; set; }
+        public ObservableCollection<IssueViewModel> Issues { get; } = new ObservableCollection<IssueViewModel>();
 
         public ReactiveCommand<object> LoadIssues { get; } = ReactiveCommand.Create();
 
@@ -30,7 +30,12 @@ namespace Taskomatic.Core
                 var repo = projectInfo[1];
                 var client = new GitHubClient(Product);
                 var issues = await client.Issue.GetAllForRepository(user, repo);
-                Issues = issues.Select(IssueViewModel.From).ToList();
+
+                Issues.Clear();
+                foreach (var model in issues.Select(i => IssueViewModel.From(repo, i)))
+                {
+                    Issues.Add(model);
+                }
             });
         }
 
