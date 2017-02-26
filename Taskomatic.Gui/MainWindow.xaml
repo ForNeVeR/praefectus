@@ -2,25 +2,41 @@
         xmlns:core="clr-namespace:Taskomatic.Core;assembly=Taskomatic.Core"
         xmlns:local="clr-namespace:Taskomatic.Gui;assembly=Taskomatic.Gui"
         MinWidth="500"
-        MinHeight="300">
+        MinHeight="300"
+        Title="taskomatic">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <ListBox Grid.Row="0" Grid.Column="0" Items="{Binding Issues}" SelectedItem="{Binding SelectedIssue}">
+        <Grid Grid.Row="0" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Command="{Binding LoadIssues}">Load issues</Button>
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <TextBlock Text="Status: " />
+                <DropDown Items="{Binding States}" SelectedItem="{Binding FilterState}" />
+                <TextBlock Text="Assignee: " />
+                <DropDown Items="{Binding Assignees}" SelectedItem="{Binding FilterAssignee}" />
+            </StackPanel>
+        </Grid>
+
+        <ListBox Grid.Row="1" Grid.Column="0" Items="{Binding Issues}" SelectedItem="{Binding SelectedIssue}">
             <ListBox.DataTemplates>
                 <DataTemplate DataType="core:IssueViewModel">
                     <TextBlock Text="{Binding FullInfo}"/>
                 </DataTemplate>
             </ListBox.DataTemplates>
         </ListBox>
-        <local:IssueDetailsView Grid.Row="0" Grid.Column="1" DataContext="{Binding SelectedIssue}" />
 
-        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Command="{Binding LoadIssues}">Load issues</Button>
+        <TextBlock Grid.Row="0" Grid.Column="1" FontWeight="Bold" Text="Selected issue:" />
+        <local:IssueDetailsView Grid.Row="1" Grid.Column="1" DataContext="{Binding SelectedIssue}" />
     </Grid>
 </Window>

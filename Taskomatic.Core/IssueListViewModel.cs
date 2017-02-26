@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -17,8 +18,60 @@ namespace Taskomatic.Core
             Assembly.GetExecutingAssembly().GetName().Version.ToString());
 
         private IssueViewModel _selectedIssue;
+        private ItemState? _filterState;
+
+        private List<IssueViewModel> _allIssues = new List<IssueViewModel>();
+        private string _filterAssignee;
 
         public ObservableCollection<IssueViewModel> Issues { get; } = new ObservableCollection<IssueViewModel>();
+        public ObservableCollection<ItemState> States { get; } = new ObservableCollection<ItemState>();
+        public ObservableCollection<string> Assignees { get; } = new ObservableCollection<string>();
+
+        public ItemState? FilterState
+        {
+            get { return _filterState; }
+            set
+            {
+                if (_filterState != value)
+                {
+                    _filterState = value;
+                    this.RaisePropertyChanged();
+
+                    Filter();
+                }
+            }
+        }
+
+        public string FilterAssignee
+        {
+            get { return _filterAssignee; }
+            set
+            {
+                if (_filterAssignee != value)
+                {
+                    _filterAssignee = value;
+                    this.RaisePropertyChanged();
+
+                    Filter();
+                }
+            }
+        }
+
+        private void Filter()
+        {
+            IEnumerable<IssueViewModel> issues = _allIssues;
+            if (FilterState != null)
+            {
+                issues = issues.Where(i => i.Status == FilterState.Value);
+            }
+
+            if (FilterAssignee != null)
+            {
+                issues = issues.Where(i => i.Assignees.Contains(FilterAssignee));
+            }
+
+            FillCollection(Issues, issues.OrderBy(i => i.FullInfo));
+        }
 
         public IssueViewModel SelectedIssue
         {
@@ -41,13 +94,21 @@ namespace Taskomatic.Core
                 var user = projectInfo[0];
                 var repo = projectInfo[1];
                 var client = new GitHubClient(Product);
-                var issues = await client.Issue.GetAllForRepository(user, repo);
-
-                Issues.Clear();
-                foreach (var model in issues.Select(i => IssueViewModel.From(config, i)))
+                var issues = await client.Issue.GetAllForRepository(user, repo, new RepositoryIssueRequest
                 {
-                    Issues.Add(model);
-                }
+                    State = ItemStateFilter.All
+                });
+
+                _allIssues.Clear();
+                _allIssues.AddRange(issues.Select(i => new IssueViewModel(config, i)));
+
+                FillCollection(States, _allIssues.Select(i => i.Status).Distinct());
+                FillCollection(Assignees, _allIssues.SelectMany(i => i.Assignees).Distinct());
+
+                FilterState = null;
+                FilterAssignee = null;
+
+                Filter();
             });
         }
 
@@ -67,6 +128,15 @@ namespace Taskomatic.Core
                     return await Config.Read(stream);
                 }
             });
+        }
+
+        private static void FillCollection<T>(ObservableCollection<T> collection, IEnumerable<T> items)
+        {
+            collection.Clear();
+            foreach (var item in items)
+            {
+                collection.Add(item);
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Octokit;
@@ -13,21 +13,24 @@ namespace Taskomatic.Core
         public int Id { get; }
         public string Name { get; }
 
+        public ItemState Status { get; }
+        public IReadOnlyList<string> Assignees { get; }
+
         public string FullInfo => $"{Project}#{Id}: {Name}";
+
+        public string AssigneeNames => string.Join(",", Assignees);
 
         public LazyAsync<string> LocalStatus { get; }
 
-        private IssueViewModel(Config config, int id, string name)
+        public IssueViewModel(Config config, Issue issue)
         {
             Project = config.GitHubProject;
-            Id = id;
-            Name = name;
-            LocalStatus = new LazyAsync<string>(() => GetLocalStatus(config, id), "Loading…");
-        }
-
-        public static IssueViewModel From(Config config, Issue issue)
-        {
-            return new IssueViewModel(config, issue.Number, issue.Title);
+            Id = issue.Number;
+            Name = issue.Title;
+            Status = issue.State;
+            Assignees = issue.Assignees.Select(u => u.Login).ToList();
+            
+            LocalStatus = new LazyAsync<string>(() => GetLocalStatus(config, Id), "Loading…");
         }
 
         private class TaskwarriorTaskInfo { }
