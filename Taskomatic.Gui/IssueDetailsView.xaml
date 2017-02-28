@@ -25,6 +25,6 @@
         <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding LocalStatus.Value}" />
 
         <Button Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
-                Command="{Binding Import}">Import</Button>
+                Command="{Binding SyncCommand}">Sync</Button>
     </Grid>
 </UserControl>

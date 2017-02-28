@@ -7,6 +7,7 @@ namespace Taskomatic.Core
     public class LazyAsync<T> : ReactiveObject
     {
         private readonly Func<Task<T>> _factory;
+        private readonly T _initialValue;
 
         private bool _loadStarted;
         private T _value;
@@ -15,7 +16,7 @@ namespace Taskomatic.Core
         public LazyAsync(Func<Task<T>> factory, T initialValue)
         {
             _factory = factory;
-            _value = initialValue;
+            _value = _initialValue = initialValue;
         }
 
         public T Value
@@ -39,6 +40,13 @@ namespace Taskomatic.Core
                 _value = value;
                 this.RaisePropertyChanged();
             }
+        }
+
+        public void Reset()
+        {
+            Value = _initialValue;
+            _loadStarted = false;
+            _exception = null;
         }
 
         private async void TriggerAsyncLoad()
