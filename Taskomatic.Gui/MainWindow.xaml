@@ -19,7 +19,10 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Command="{Binding LoadIssues}">Load issues</Button>
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <DropDown Items="{Binding AllProjects}" SelectedItem="{Binding SelectedProject}" />
+                <Button Command="{Binding LoadIssues}">Load issues</Button>
+            </StackPanel>
             <StackPanel Grid.Column="2" Orientation="Horizontal">
                 <TextBlock Text="Status: " />
                 <DropDown Items="{Binding States}" SelectedItem="{Binding FilterState}" />

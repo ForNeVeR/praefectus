@@ -8,14 +8,16 @@ namespace Taskomatic.Gui
     {
         public MainWindow()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             App.AttachDevTools(this);
-            DataContext = new IssueListViewModel();
         }
 
-        private void InitializeComponent()
+        private async void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+
+            var config = await ConfigService.LoadConfig();
+            DataContext = new ApplicationViewModel(config);
         }
     }
 }

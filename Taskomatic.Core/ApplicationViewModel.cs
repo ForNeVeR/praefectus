@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Octokit;
 using ReactiveUI;
-using FileMode = System.IO.FileMode;
 
 namespace Taskomatic.Core
 {
-    public class IssueListViewModel : ReactiveObject
+    public class ApplicationViewModel : ReactiveObject
     {
         private static readonly ProductHeaderValue Product = new ProductHeaderValue(
             "taskomatic",
@@ -22,6 +20,7 @@ namespace Taskomatic.Core
 
         private List<IssueViewModel> _allIssues = new List<IssueViewModel>();
         private string _filterAssignee;
+        private string _selectedProject;
 
         public ObservableCollection<IssueViewModel> Issues { get; } = new ObservableCollection<IssueViewModel>();
         public ObservableCollection<ItemState> States { get; } = new ObservableCollection<ItemState>();
@@ -83,14 +82,28 @@ namespace Taskomatic.Core
             }
         }
 
-        public ReactiveCommand<object> LoadIssues { get; } = ReactiveCommand.Create();
+        public List<string> AllProjects { get; } = new List<string>();
 
-        public IssueListViewModel()
+        public string SelectedProject
         {
+            get => _selectedProject;
+            set
+            {
+                _selectedProject = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        public ReactiveCommand<object> LoadIssues { get; }
+
+        public ApplicationViewModel(Config config)
+        {
+            AllProjects = config.GitHubProjects.ToList();
+
+            LoadIssues = ReactiveCommand.Create(this.ObservableForProperty(m => m.SelectedProject).Select(p => p != null));
             LoadIssues.Subscribe(async _ =>
             {
-                var config = await LoadConfig();
-                var projectInfo = config.GitHubProject.Split('/');
+                var projectInfo = SelectedProject.Split('/');
                 var user = projectInfo[0];
                 var repo = projectInfo[1];
                 var client = new GitHubClient(Product);
@@ -100,7 +113,7 @@ namespace Taskomatic.Core
                 });
 
                 _allIssues.Clear();
-                _allIssues.AddRange(issues.Select(i => new IssueViewModel(config, i)));
+                _allIssues.AddRange(issues.Select(i => new IssueViewModel(config, SelectedProject, i)));
 
                 FillCollection(States, _allIssues.Select(i => i.Status).Distinct());
                 FillCollection(Assignees, _allIssues.SelectMany(i => i.Assignees).Distinct());
@@ -109,24 +122,6 @@ namespace Taskomatic.Core
                 FilterAssignee = null;
 
                 Filter();
-            });
-        }
-
-        private static Task<Config> LoadConfig()
-        {
-            var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            if (string.IsNullOrEmpty(home))
-            {
-                throw new Exception("Cannot determine user home directory");
-            }
-
-            var path = Path.Combine(home, Config.ConfigFileName);
-            return Task.Run(async () =>
-            {
-                using (var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-                {
-                    return await Config.Read(stream);
-                }
             });
         }
 

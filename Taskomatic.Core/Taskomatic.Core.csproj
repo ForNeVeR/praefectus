@@ -151,7 +151,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
-    <Compile Include="IssueListViewModel.cs" />
+    <Compile Include="ApplicationViewModel.cs" />
+    <Compile Include="ConfigService.cs" />
     <Compile Include="IssueViewModel.cs" />
     <Compile Include="LazyAsync.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

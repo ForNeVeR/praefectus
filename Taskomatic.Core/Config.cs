@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
@@ -9,7 +8,7 @@ namespace Taskomatic.Core
     {
         public const string ConfigFileName = ".taskomatic.json";
 
-        public string GitHubProject { get; set; }
+        public string[] GitHubProjects { get; set; }
         public string TaskWarriorPath { get; set; } 
 
         public static Task<Config> Read(Stream input)

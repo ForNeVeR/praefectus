@@ -27,29 +27,28 @@ namespace Taskomatic.Core
 
         public ReactiveCommand<object> SyncCommand { get; }
 
-        public IssueViewModel(Config config, Issue issue)
+        public IssueViewModel(Config config, string project, Issue issue)
         {
-            Project = config.GitHubProject;
+            Project = project;
             Id = issue.Number;
             Name = issue.Title;
             Status = issue.State;
             Assignees = issue.Assignees.Select(u => u.Login).ToList();
             
-            LocalStatus = new LazyAsync<string>(() => GetLocalStatus(config, Id), "Loading…");
+            LocalStatus = new LazyAsync<string>(() => GetLocalStatus(config, project, Id), "Loading…");
             SyncCommand = ReactiveCommand.Create(
                 LocalStatus.ObservableForProperty(ls => ls.Value).Select(p => p.Value == "Not imported"));
             SyncCommand.Subscribe(async _ =>
             {
-                await SyncTask(config, Id, Name);
+                await SyncTask(config, project, Id, Name);
                 LocalStatus.Reset();
             });
         }
 
         private class TaskwarriorTaskInfo { }
 
-        private Task<string> GetLocalStatus(Config config, int id)
+        private Task<string> GetLocalStatus(Config config, string project, int id)
         {
-            var project = config.GitHubProject;
             var startInfo = new ProcessStartInfo(
                 config.TaskWarriorPath,
                 $"taskomatic_ghproject:\"{project}\" taskomatic_id:{id} export")
@@ -74,15 +73,14 @@ namespace Taskomatic.Core
             });
         }
 
-        private async Task SyncTask(Config config, int id, string name)
+        private async Task SyncTask(Config config, string project, int id, string name)
         {
-            var status = await GetLocalStatus(config, id);
+            var status = await GetLocalStatus(config, project, id);
             if (status != "Not imported")
             {
                 return;
             }
 
-            var project = config.GitHubProject;
             var startInfo = new ProcessStartInfo(
                 config.TaskWarriorPath,
                 $"add \"{project}#{id}: {name.Replace("\"", "\\\"")}\" taskomatic_ghproject:\"{project}\" taskomatic_id:{id}")
