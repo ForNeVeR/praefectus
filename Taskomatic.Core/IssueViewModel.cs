@@ -45,18 +45,17 @@ namespace Taskomatic.Core
             });
         }
 
+        private static string EscapeProjectName(string name) => ArgumentProcessor.CygwinPrepareArgument(name);
+
         private class TaskwarriorTaskInfo { }
 
         private Task<string> GetLocalStatus(Config config, string project, int id)
         {
-            var startInfo = new ProcessStartInfo(
-                config.TaskWarriorPath,
-                $"taskomatic_ghproject:\"{project}\" taskomatic_id:{id} export")
-            {
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                CreateNoWindow = true
-            };
+            var startInfo = StartTaskWarrior(
+                config,
+                $"taskomatic_ghproject:{EscapeProjectName(project)}",
+                $"taskomatic_id:{id}",
+                "export");
             return Task.Run(() =>
             {
                 using (var process = Process.Start(startInfo))
@@ -81,14 +80,12 @@ namespace Taskomatic.Core
                 return;
             }
 
-            var startInfo = new ProcessStartInfo(
-                config.TaskWarriorPath,
-                $"add \"{project}#{id}: {name.Replace("\"", "\\\"")}\" taskomatic_ghproject:\"{project}\" taskomatic_id:{id}")
-            {
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                CreateNoWindow = true
-            };
+            var startInfo = StartTaskWarrior(
+                config,
+                "add",
+                $"{project}#{id}: {name}",
+                $"taskomatic_ghproject:{EscapeProjectName(project)}",
+                $"taskomatic_id:{id}");
 
             await Task.Run(() =>
             {
@@ -102,5 +99,15 @@ namespace Taskomatic.Core
                 }
             });
         }
+
+        private ProcessStartInfo StartTaskWarrior(Config config, params string[] args) =>
+            new ProcessStartInfo(
+                config.TaskWarriorPath,
+                ArgumentProcessor.CygwinArgumentsToString(args))
+            {
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            };
     }
 }
