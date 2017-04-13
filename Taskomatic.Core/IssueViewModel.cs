@@ -51,10 +51,13 @@ namespace Taskomatic.Core
 
         private Task<string> GetLocalStatus(Config config, string project, int id)
         {
+            var simpleProjectName = project.Split('/')[1];
             var startInfo = StartTaskWarrior(
                 config,
                 $"taskomatic_ghproject:{EscapeProjectName(project)}",
                 $"taskomatic_id:{id}",
+                "or",
+                $"/{simpleProjectName}#{id}: /",
                 "export");
             return Task.Run(() =>
             {
