@@ -34,7 +34,7 @@ namespace Taskomatic.Core
             Name = issue.Title;
             Status = issue.State;
             Assignees = issue.Assignees.Select(u => u.Login).ToList();
-            
+
             LocalStatus = new LazyAsync<string>(() => GetLocalStatus(config, project, Id), "Loading…");
             SyncCommand = ReactiveCommand.Create(
                 LocalStatus.ObservableForProperty(ls => ls.Value).Select(p => p.Value == "Not imported"));
@@ -42,6 +42,7 @@ namespace Taskomatic.Core
             {
                 await SyncTask(config, project, Id, Name);
                 LocalStatus.Reset();
+                var value = LocalStatus.Value;
             });
         }
 
