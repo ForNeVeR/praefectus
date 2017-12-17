@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
 using Octokit;
+using Octokit.Internal;
 using ReactiveUI;
 
 namespace Taskomatic.Core
@@ -96,6 +97,11 @@ namespace Taskomatic.Core
 
         public ReactiveCommand<object> LoadIssues { get; }
 
+        private static GitHubClient InitializeGitHubClient(Config config) =>
+            string.IsNullOrWhiteSpace(config.GitHubAccessToken)
+                ? new GitHubClient(Product)
+                : new GitHubClient(Product, new InMemoryCredentialStore(new Credentials(config.GitHubAccessToken)));
+
         public ApplicationViewModel(Config config)
         {
             AllProjects = config.GitHubProjects.ToList();
@@ -106,7 +112,7 @@ namespace Taskomatic.Core
                 var projectInfo = SelectedProject.Split('/');
                 var user = projectInfo[0];
                 var repo = projectInfo[1];
-                var client = new GitHubClient(Product);
+                var client = InitializeGitHubClient(config);
                 var issues = await client.Issue.GetAllForRepository(user, repo, new RepositoryIssueRequest
                 {
                     State = ItemStateFilter.All

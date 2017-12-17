@@ -9,7 +9,8 @@ namespace Taskomatic.Core
         public const string ConfigFileName = ".taskomatic.json";
 
         public string[] GitHubProjects { get; set; }
-        public string TaskWarriorPath { get; set; } 
+        public string TaskWarriorPath { get; set; }
+        public string GitHubAccessToken { get; set; }
 
         public static Task<Config> Read(Stream input)
         {
