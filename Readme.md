@@ -115,6 +115,14 @@ to derive the tasks completion percents and task estimation based on simple
 machine learning algorithms. Everything it presumes then should be approved by
 a human, so don't worry, machines aren't (yet) going to take over your tasks.
 
+### Task progress
+
+Praefectus is aware of the task progress: task may be 50% done — and Praefectus
+known about your cognitive bias in estimating the progress, thanks to AI!
+
+Praefectus also allows you to specify the task _value_, and it will try to
+maximize the value you gather when making your schedule.
+
 ### Programmable
 
 Praefectus has good APIs for both external programs and internal scripts.
