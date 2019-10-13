@@ -65,6 +65,80 @@ scripts, shell aliases or via various automation, I agree with that. But the
 fact is that Taskwarrior doesn't offer these tools out-of-the-box — and it is
 arguable whether it should or not; we'll see!
 
+Features
+--------
+
+### Cross-platform
+
+Praefectus is written in .NET Core and runs on any platform .NET Core is
+supported on.
+
+### User interface
+
+Praefectus has a query tool (Taskwarrior-like) and a Text UI dashboard
+application that runs in any terminal.
+
+### Decentralized
+
+Praefectus supports various decentralized update scenarios via the concept of
+_nodes_: these nodes may not all be interconnected, but still deliver the tasks
+to the user.
+
+### Automated import
+
+Some of the Praefectus nodes are programmatic ones: for example, a GitHub issues
+is one node, your internal homegrown bugtracker is another one, a directory with
+a bunch or markdown notes, a Git repository with backups, literally any API
+could be a Praefectus node.
+
+### Automated export
+
+Some nodes may support Praefectus export, so it will automatically flow the
+changes to these nodes.
+
+### Task history
+
+Each node has its own history for every task. Conflicts are inevitable in a
+decentralized world, so Praefectus allows you to manage them in case they occur.
+Out-of-band conflict resolution (either in Praefectus itself or in any external
+merge tool) is supported.
+
+### Task management
+
+Start tasks, merge tasks from different sources, annotate your tasks: anything
+you expect to see in a good task management application is here in Praefectus.
+
+### (A bit of) artifical intelligense
+
+Praefectus tries to be useful with some small AI components in it: it will try
+to derive the tasks completion percents and task estimation based on simple
+machine learning algorithms. Everything it presumes then should be approved by
+a human, so don't worry, machines aren't (yet) going to take over your tasks.
+
+### Programmable
+
+Praefectus has good APIs for both external programs and internal scripts.
+
+### Schedules
+
+Praefectus uses some small achievements of the modern theory of economy to
+manage the schedules: it shows critical paths in solving the tasks,
+automatically applies transitive constraints, has an ability to show Gantt(-ish)
+charts.
+
+### Delegation
+
+Praefectus supports some small bits of multi-actor task management: you may mark
+your tasks as delegated to someone else, manage and control their work load and
+their schedules. Praefectus is still a personal task management application, not
+an enterprise one. But in our daily work/life, we often have to delegate some of
+the work, and Praefectus is made be aware of it.
+
+### Fun
+
+It is a mandatory detail that working on the Praefectus project should be fun.
+And I hope it will be fun to work _with_ Praefectus for the users.
+
 [andivionian-status-classifier]: https://github.com/ForNeVeR/andivionian-status-classifier#status-zero-
 [status-zero]: https://img.shields.io/badge/status-zero-lightgrey.svg
 [taskwarrior]: https://taskwarrior.org/
