@@ -45,14 +45,13 @@ GTD application:
 8. The task constraints (e.g. `due`) are non-transitive: if my task with
    `due=tomorrow` depends on some other tasks with no constrains, Taskwarrior
    won't tell me about it (aside from slightly increasing these tasks' urgency).
-9. Taskwarrior has no "scopes" (e.g. for home and office work).
-10. Taskwarrior doesn't offer an embedded periodic import/export capabilities
-    (e.g. to sync with GitHub or some other task/issue lists).
-11. Taskwarrior "API" (the command line one) is not the best: e.g. it has no
+9. Taskwarrior doesn't offer an embedded periodic import/export capabilities
+   (e.g. to sync with GitHub or some other task/issue lists).
+10. Taskwarrior "API" (the command line one) is not the best: e.g. it has no
     easy way yo deal with the escapes in the Windows' command line (this
     significantly complicates its usage from other programs on that particular
     platform).
-12. Taskwarrior doesn't perform automatic backups (believe or not, I have
+11. Taskwarrior doesn't perform automatic backups (believe or not, I have
     developed a habit of backing up all of my task files every morning, and it
     saved me a lot of times).
 
