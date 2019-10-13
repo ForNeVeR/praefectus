@@ -80,15 +80,25 @@ application that runs in any terminal.
 ### Decentralized
 
 Praefectus supports various decentralized update scenarios via the concept of
-_nodes_: these nodes may not all be interconnected, but still deliver the tasks
-to the user.
+_nodes_: these nodes may not all be directly connected, but will still deliver
+tasks to the user.
 
 ### Automated import
 
-Some of the Praefectus nodes are programmatic ones: for example, a GitHub issues
-is one node, your internal homegrown bugtracker is another one, a directory with
-a bunch or markdown notes, a Git repository with backups, literally any API
-could be a Praefectus node.
+While most of Praefectus _nodes_ are Praefectus application instances running
+over various devices or over the network, some of them are _programmatic_ ones:
+for example, all GitHub issues for one particular user may be described as one
+_node_, your internal homegrown bugtracker is another one, a directory with a
+bunch of markdown notes, a Git repository with backups, literally any API could
+be a Praefectus node.
+
+Praefectus knows a task history for each node, and it will allow multiple nodes
+to manage single issue. Conflict resolution is sometimes performed automatically
+and is sometimes up to the user. For example, you may import a GitHub issue,
+then add some annotations to it, change its status and then export it back:
+depending on your settings, the status may be synchronized back to GitHub (e.g.
+an issue will be closed), and your annotations may be leaved on a Praefectus
+node that authored them.
 
 ### Automated export
 
