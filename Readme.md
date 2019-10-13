@@ -33,10 +33,10 @@ GTD application:
 3. Repeated task functionality in Taskwarrior is a bit messy (in how it handles
    dates: e.g. `wait` date will move together with the new tasks, but the
    `scheduled` one won't).
-4. Taskwarrior offers very centralized way to manage the tasks. If you have
+4. Taskwarrior offers a very centralized way to manage the tasks. If you have
    multiple devices, then you'll have to either use a file synchronization
    software to manage these or set up the Taskserver.
-5. Taskserver is extremely non-crossplatform, I wasn't able to run it on my
+5. Taskserver is agressively non-crossplatform, I wasn't able to run it on my
    computers at all.
 6. Taskwarrior has no convention of task progress: you can't say to it that this
    task is 90% done so probably it'll take less time to finish it.
@@ -48,7 +48,7 @@ GTD application:
 9. Taskwarrior doesn't offer an embedded periodic import/export capabilities
    (e.g. to sync with GitHub or some other task/issue lists).
 10. Taskwarrior "API" (the command line one) is not the best: e.g. it has no
-    easy way yo deal with the escapes in the Windows' command line (this
+    easy way to deal with the escapes in the Windows' command line (this
     significantly complicates its usage from other programs on that particular
     platform).
 11. Taskwarrior doesn't perform automatic backups (believe or not, I have
