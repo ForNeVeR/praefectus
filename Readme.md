@@ -117,7 +117,7 @@ merge tool) is supported.
 Start tasks, merge tasks from different sources, annotate your tasks: anything
 you expect to see in a good task management application is here in Praefectus.
 
-### (A bit of) artifical intelligense
+### (A bit of) artificial intelligence
 
 Praefectus tries to be useful with some small AI components in it: it will try
 to derive the tasks completion percents and task estimation based on simple
