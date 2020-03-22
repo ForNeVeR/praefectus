@@ -17,6 +17,11 @@ predict their real schedule.
 
 It has a terminal UI (inspired by [Taskwarrior][taskwarrior]) and an API.
 
+Documentation
+-------------
+
+1. [Development Process][docs.1.development-process]
+
 Questions
 ---------
 
@@ -155,6 +160,8 @@ the work, and Praefectus is made be aware of it.
 
 It is a mandatory detail that working on the Praefectus project should be fun.
 And I hope it will be fun to work _with_ Praefectus for the users.
+
+[docs.1.development-process]: docs/1.development-process.md
 
 [andivionian-status-classifier]: https://github.com/ForNeVeR/andivionian-status-classifier#status-zero-
 [status-zero]: https://img.shields.io/badge/status-zero-lightgrey.svg
