@@ -3,4 +3,7 @@
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
+    <ItemGroup>
+        <None Include="packages.lock.json" />
+    </ItemGroup>
 </Project>

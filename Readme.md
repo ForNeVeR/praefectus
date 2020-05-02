@@ -67,6 +67,15 @@ the terminal:
 $ dotnet run --project Praefectus.Console
 ```
 
+Test
+----
+
+To execute the automatic test suite, run the following command in the terminal:
+
+```console
+$ dotnet test --configuration Release
+```
+
 Questions
 ---------
 

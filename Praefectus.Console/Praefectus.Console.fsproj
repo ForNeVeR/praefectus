@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="packages.lock.json" />
         <Compile Include="EntryPoint.fs" />
     </ItemGroup>
 

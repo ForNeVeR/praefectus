@@ -37,6 +37,8 @@ jobs:
 
       - name: Build
         run: dotnet build --configuration Release
+      - name: Test
+        run: dotnet test --configuration Release
       - name: Publish
         run: dotnet publish --self-contained true --configuration Release --runtime ${{ matrix.rid }} --output publish Praefectus.Console
 
