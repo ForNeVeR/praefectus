@@ -22,6 +22,51 @@ Documentation
 
 1. [Development Process][docs.1.development-process]
 
+Prerequisites
+-------------
+
+Praefectus is a .NET Core 3.1 application, that is published in a
+[self-contained deployment mode][dotnet-publish.self-contained]. It means that
+to run the released binaries, you'll need to install [.NET Core
+prerequisites][dotnet-prerequisites] for your operating system.
+
+For developers, [.NET Core 3.1 SDK][dotnet-download] is required.
+
+Build
+-----
+
+To build the application, run the following command in the terminal:
+
+```console
+$ dotnet build --configuration Release
+```
+
+To publish the application (prepare a distributable copy independent of
+installed runtime), run the following command:
+
+```console
+$ dotnet publish --self-contained true --configuration Release --runtime <RUNTIME_IDENTIFIER> --output publish Praefectus.Console
+```
+
+Here `<RUNTIME_IDENTIFIER>` is a [RID][dotnet-rid] for the target platform.
+Currently used RIDs are:
+- `linux-x64`
+- `osx-x64`
+- `win-x64`
+
+This will create a redistributable set of application files in the `publish`
+directory. `praefectus` (or `praefectus.exe`) binary is a console entry point.
+
+Run
+---
+
+To start the application in the development mode, run the following command in
+the terminal:
+
+```console
+$ dotnet run --project Praefectus.Console
+```
+
 Questions
 ---------
 
@@ -161,8 +206,12 @@ the work, and Praefectus is made be aware of it.
 It is a mandatory detail that working on the Praefectus project should be fun.
 And I hope it will be fun to work _with_ Praefectus for the users.
 
-[docs.1.development-process]: docs/1.development-process.md
+[status-zero]: https://img.shields.io/badge/status-zero-lightgrey.svg
 
 [andivionian-status-classifier]: https://github.com/ForNeVeR/andivionian-status-classifier#status-zero-
-[status-zero]: https://img.shields.io/badge/status-zero-lightgrey.svg
+[docs.1.development-process]: docs/1.development-process.md
+[dotnet-download]: https://dotnet.microsoft.com/download
+[dotnet-prerequisites]: https://docs.microsoft.com/en-us/dotnet/core/install/dependencies?tabs=netcore31
+[dotnet-publish.self-contained]: https://docs.microsoft.com/en-us/dotnet/core/deploying/deploy-with-cli#self-contained-deployment
+[dotnet-rid]: https://docs.microsoft.com/en-us/dotnet/core/rid-catalog
 [taskwarrior]: https://taskwarrior.org/
