@@ -26,6 +26,11 @@ EndProjectSection
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Praefectus.Tests", "Praefectus.Tests\Praefectus.Tests.fsproj", "{99061F2D-EF4A-4E5B-B9C2-549D0026DA93}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rfcs", "rfcs", "{30773A27-35FE-4360-B3F7-1D9B08E6973A}"
+ProjectSection(SolutionItems) = preProject
+	docs\rfcs\command-line-interface.md = docs\rfcs\command-line-interface.md
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,5 +71,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9FA2357A-7ED1-4B94-8987-5E6E38A32343} = {8DD1BAFA-86F9-49E2-A1A9-64A4F8C28535}
+		{30773A27-35FE-4360-B3F7-1D9B08E6973A} = {C78ED648-976E-43C5-BD3F-57798CD950D3}
 	EndGlobalSection
 EndGlobal

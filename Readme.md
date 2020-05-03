@@ -22,6 +22,11 @@ Documentation
 
 1. [Development Process][docs.1.development-process]
 
+### RFCs
+
+- [Command Line Interface][docs.rfcs.command-line-interface]: an RFC for [issue
+  #13: Simple UI/UX to navigate the database][issue-13]
+
 Prerequisites
 -------------
 
@@ -64,8 +69,11 @@ To start the application in the development mode, run the following command in
 the terminal:
 
 ```console
-$ dotnet run --project Praefectus.Console
+$ dotnet run --project Praefectus.Console -- [arguments…]
 ```
+
+See the [command line interface][docs.rfcs.command-line-interface] documentation
+on possible arguments, or pass `--help` to see the option list.
 
 Test
 ----
@@ -219,8 +227,10 @@ And I hope it will be fun to work _with_ Praefectus for the users.
 
 [andivionian-status-classifier]: https://github.com/ForNeVeR/andivionian-status-classifier#status-zero-
 [docs.1.development-process]: docs/1.development-process.md
+[docs.rfcs.command-line-interface]: docs/rfcs/command-line-interface.md
 [dotnet-download]: https://dotnet.microsoft.com/download
 [dotnet-prerequisites]: https://docs.microsoft.com/en-us/dotnet/core/install/dependencies?tabs=netcore31
 [dotnet-publish.self-contained]: https://docs.microsoft.com/en-us/dotnet/core/deploying/deploy-with-cli#self-contained-deployment
 [dotnet-rid]: https://docs.microsoft.com/en-us/dotnet/core/rid-catalog
+[issue-13]: https://github.com/ForNeVeR/praefectus/issues/13
 [taskwarrior]: https://taskwarrior.org/
