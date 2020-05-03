@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Content Include="..\Praefectus.Console\praefectus.json" CopyToOutputDirectory="PreserveNewest" />
         <Compile Include="ConsoleTests.fs" />
     </ItemGroup>
 

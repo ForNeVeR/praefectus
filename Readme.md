@@ -24,8 +24,10 @@ Documentation
 
 ### RFCs
 
-- [Command Line Interface][docs.rfcs.command-line-interface]: an RFC for [issue
-  #13: Simple UI/UX to navigate the database][issue-13]
+- [Configuration][docs.rfcs.configuration]: an RFC for the issue [#10:
+  Configuration system][issue-10]
+- [Command Line Interface][docs.rfcs.command-line-interface]: an RFC for the
+  issue [#13: Simple UI/UX to navigate the database][issue-13]
 
 Prerequisites
 -------------
@@ -61,6 +63,14 @@ Currently used RIDs are:
 
 This will create a redistributable set of application files in the `publish`
 directory. `praefectus` (or `praefectus.exe`) binary is a console entry point.
+
+Configure
+---------
+
+By default, Praefectus will use the `praefectus.json` file found in the same
+directory as the executable file. Default configuration distributed alongside
+the console client will only set up the logging framework. See more information
+in [the configuration RFC][docs.rfcs.configuration].
 
 Run
 ---
@@ -228,9 +238,11 @@ And I hope it will be fun to work _with_ Praefectus for the users.
 [andivionian-status-classifier]: https://github.com/ForNeVeR/andivionian-status-classifier#status-zero-
 [docs.1.development-process]: docs/1.development-process.md
 [docs.rfcs.command-line-interface]: docs/rfcs/command-line-interface.md
+[docs.rfcs.configuration]: docs/rfcs/configuration.md
 [dotnet-download]: https://dotnet.microsoft.com/download
 [dotnet-prerequisites]: https://docs.microsoft.com/en-us/dotnet/core/install/dependencies?tabs=netcore31
 [dotnet-publish.self-contained]: https://docs.microsoft.com/en-us/dotnet/core/deploying/deploy-with-cli#self-contained-deployment
 [dotnet-rid]: https://docs.microsoft.com/en-us/dotnet/core/rid-catalog
+[issue-10]: https://github.com/ForNeVeR/praefectus/issues/10
 [issue-13]: https://github.com/ForNeVeR/praefectus/issues/13
 [taskwarrior]: https://taskwarrior.org/
