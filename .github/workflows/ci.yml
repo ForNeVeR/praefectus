@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - master
+    tags:
+      - '*'
   pull_request:
     branches:
       - master
@@ -42,9 +44,15 @@ jobs:
       - name: Publish
         run: dotnet publish --self-contained true --configuration Release --runtime ${{ matrix.rid }} --output publish Praefectus.Console
 
+      - name: Get Version
+        if: startsWith(github.ref, 'refs/tags/') # only for pushed tags
+        shell: pwsh
+        run: |
+          $version = ./scripts/Get-Version.ps1
+          Write-Output "::set-env name=PRAEFECTUS_VERSION::$version"
       - name: Upload Distribution
         uses: actions/upload-artifact@v2
         if: startsWith(github.ref, 'refs/tags/') # only for pushed tags
         with:
-          name: distribution.${{ matrix.rid }}
+          name: praefectus.${{ env.PRAEFECTUS_VERSION }}.${{ matrix.rid }}
           path: publish

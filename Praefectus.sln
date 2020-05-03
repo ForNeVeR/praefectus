@@ -32,6 +32,11 @@ ProjectSection(SolutionItems) = preProject
 	docs\rfcs\configuration.md = docs\rfcs\configuration.md
 EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{B0720CD7-C3D3-4FC1-986D-83D8AC8FC283}"
+ProjectSection(SolutionItems) = preProject
+	scripts\Get-Version.ps1 = scripts\Get-Version.ps1
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
