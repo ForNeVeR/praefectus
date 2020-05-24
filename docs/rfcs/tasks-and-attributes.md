@@ -83,7 +83,10 @@ engine to function, and cannot be changed by the user.
 - `praefectus.created: timestamp`: date of task creation.
 - `praefectus.updated: timestamp`: date of the last task update.
 - `praefectus.status: enum[Open, InProgress, Done, Deleted]`: a task status.
-  While `Open` and `InProgress` are self-explanatory, `Done` and `Deleted`
+  While `Open` and `InProgress` are self-explanatory, `Done` and `Deleted` are
+  differ in how the corresponding tasks are treated: `Deleted` ones shouldn't be
+  considered by most reports, and any links from regular tasks to deleted ones
+  are reported during diagnostics.
 
 Additional Attributes
 ---------------------
