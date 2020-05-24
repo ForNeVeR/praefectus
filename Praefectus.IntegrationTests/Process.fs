@@ -16,7 +16,8 @@ let run(args: string seq): Async<Process> = async {
     let startInfo =
         if shouldUseLauncher
         then
-            let si = ProcessStartInfo "dotnet"
+            let si = ProcessStartInfo "/usr/bin/env"
+            si.ArgumentList.Add "dotnet"
             si.ArgumentList.Add executablePath
             si
         else ProcessStartInfo executablePath
