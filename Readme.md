@@ -28,8 +28,8 @@ Documentation
   Configuration system][issue-10]
 - [Command Line Interface][docs.rfcs.command-line-interface]: an RFC for the
   issue [#13: Simple UI/UX to navigate the database][issue-13]
-- [Tasks][docs.rfcs.tasks]: an RFC for the issue [#6: Foundational concept
-  design: task attributes][issue-06]
+- [Tasks and Attributes][docs.rfcs.tasks-and-attributes]: an RFC for the issue
+  [#6: Foundational concept design: task attributes][issue-06]
 
 Prerequisites
 -------------
@@ -241,7 +241,7 @@ And I hope it will be fun to work _with_ Praefectus for the users.
 [docs.1.development-process]: docs/1.development-process.md
 [docs.rfcs.command-line-interface]: docs/rfcs/command-line-interface.md
 [docs.rfcs.configuration]: docs/rfcs/configuration.md
-[docs.rfcs.tasks]: docs/rfcs/tasks.md
+[docs.rfcs.tasks-and-attributes]: docs/rfcs/tasks-and-attributes.md
 [dotnet-download]: https://dotnet.microsoft.com/download
 [dotnet-prerequisites]: https://docs.microsoft.com/en-us/dotnet/core/install/dependencies?tabs=netcore31
 [dotnet-publish.self-contained]: https://docs.microsoft.com/en-us/dotnet/core/deploying/deploy-with-cli#self-contained-deployment

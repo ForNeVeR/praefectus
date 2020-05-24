@@ -1,5 +1,5 @@
-Tasks
-=====
+Tasks and Attributes
+====================
 
 _Task_ is the main piece of information used by Praefectus. Conceptually, the
 only requirement for something being a task is that it has to have some
