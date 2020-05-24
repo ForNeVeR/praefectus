@@ -97,8 +97,8 @@ $ dotnet test --configuration Release
 ```
 
 To execute integration tests for the distribution ready for publishing, set the
-`PRAEFECTUS_TEST_EXECUTABLE` environment variable (pointing to the executable
-for testing), and then run the following command in the terminal:
+`PRAEFECTUS_TEST_EXECUTABLE` environment variable to the absolute path to the
+executable for testing, and then run the following command in the terminal:
 
 ```console
 $ dotnet test --configuration Release Praefectus.IntegrationTests
