@@ -25,14 +25,14 @@ Attribute itself has the following attributes:
   > Companies use their reversed Internet domain name to begin their package
   > names—for example, `com.example.mypackage` for a package named mypackage
   > created by a programmer at `example.com`.
-
+  >
   > Name collisions that occur within a single company need to be handled by
   > convention within that company, perhaps by including the region or the
   > project name after the company name (for example,
   > `com.example.region.mypackage`).
 
 - `id`: an identifier of particular attribute. Attribute identifiers should be
-  unique inside of a namespace; no tro attributes are to occupy the same
+  unique inside of a namespace; no two attributes are allowed to occupy the same
   `namespace`+`id` pair.
 
   For short, attributes may be referred by a pair of `namespace.id`; for
@@ -71,7 +71,7 @@ Core Attributes
 
 Basic task in Praefectus has the following attributes, of which only
 `praefectus.id` is mandatory. These attributes are essential for the Praefectus
-engine to function.
+engine to function, and cannot be changed by the user.
 
 - `praefectus.id: string`: a task identifier. Should be unique across all of the
   Praefectus network; thus, nodes are recommended to add unique node identifier
