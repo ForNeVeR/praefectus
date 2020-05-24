@@ -14,14 +14,16 @@ let private defaultExecutableUnderTest =
     let slnPath = Path.Combine(solutionDir, "Praefectus.sln") |> Path.GetFullPath
     Assert.True(File.Exists(slnPath), sprintf "Path should exist: %s" slnPath)
     let executableDirectory = Path.Combine(solutionDir, "Praefectus.Console", "bin", configuration, framework) |> Path.GetFullPath
-    let executable =
-        if Environment.OSVersion.Platform = PlatformID.Win32NT
-        then Path.Combine(executableDirectory, "praefectus.exe")
-        else Path.Combine(executableDirectory, "praefectus.dll")
-    Assert.True(File.Exists(executable), sprintf "Path should exist: %s" executable)
-    executable
+
+    if Environment.OSVersion.Platform = PlatformID.Win32NT
+    then Path.Combine(executableDirectory, "praefectus.exe")
+    else Path.Combine(executableDirectory, "praefectus.dll")
 
 let executableUnderTest: string =
-    Environment.GetEnvironmentVariable "PRAEFECTUS_TEST_EXECUTABLE"
-    |> Option.ofObj
-    |> Option.defaultValue defaultExecutableUnderTest
+    let path =
+        Environment.GetEnvironmentVariable "PRAEFECTUS_TEST_EXECUTABLE"
+        |> Option.ofObj
+        |> Option.defaultValue defaultExecutableUnderTest
+        |> Path.GetFullPath
+    Assert.True(File.Exists(path), sprintf "Path should exist: %s" path)
+    path
