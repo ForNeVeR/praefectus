@@ -2,6 +2,7 @@
 
 open System.Reflection
 
+open System.Runtime.CompilerServices
 open Argu
 open Microsoft.Extensions.Configuration
 open Serilog
@@ -31,8 +32,9 @@ let private createLogger config =
         .ReadFrom.Configuration(config)
         .CreateLogger()
 
-let private getAppVersion() =
-    Assembly.GetEntryAssembly().GetName().Version
+[<MethodImpl(MethodImplOptions.NoInlining)>] // See https://github.com/dotnet/fsharp/issues/9283
+let getAppVersion() =
+    Assembly.GetExecutingAssembly().GetName().Version
 
 let private parseArguments (argParser: ArgumentParser<_>) args =
     try
