@@ -52,14 +52,12 @@ jobs:
           PRAEFECTUS_TEST_EXECUTABLE: "${{ github.workspace }}/publish/${{ matrix.executable }}"
 
       - name: Get Version
-        if: startsWith(github.ref, 'refs/tags/') # only for pushed tags
         shell: pwsh
         run: |
           $version = ./scripts/Get-Version.ps1
           Write-Output "::set-env name=PRAEFECTUS_VERSION::$version"
       - name: Upload Distribution
         uses: actions/upload-artifact@v2
-        if: startsWith(github.ref, 'refs/tags/') # only for pushed tags
         with:
           name: praefectus.${{ env.PRAEFECTUS_VERSION }}.${{ matrix.rid }}
           path: publish
