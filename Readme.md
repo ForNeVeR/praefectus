@@ -54,7 +54,7 @@ To publish the application (prepare a distributable copy independent of
 installed runtime), run the following command:
 
 ```console
-$ dotnet publish --self-contained true --configuration Release --runtime <RUNTIME_IDENTIFIER> --output publish Praefectus.Console
+$ dotnet publish --runtime <RUNTIME_IDENTIFIER> --self-contained true --configuration Release --output publish -p:PublishTrimmed=true Praefectus.Console
 ```
 
 Here `<RUNTIME_IDENTIFIER>` is a [RID][dotnet-rid] for the target platform.
