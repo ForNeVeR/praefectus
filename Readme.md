@@ -46,7 +46,7 @@ prerequisites][dotnet-prerequisites] for your environment, and then download a
 
 To run a framework-dependent application, you'll need to install [.NET Core
 Runtime 3.1 or later][dotnet-download] for your environment, and then download a
-`praefectus.fd.<VERSION>.<RUNTIME>` package (where `fd` stays for
+`praefectus.fd.<VERSION>.<RUNTIME>` package (where `fd` stands for
 "framework-dependent").
 
 For developers, [.NET Core 3.1 SDK][dotnet-download] is required.
