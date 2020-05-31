@@ -1,4 +1,4 @@
-module Praefectus.Tests.ConsoleTests
+module Praefectus.Tests.Console.EntryPointTests
 
 open Xunit
 
