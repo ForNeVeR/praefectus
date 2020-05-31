@@ -45,6 +45,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Praefectus.IntegrationTests
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Praefectus.Core", "Praefectus.Core\Praefectus.Core.fsproj", "{082A0B0E-2593-4149-A420-0EC783B4EC0A}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Praefectus.Storage", "Praefectus.Storage\Praefectus.Storage.fsproj", "{B6852C90-C78C-4951-B1A5-11440C19E07A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -106,6 +108,18 @@ Global
 		{082A0B0E-2593-4149-A420-0EC783B4EC0A}.Release|x64.Build.0 = Release|Any CPU
 		{082A0B0E-2593-4149-A420-0EC783B4EC0A}.Release|x86.ActiveCfg = Release|Any CPU
 		{082A0B0E-2593-4149-A420-0EC783B4EC0A}.Release|x86.Build.0 = Release|Any CPU
+		{B6852C90-C78C-4951-B1A5-11440C19E07A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6852C90-C78C-4951-B1A5-11440C19E07A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6852C90-C78C-4951-B1A5-11440C19E07A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B6852C90-C78C-4951-B1A5-11440C19E07A}.Debug|x64.Build.0 = Debug|Any CPU
+		{B6852C90-C78C-4951-B1A5-11440C19E07A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B6852C90-C78C-4951-B1A5-11440C19E07A}.Debug|x86.Build.0 = Debug|Any CPU
+		{B6852C90-C78C-4951-B1A5-11440C19E07A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6852C90-C78C-4951-B1A5-11440C19E07A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6852C90-C78C-4951-B1A5-11440C19E07A}.Release|x64.ActiveCfg = Release|Any CPU
+		{B6852C90-C78C-4951-B1A5-11440C19E07A}.Release|x64.Build.0 = Release|Any CPU
+		{B6852C90-C78C-4951-B1A5-11440C19E07A}.Release|x86.ActiveCfg = Release|Any CPU
+		{B6852C90-C78C-4951-B1A5-11440C19E07A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9FA2357A-7ED1-4B94-8987-5E6E38A32343} = {8DD1BAFA-86F9-49E2-A1A9-64A4F8C28535}

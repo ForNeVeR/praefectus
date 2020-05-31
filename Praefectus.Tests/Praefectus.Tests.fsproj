@@ -8,17 +8,21 @@
     <ItemGroup>
         <Content Include="..\Praefectus.Console\praefectus.json" CopyToOutputDirectory="PreserveNewest" />
         <Compile Include="Console\ConsoleTests.fs" />
+        <Compile Include="Storage\JsonTests.fs" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
-        <PackageReference Include="xunit" Version="2.4.0" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+        <PackageReference Include="Quibble.Xunit" Version="0.0.44" />
+        <PackageReference Include="xunit" Version="2.4.1" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
         <PackageReference Include="coverlet.collector" Version="1.2.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Praefectus.Console\Praefectus.Console.fsproj" />
+      <ProjectReference Include="..\Praefectus.Core\Praefectus.Core.fsproj" />
+      <ProjectReference Include="..\Praefectus.Storage\Praefectus.Storage.fsproj" />
     </ItemGroup>
 
 </Project>
