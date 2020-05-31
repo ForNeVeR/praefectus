@@ -44,12 +44,14 @@ jobs:
         run: dotnet build --configuration Release
       - name: Test
         run: dotnet test --configuration Release
-      - name: Publish
+      - name: Publish Self-Contained Distribution
         run: dotnet publish --runtime ${{ matrix.rid }} --self-contained true --configuration Release --output publish -p:PublishTrimmed=true Praefectus.Console
       - name: Integration Test After Publish
         run: dotnet test --configuration Release Praefectus.IntegrationTests
         env:
           PRAEFECTUS_TEST_EXECUTABLE: "${{ github.workspace }}/publish/${{ matrix.executable }}"
+      - name: Publish Framework-Dependent Distribution
+        run: dotnet publish --runtime ${{ matrix.rid }} --self-contained false --configuration Release --output publish.fd Praefectus.Console
 
       - name: Get Version
         shell: pwsh
