@@ -56,8 +56,13 @@ jobs:
         run: |
           $version = ./scripts/Get-Version.ps1
           Write-Output "::set-env name=PRAEFECTUS_VERSION::$version"
-      - name: Upload Distribution
+      - name: Upload Self-Contained Distribution
         uses: actions/upload-artifact@v2
         with:
           name: praefectus.${{ env.PRAEFECTUS_VERSION }}.${{ matrix.rid }}
           path: publish
+      - name: Upload Framework-Dependent Distribution
+        uses: actions/upload-artifact@v2
+        with:
+          name: praefectus.fd.${{ env.PRAEFECTUS_VERSION }}.${{ matrix.rid }}
+          path: publish.fd
