@@ -5,7 +5,7 @@ open System.Collections.Generic
 [<RequireQualifiedAccess>]
 type ScalarDataType =
 | Boolean
-| Enum of IList<string>
+| Enum of IReadOnlyCollection<string>
 | String
 | Integer
 | Double
@@ -18,7 +18,7 @@ type DataType =
 | List of ScalarDataType
 with
     static member Boolean: DataType = Scalar ScalarDataType.Boolean
-    static member Enum(members: IList<string>): DataType = Scalar(ScalarDataType.Enum members)
+    static member Enum(members: IReadOnlyCollection<string>): DataType = Scalar(ScalarDataType.Enum members)
     static member String: DataType = Scalar ScalarDataType.String
     static member Integer: DataType = Scalar ScalarDataType.Integer
     static member Double: DataType = Scalar ScalarDataType.Double
