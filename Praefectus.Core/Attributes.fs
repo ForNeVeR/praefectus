@@ -25,9 +25,14 @@ with
     static member Timestamp: DataType = Scalar ScalarDataType.Timestamp
     static member TaskReference: DataType = Scalar ScalarDataType.TaskReference
 
-type Attribute = {
+[<Struct>]
+type AttributeIdentification = {
     Namespace: string
     Id: string
+}
+
+type Attribute = {
+    Id: AttributeIdentification
     Type: DataType
     Description: string
 }
@@ -37,8 +42,10 @@ type Attribute = {
 module CoreAttributes =
     let CoreNamespace: string = "praefectus"
     let private coreAttribute id dataType description = {
-        Namespace = CoreNamespace
-        Id = id
+        Id = {
+            Namespace = CoreNamespace
+            Id = id
+        }
         Type = dataType
         Description = description
     }
@@ -52,14 +59,18 @@ module CoreAttributes =
 /// user afterwards.
 module DefaultAttributes =
     let DependsOn = {
-        Namespace = CoreAttributes.CoreNamespace
-        Id = "depends-on"
+        Id = {
+            Namespace = CoreAttributes.CoreNamespace
+            Id = "depends-on"
+        }
         Type = DataType.List ScalarDataType.TaskReference
         Description = "A list of tasks this one depends on."
     }
     let ActuallyDependsOn = {
-        Namespace = CoreAttributes.CoreNamespace
-        Id = "actually-depends-on"
+        Id = {
+            Namespace = CoreAttributes.CoreNamespace
+            Id = "actually-depends-on"
+        }
         Type = DataType.List ScalarDataType.TaskReference
         Description = "A set of unresolved tasks (i.e. not Done or Deleted) this one depends on."
     }

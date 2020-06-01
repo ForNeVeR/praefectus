@@ -91,6 +91,10 @@ To execute the automatic test suite, run the following command in the terminal:
 $ dotnet test --configuration Release
 ```
 
+Some of the unit tests use [Approvals.Net verification library][approvals.net].
+If you update part of the code that requires changing of the test data
+(`*.approved.txt`), you may use the `scripts/Approve-All.ps1` script.
+
 To execute integration tests for the distribution ready for publishing, set the
 `PRAEFECTUS_TEST_EXECUTABLE` environment variable to the absolute path to the
 executable for testing, and then run the following command in the terminal:
@@ -272,6 +276,7 @@ And I hope it will be fun to work _with_ Praefectus for the users.
 [status-zero]: https://img.shields.io/badge/status-zero-lightgrey.svg
 
 [andivionian-status-classifier]: https://github.com/ForNeVeR/andivionian-status-classifier#status-zero-
+[approvals.net]: https://github.com/approvals/ApprovalTests.Net/
 [docs.1.development-process]: docs/1.development-process.md
 [docs.2.configuration]: docs/2.configuration.md
 [docs.rfcs.command-line-interface]: docs/rfcs/command-line-interface.md

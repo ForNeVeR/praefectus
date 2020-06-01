@@ -8,10 +8,11 @@ open System.Text.Json.Serialization
 open Praefectus.Core
 
 let private serializationOptions =
-    let o = JsonSerializerOptions()
+    let o = JsonSerializerOptions(WriteIndented = true)
     o.Converters.Add(JsonFSharpConverter())
     o
 
+// TODO[F]: Migrate to TaskBuilder.fs
 let save (database: Database) (target: Stream): Async<unit> = async {
     let! cancellationToken = Async.CancellationToken
     do! Async.AwaitTask(JsonSerializer.SerializeAsync(target, database, serializationOptions, cancellationToken))

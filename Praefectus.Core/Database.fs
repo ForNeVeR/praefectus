@@ -3,13 +3,15 @@ namespace Praefectus.Core
 open System.Collections.Generic
 
 type Database = {
-    Attributes: IReadOnlyCollection<Attribute>
+    Metadata: IReadOnlyCollection<Attribute>
+    Tasks: IReadOnlyCollection<Task>
 }
 
 module Database =
-    let empty = {
-        Attributes = [|
+    let defaultDatabase = {
+        Metadata = [|
             DefaultAttributes.DependsOn
             DefaultAttributes.ActuallyDependsOn
         |]
+        Tasks = [||]
     }
