@@ -6,6 +6,8 @@
 
     <ItemGroup>
         <Compile Include="Attributes.fs" />
+        <Compile Include="AttributeValues.fs" />
+        <Compile Include="Tasks.fs" />
         <Compile Include="Database.fs" />
     </ItemGroup>
 

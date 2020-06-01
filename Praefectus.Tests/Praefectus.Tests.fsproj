@@ -3,15 +3,19 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <IsPackable>false</IsPackable>
+        <DebugType>Full</DebugType>
     </PropertyGroup>
 
     <ItemGroup>
         <Content Include="..\Praefectus.Console\praefectus.json" CopyToOutputDirectory="PreserveNewest" />
+        <Compile Include="ApprovalTestUtils.fs" />
         <Compile Include="Console\ConsoleTests.fs" />
+        <None Include="Storage\TestResults\*.txt" />
         <Compile Include="Storage\JsonTests.fs" />
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="ApprovalTests" Version="5.2.5" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
         <PackageReference Include="Quibble.Xunit" Version="0.0.44" />
         <PackageReference Include="xunit" Version="2.4.1" />
