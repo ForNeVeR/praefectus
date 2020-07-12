@@ -80,8 +80,6 @@ engine to function, and cannot be changed by the user.
   `home.`: `home.1`, `home.2` etc.
 - `praefectus.title: string`: a short task title description or summary; will be
   shown in most of the default Praefectus views, so should be concise.
-- `praefectus.created: timestamp`: date of task creation.
-- `praefectus.updated: timestamp`: date of the last task update.
 - `praefectus.status: enum[Open, InProgress, Done, Deleted]`: a task status.
   While `Open` and `InProgress` are self-explanatory, `Done` and `Deleted` are
   differ in how the corresponding tasks are treated: `Deleted` ones shouldn't be
@@ -104,6 +102,10 @@ calculated on fly, because they depend on the calculation time.
 
 - `praefectus.actually-depends-on: list<task>`: a set of unresolved tasks (i.e.
   not `Done` or `Deleted`) this one depends on.
+- `praefectus.created: timestamp`: date of task creation. Calculated based on
+  the task history.
+- `praefectus.updated: timestamp`: date of the last task update. Calculated
+  based on the task history.
 
 Attribute Metadata Persistence
 ------------------------------

@@ -30,6 +30,8 @@ Documentation
   issue [#13: Simple UI/UX to navigate the database][issue-13]
 - [Tasks and Attributes][docs.rfcs.tasks-and-attributes]: an RFC for the issue
   [#6: Foundational concept design: task attributes][issue-06]
+- [Version Control][docs.rfcs.version-control]: an RFC for the issue
+  [#7: Foundational concept design: version control][issue-07]
 
 Prerequisites
 -------------
@@ -275,12 +277,14 @@ And I hope it will be fun to work _with_ Praefectus for the users.
 [docs.rfcs.command-line-interface]: docs/rfcs/command-line-interface.md
 [docs.rfcs.configuration]: docs/rfcs/configuration.md
 [docs.rfcs.tasks-and-attributes]: docs/rfcs/tasks-and-attributes.md
+[docs.rfcs.version-control]: docs/rfcs/version-control.md
 [dotnet-download]: https://dotnet.microsoft.com/download
 [dotnet-prerequisites]: https://docs.microsoft.com/en-us/dotnet/core/install/dependencies?tabs=netcore31
 [dotnet-publish.framework-dependent]: https://docs.microsoft.com/en-us/dotnet/core/deploying/deploy-with-cli#framework-dependent-deployment
 [dotnet-publish.self-contained]: https://docs.microsoft.com/en-us/dotnet/core/deploying/deploy-with-cli#self-contained-deployment
 [dotnet-rid]: https://docs.microsoft.com/en-us/dotnet/core/rid-catalog
 [issue-06]: https://github.com/ForNeVeR/praefectus/issues/6
+[issue-07]: https://github.com/ForNeVeR/praefectus/issues/7
 [issue-10]: https://github.com/ForNeVeR/praefectus/issues/10
 [issue-13]: https://github.com/ForNeVeR/praefectus/issues/13
 [taskwarrior]: https://taskwarrior.org/
