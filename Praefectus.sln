@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{C78ED648-976E-43C5-BD3F-57798CD950D3}"
 ProjectSection(SolutionItems) = preProject
 	docs\1.development-process.md = docs\1.development-process.md
+	docs\2.configuration.md = docs\2.configuration.md
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{8DD1BAFA-86F9-49E2-A1A9-64A4F8C28535}"
@@ -31,7 +32,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rfcs", "rfcs", "{30773A27-35FE-4360-B3F7-1D9B08E6973A}"
 ProjectSection(SolutionItems) = preProject
 	docs\rfcs\command-line-interface.md = docs\rfcs\command-line-interface.md
-	docs\rfcs\configuration.md = docs\rfcs\configuration.md
 	docs\rfcs\tasks-and-attributes.md = docs\rfcs\tasks-and-attributes.md
 	docs\rfcs\version-control.md = docs\rfcs\version-control.md
 EndProjectSection
