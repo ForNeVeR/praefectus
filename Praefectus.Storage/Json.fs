@@ -2,24 +2,19 @@
 
 open System.IO
 
-open System.Text.Json
+open Newtonsoft.Json
 
-open System.Text.Json.Serialization
 open Praefectus.Core
-
-let private serializationOptions =
-    let o = JsonSerializerOptions(WriteIndented = true)
-    o.Converters.Add(JsonFSharpConverter())
-    o
 
 // TODO[F]: Migrate to TaskBuilder.fs
 let save (database: Database) (target: Stream): Async<unit> = async {
-    let! cancellationToken = Async.CancellationToken
-    do! Async.AwaitTask(JsonSerializer.SerializeAsync(target, database, serializationOptions, cancellationToken))
+    let serializer = JsonSerializer(Formatting = Formatting.Indented)
+    use writer = new StreamWriter(target, leaveOpen = true)
+    serializer.Serialize(writer, database)
 }
 
 let load(source: Stream): Async<Database> = async {
-    let! cancellationToken = Async.CancellationToken
-    let task = JsonSerializer.DeserializeAsync<Database>(source, serializationOptions, cancellationToken).AsTask()
-    return! Async.AwaitTask task
+    use reader = new StreamReader(source)
+    let serializer = JsonSerializer()
+    return serializer.Deserialize(reader, typeof<Database>) :?> Database
 }
