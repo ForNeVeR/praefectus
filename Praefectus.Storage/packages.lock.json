@@ -8,20 +8,11 @@
         "resolved": "4.7.1",
         "contentHash": "cQ4Dn5mFIWnJF8MmL49k2V6L8mtInDrXopskNFbpC4lsPdspTn7WzUQLylB4HU4tpi76ManXMVCAvtlYowTfHQ=="
       },
-      "FSharp.SystemTextJson": {
+      "Newtonsoft.Json": {
         "type": "Direct",
-        "requested": "[0.11.13, )",
-        "resolved": "0.11.13",
-        "contentHash": "r50Vv8bsqbsQIh82xA0wy4Vg2ING3018mKAmzSzNSGDmtWqyGxobwko6NbsQ8kV50HKLdTqbiA8N6WgRejSaAA==",
-        "dependencies": {
-          "FSharp.Core": "4.7.0"
-        }
-      },
-      "System.Text.Json": {
-        "type": "Direct",
-        "requested": "[4.7.2, )",
-        "resolved": "4.7.2",
-        "contentHash": "TcMd95wcrubm9nHvJEQs70rC0H/8omiSGGpU4FQ/ZA1URIqD4pjmFJh2Mfv1yH1eHgJDWTi2hMDXwTET+zOOyg=="
+        "requested": "[12.0.3, )",
+        "resolved": "12.0.3",
+        "contentHash": "6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg=="
       },
       "praefectus.core": {
         "type": "Project",
