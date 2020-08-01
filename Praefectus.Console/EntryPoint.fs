@@ -1,5 +1,7 @@
 ﻿module Praefectus.Console.EntryPoint
 
+open System
+open System.IO
 open System.Reflection
 
 open System.Runtime.CompilerServices
@@ -44,8 +46,8 @@ let private parseArguments (argParser: ArgumentParser<_>) args =
         eprintfn "Cannot parse the command line arguments.\n%s" ex.Message
         None
 
-let private execute(arguments: ParseResults<Arguments>) =
-    let configPath = arguments.GetResult(Arguments.Config, "praefectus.json")
+let private execute (currentDirectory: string) (arguments: ParseResults<Arguments>) =
+    let configPath = arguments.GetResult(Arguments.Config, Path.Combine(currentDirectory, "praefectus.json"))
     let config = configure configPath
     let logger = createLogger config
 
@@ -68,9 +70,7 @@ let private execute(arguments: ParseResults<Arguments>) =
     logger.Information "Praefectus is terminating"
     exitCode
 
-
-[<EntryPoint>]
-let main (args: string[]): int =
+let run (currentDirectory: string) (args: string[]): int =
     let argParser = ArgumentParser.Create<Arguments>()
     match parseArguments argParser args with
     | None -> ExitCodes.CannotParseArguments
@@ -80,8 +80,12 @@ let main (args: string[]): int =
             ExitCodes.Success
         else
             try
-                execute arguments
+                execute currentDirectory arguments
             with
             | ex ->
                 eprintfn "Runtime exception: %A" ex
                 ExitCodes.GenericError
+
+[<EntryPoint>]
+let private main (args: string[]): int =
+    run Environment.CurrentDirectory args
