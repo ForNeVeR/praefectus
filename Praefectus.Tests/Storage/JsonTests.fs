@@ -33,7 +33,7 @@ let ``Json should serialize the database successfully``(): unit =
     Async.RunSynchronously <| async {
         let database = testDatabase
         use stream = new MemoryStream()
-        do! Json.save database stream
+        do! Async.AwaitTask <| Json.save database stream
         Assert.NotEqual(0L, stream.Length)
     }
 
@@ -46,7 +46,7 @@ let private streamToString(stream: MemoryStream) =
 let private assertEqual expected actual: Async<unit> =
     let serialize x = async {
         use stream = new MemoryStream()
-        do! Json.save x stream
+        do! Async.AwaitTask <| Json.save x stream
         return streamToString stream
     }
 
@@ -60,10 +60,10 @@ let ``Json should be able to load the database after save``(): unit =
     Async.RunSynchronously <| async {
         let database = testDatabase
         use stream = new MemoryStream()
-        do! Json.save database stream
+        do! Async.AwaitTask <| Json.save database stream
         rewindStream stream
 
-        let! newDatabase = Json.load stream
+        let! newDatabase = Async.AwaitTask <| Json.load stream
         do! assertEqual database newDatabase
     }
 
@@ -95,7 +95,7 @@ module DeserializationTests =
     let private verifyDatabase database =
         Async.RunSynchronously <| async {
             use stream = new MemoryStream()
-            do! Json.save database stream
+            do! Async.AwaitTask <| Json.save database stream
             let string = streamToString stream
 
             return! Async.AwaitTask(Verifier.Verify string)
