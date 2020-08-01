@@ -4,25 +4,20 @@ open System
 open System.IO
 open System.Text
 
-open ApprovalTests
-open ApprovalTests.Namers
-open ApprovalTests.Reporters
-open ApprovalTests.Writers
 open Quibble.Xunit
+open VerifyXunit
 open Xunit
 
 open Praefectus.Core
 open Praefectus.Storage
 
 let private createTask id title av = {
-    Id = "Task1"
-    Title = "Perform tests"
+    Id = id
+    Title = title
     Created = DateTimeOffset.Now
     Updated = DateTimeOffset.Now
     Status = TaskStatus.Open
-    AttributeValues = Map.ofArray [|
-        DefaultAttributes.DependsOn.Id, AttributeValue.TaskReference "Task1"
-    |]
+    AttributeValues = Map.ofArray av
 }
 
 let private testDatabase =
@@ -72,10 +67,7 @@ let ``Json should be able to load the database after save``(): unit =
         do! assertEqual database newDatabase
     }
 
-[<assembly: UseReporter(typeof<DiffReporter>)>]
-[<assembly: UseApprovalSubdirectory("TestResults")>]
-()
-
+[<UsesVerify>]
 module DeserializationTests =
     let private createId x = { Namespace = "praefectus.tests"; Id = x }
     let private createAttribute id dataType = {
@@ -101,14 +93,12 @@ module DeserializationTests =
     }
 
     let private verifyDatabase database =
-        let namer = UnitTestFrameworkNamer()
         Async.RunSynchronously <| async {
             use stream = new MemoryStream()
             do! Json.save database stream
             let string = streamToString stream
 
-            let writer = WriterFactory.CreateTextWriter string
-            Approvals.Verify(writer, namer, Approvals.GetReporter())
+            return! Async.AwaitTask(Verifier.Verify string)
         }
 
     [<Fact>]
