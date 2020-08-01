@@ -14,8 +14,8 @@ open Praefectus.Storage
 let private createTask id title av = {
     Id = id
     Title = title
-    Created = DateTimeOffset.Now
-    Updated = DateTimeOffset.Now
+    Created = DateTimeOffset.UnixEpoch
+    Updated = DateTimeOffset.UnixEpoch
     Status = TaskStatus.Open
     AttributeValues = Map.ofArray av
 }
@@ -114,7 +114,7 @@ module DeserializationTests =
         createId "double.maxValue", AttributeValue.Double Double.MaxValue
         createId "double.inf", AttributeValue.Double Double.PositiveInfinity
         createId "double.epsilon", AttributeValue.Double Double.Epsilon
-        createId "timestamp", AttributeValue.Timestamp DateTimeOffset.UtcNow
+        createId "timestamp", AttributeValue.Timestamp DateTimeOffset.UnixEpoch
         createId "taskReference", AttributeValue.TaskReference "Task1"
         createId "taskReferenceList", AttributeValue.List [|
             ScalarAttributeValue.TaskReference "Task1"
