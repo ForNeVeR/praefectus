@@ -91,9 +91,14 @@ To execute the automatic test suite, run the following command in the terminal:
 $ dotnet test --configuration Release
 ```
 
-Some of the unit tests use [Approvals.Net verification library][approvals.net].
-If you update part of the code that requires changing of the test data
-(`*.approved.txt`), you may use the `scripts/Approve-All.ps1` script.
+Some of the unit tests use [Verify library][verify]. If you update part of the
+code that requires changing of the test data (`*.verified.txt`), you may use the
+`scripts/Approve-All.ps1` script.
+
+To set up a right diff tool for your system (if Verify reports an error
+launching diff tool or just using a wrong one), set up the
+`DiffEngine.ToolOrder` environment variable. Consult [the
+documentation][verify.diff-tool-order] for details.
 
 To execute integration tests for the distribution ready for publishing, set the
 `PRAEFECTUS_TEST_EXECUTABLE` environment variable to the absolute path to the
@@ -276,7 +281,6 @@ And I hope it will be fun to work _with_ Praefectus for the users.
 [status-zero]: https://img.shields.io/badge/status-zero-lightgrey.svg
 
 [andivionian-status-classifier]: https://github.com/ForNeVeR/andivionian-status-classifier#status-zero-
-[approvals.net]: https://github.com/approvals/ApprovalTests.Net/
 [docs.1.development-process]: docs/1.development-process.md
 [docs.2.configuration]: docs/2.configuration.md
 [docs.rfcs.command-line-interface]: docs/rfcs/command-line-interface.md
@@ -291,3 +295,5 @@ And I hope it will be fun to work _with_ Praefectus for the users.
 [issue-07]: https://github.com/ForNeVeR/praefectus/issues/7
 [issue-13]: https://github.com/ForNeVeR/praefectus/issues/13
 [taskwarrior]: https://taskwarrior.org/
+[verify]: https://github.com/VerifyTests/Verify
+[verify.diff-tool-order]: https://github.com/VerifyTests/DiffEngine/blob/HEAD/docs/diff-tool.order.md

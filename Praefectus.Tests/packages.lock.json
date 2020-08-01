@@ -2,25 +2,6 @@
   "version": 1,
   "dependencies": {
     ".NETCoreApp,Version=v3.1": {
-      "ApprovalTests": {
-        "type": "Direct",
-        "requested": "[5.2.5, )",
-        "resolved": "5.2.5",
-        "contentHash": "7122EsgZ8ZP0PD96buitm4sTfY+HW5I6jao6HOR9ZQyaXB2iTEbNTLOuJUgc842QXsWUe4Ky6q1ghLKND9+oRQ==",
-        "dependencies": {
-          "ApprovalUtilities": "5.2.5",
-          "DiffEngine": "3.2.0",
-          "EmptyFiles": "2.0.3",
-          "Microsoft.Win32.Registry": "4.7.0",
-          "TextCopy": "4.1.0"
-        }
-      },
-      "coverlet.collector": {
-        "type": "Direct",
-        "requested": "[1.2.0, )",
-        "resolved": "1.2.0",
-        "contentHash": "ZB+EGXsVBIn8cew7D3S2c+rgIlokKv1dSwsXEoiFQaNXF/BSxp9Rlfz/jV1ehSWH5XpLitfRxFNW3ok7uPDOXA=="
-      },
       "FSharp.Core": {
         "type": "Direct",
         "requested": "[4.7.1, )",
@@ -49,6 +30,20 @@
           "xunit": "2.4.1"
         }
       },
+      "Verify.Xunit": {
+        "type": "Direct",
+        "requested": "[6.7.0, )",
+        "resolved": "6.7.0",
+        "contentHash": "Y0/gfi/NrBM0bi0EWQPst1npaaSsSZchpWQSK2hGbQJoPWO9Vt2J6adoGd8wv7nT3wNVSELCtqPTydGcXyjiKA==",
+        "dependencies": {
+          "EmptyFiles": "2.0.3",
+          "Newtonsoft.Json": "12.0.3",
+          "Verify": "6.7.0",
+          "xunit.abstractions": "2.0.3",
+          "xunit.assert": "2.4.1",
+          "xunit.extensibility.execution": "2.4.1"
+        }
+      },
       "xunit": {
         "type": "Direct",
         "requested": "[2.4.1, )",
@@ -69,15 +64,6 @@
           "Microsoft.NET.Test.Sdk": "15.0.0"
         }
       },
-      "ApprovalUtilities": {
-        "type": "Transitive",
-        "resolved": "5.2.5",
-        "contentHash": "tVH768xI8BA9A/iPtZQU/fGM6wtW4tU0L8q4fU6TSKfWKQrcHbDG9i2dsPw7Du8h+X9yREDQ5sUp4C2EAnjB8Q==",
-        "dependencies": {
-          "System.Data.SqlClient": "4.8.1",
-          "System.Management": "4.7.0"
-        }
-      },
       "Argu": {
         "type": "Transitive",
         "resolved": "6.0.0",
@@ -89,8 +75,8 @@
       },
       "DiffEngine": {
         "type": "Transitive",
-        "resolved": "3.2.0",
-        "contentHash": "n94Mfen4PSFHzE50r8wRTU6tJKdNmeiyE1K+oJ2rkW1AP2WbssqyeoC/KM2itqwnWATijCFp7uJkLwBiSpdojw==",
+        "resolved": "4.4.0",
+        "contentHash": "Tz5uIgp7usFJY3fcxXGm2VMJBmorSOM3n96WtghsCz72ltZiDgLCxk0dY4HhYxI5J6p/svFL25HzOzyRO7qIuw==",
         "dependencies": {
           "EmptyFiles": "2.0.3",
           "Microsoft.Windows.Compatibility": "3.1.0"
@@ -188,8 +174,8 @@
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions": {
         "type": "Transitive",
-        "resolved": "3.1.3",
-        "contentHash": "woeS5XeBChU76EmtFCwGHKgBfsYIn76u3myDq4zNY2ZrcwzBMNEViK2FRgXDgF11PBNbGdKCXsWFFZDtqPW0nQ=="
+        "resolved": "3.1.4",
+        "contentHash": "AceHamXNKDMDwIoZqEoApLp8s3935wSC3VXrPaRWa0wWOaEcYdDlo1nWQ1zLiezoDmpJzV7FqDm53E0Ty/hEMg=="
       },
       "Microsoft.Extensions.DependencyModel": {
         "type": "Transitive",
@@ -773,8 +759,8 @@
       },
       "System.Data.SqlClient": {
         "type": "Transitive",
-        "resolved": "4.8.1",
-        "contentHash": "HKLykcv6eZLbLnSMnlQ6Os4+UAmFE+AgYm92CTvJYeTOBtOYusX3qu8OoGhFrnKZax91UcLcDo5vPrqvJUTSNQ==",
+        "resolved": "4.8.0",
+        "contentHash": "xsSRvrPbeXgD6rAqFGw1FZsMLaoDVwzgflHig8OLypDpiyb4XISChy2XOutoNsQIkBP9SJ4nSvhd8uStDU7AiA==",
         "dependencies": {
           "Microsoft.Win32.Registry": "4.7.0",
           "System.Security.Principal.Windows": "4.7.0",
@@ -1703,10 +1689,22 @@
       },
       "TextCopy": {
         "type": "Transitive",
-        "resolved": "4.1.0",
-        "contentHash": "BbMPKAqxQAfKOHbMOA0XOD0AB493VjR422jfXbVchAPH/lVEEdzam41WNeR3bkSITBb9h/SMRXY3asvjB3iMNQ==",
+        "resolved": "4.2.0",
+        "contentHash": "NY2UAFIjBJj+3aABP5tyO6ooEdkJxIGtwRNqvMQKLmyIeZiyGvM4XYbkKNntyQlhyFhhfBww05C3D/0DdimfaQ==",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "3.1.3"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "3.1.4"
+        }
+      },
+      "Verify": {
+        "type": "Transitive",
+        "resolved": "6.7.0",
+        "contentHash": "9e+olCUfo8jAGddji0xx0O533uBon7YYTVz0NTiPPxWLb5AMtdWU4NLjsZHRUrAzJDA0V+FhKDLLm/4hy8hq6g==",
+        "dependencies": {
+          "DiffEngine": "4.4.0",
+          "Microsoft.Windows.Compatibility": "3.1.0",
+          "Newtonsoft.Json": "12.0.3",
+          "System.CodeDom": "4.7.0",
+          "TextCopy": "4.2.0"
         }
       },
       "xunit.abstractions": {
