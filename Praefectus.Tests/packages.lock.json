@@ -1638,6 +1638,11 @@
           "System.Runtime": "4.3.0"
         }
       },
+      "System.ValueTuple": {
+        "type": "Transitive",
+        "resolved": "4.4.0",
+        "contentHash": "BahUww/+mdP4ARCAh2RQhQTg13wYLVrBb9SYVgW8ZlrwjraGCXHGjo0oIiUfZ34LUZkMMR+RAzR7dEY4S1HeQQ=="
+      },
       "System.Windows.Extensions": {
         "type": "Transitive",
         "resolved": "4.7.0",
@@ -1685,6 +1690,16 @@
           "System.Text.Encoding": "4.3.0",
           "System.Threading": "4.3.0",
           "System.Xml.ReaderWriter": "4.3.0"
+        }
+      },
+      "TaskBuilder.fs": {
+        "type": "Transitive",
+        "resolved": "2.1.0",
+        "contentHash": "SBL6WjMQjc3bxY4lDtw1h7dM+CDbE9Gt1czsaaSDgPzJQYq+bkDXfwI/QXFKHMtisGKXjkDVAVNxS/gQRE44eA==",
+        "dependencies": {
+          "FSharp.Core": "4.1.17",
+          "NETStandard.Library": "1.6.1",
+          "System.ValueTuple": "4.4.0"
         }
       },
       "TextCopy": {
@@ -1774,7 +1789,8 @@
         "dependencies": {
           "FSharp.Core": "4.7.1",
           "Newtonsoft.Json": "12.0.3",
-          "Praefectus.Core": "1.0.0"
+          "Praefectus.Core": "1.0.0",
+          "TaskBuilder.fs": "2.1.0"
         }
       }
     }
