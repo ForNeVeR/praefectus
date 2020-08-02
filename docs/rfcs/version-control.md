@@ -17,7 +17,7 @@ Any object (i.e. a task or an attribute) should have its own history, which is a
 set of _commits_. A commit is an object with the following attributes:
 
 - `id: string`: a unique commit identifier. Any Praefectus node is recommended
-  to use its own id combined with an [UUID][uuid] as the commit identitfier.
+  to use its own id combined with an [UUID][uuid] as the commit identifier.
 - `author: string`: an name of a change author (e.g. a node identifier).
 - `date: timestamp`: a timestamp of a commit.
 - `message: string`: an optional commit message (may either be set by user or by
@@ -75,12 +75,12 @@ Merge algorithm follows these steps:
    changed in one of the merge heads, then copy this change to the resulting
    commit.
 4. Fill the `conflicted` list in the object (see the list structure below). The
-   list gets an additional values of every conflicted attribute, marked with the
+   list gets additional values of every conflicted attribute, marked with the
    origin branch name.
 
    For example, consider that two nodes have changed the attribute `attr`:
    `node1` set it to the value `X`, and `node2` to the value `Y`. It means that
-   the conflict map will look like
+   the conflict map will look like:
 
    ```json
     "conflicted": {
@@ -99,9 +99,9 @@ Merge algorithm follows these steps:
    probably be added back by the entity that will perform conflict resolution.
 6. Set a conflict flag for the object that has any conflicts.
 
-In future, the node may _resolve_ the conflicts: any changes to the conflicted
-attributes should clear their conflicted status. If an object has no conflicted
-attributes, then it should be marked as conflict-free.
+In the future, the node may _resolve_ the conflicts: any changes to the
+conflicted attributes should clear their conflicted status. If an object has no
+conflicted attributes, then it should be marked as conflict-free.
 
 Object History Structure
 ------------------------

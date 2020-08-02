@@ -135,13 +135,13 @@ Questions
 
 ### Why not Taskwarrior?
 
-Praefectus is very much inspired of Taskwarrior in many of its features. But,
+Praefectus is very much inspired by Taskwarrior in many of its features. But,
 while it's very good, Taskwarrior lacks some main features I'd like to see in a
 GTD application:
 
 1. It should be cross-platform. I'm sorry, but "POSIX-only" is not
    cross-platform. It is hard to use on Windows, while it shouldn't be.
-2. I would like to add thorough notes for every task. Taskwarrior allows to add
+2. I would like to add thorough notes for every task. Taskwarrior allows adding
    annotations, but these aren't very convenient.
 3. Repeated task functionality in Taskwarrior is a bit messy (in how it handles
    dates: e.g. `wait` date will move together with the new tasks, but the
@@ -149,7 +149,7 @@ GTD application:
 4. Taskwarrior offers a very centralized way to manage the tasks. If you have
    multiple devices, then you'll have to either use a file synchronization
    software to manage these or set up the Taskserver.
-5. Taskserver is agressively non-crossplatform, I wasn't able to run it on my
+5. Taskserver is aggressively non-cross-platform, I wasn't able to run it on my
    computers at all.
 6. Taskwarrior has no convention of task progress: you can't say to it that this
    task is 90% done so probably it'll take less time to finish it.
@@ -168,7 +168,7 @@ GTD application:
     developed a habit of backing up all of my task files every morning, and it
     saved me a lot of times).
 
-Overall, Taskwarrior is a very good application and I recommend it to you. But
+Overall, Taskwarrior is a very good application, and I recommend it to you. But
 it doesn't solve **all** of my needs, and thus I've decided to develop a GTD
 application that will try to do it.
 
@@ -182,8 +182,8 @@ Features
 
 ### Cross-platform
 
-Praefectus is written in .NET Core and runs on any platform .NET Core is
-supported on.
+Praefectus is written in .NET Core and runs on any platform supported by .NET
+Core.
 
 ### User interface
 
@@ -200,18 +200,18 @@ tasks to the user.
 
 While most of Praefectus _nodes_ are Praefectus application instances running
 over various devices or over the network, some of them are _programmatic_ ones:
-for example, all GitHub issues for one particular user may be described as one
-_node_, your internal homegrown bugtracker is another one, a directory with a
-bunch of markdown notes, a Git repository with backups, literally any API could
-be a Praefectus node.
+for example, all GitHub issues for one particular user may be considered as
+being managed by one _node_, your internal homegrown bugtracker is another one,
+a directory with a bunch of markdown notes, a Git repository with backups,
+literally any API could be a Praefectus node.
 
 Praefectus knows a task history for each node, and it will allow multiple nodes
 to manage single issue. Conflict resolution is sometimes performed automatically
 and is sometimes up to the user. For example, you may import a GitHub issue,
 then add some annotations to it, change its status and then export it back:
 depending on your settings, the status may be synchronized back to GitHub (e.g.
-an issue will be closed), and your annotations may be leaved on a Praefectus
-node that authored them.
+an issue will be closed), and your annotations may be left on a Praefectus node
+that authored them.
 
 ### Automated export
 
@@ -261,8 +261,8 @@ charts.
 Praefectus supports some small bits of multi-actor task management: you may mark
 your tasks as delegated to someone else, manage and control their work load and
 their schedules. Praefectus is still a personal task management application, not
-an enterprise one. But in our daily work/life, we often have to delegate some of
-the work, and Praefectus is made be aware of it.
+an enterprise one. But in our daily work/life, we often have to delegate some
+work, and Praefectus is aware of it.
 
 ### Fun
 

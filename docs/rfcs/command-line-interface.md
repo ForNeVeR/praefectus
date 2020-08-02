@@ -37,7 +37,7 @@ Praefectus supports the following command line options:
 - `--help` to print a quick help message
 - `--version` to print Praefectus version in format `Praefectus v{version}`
 
-By default (without any arguments) it will do nothing (but will still parse the
+By default (without any arguments), it will do nothing (but will still parse the
 configuration file).
 
 [issue-13]: https://github.com/ForNeVeR/praefectus/issues/13
