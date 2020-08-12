@@ -91,8 +91,8 @@ To execute the automatic test suite, run the following command in the terminal:
 $ dotnet test --configuration Release
 ```
 
-Some of the unit tests use [Verify library][verify]. If you update part of the
-code that requires changing of the test data (`*.verified.txt`), you may use the
+Some unit tests use the [Verify library][verify]. If you update part of the code
+that requires changing of the test data (`*.verified.txt`), you may use the
 `scripts/Approve-All.ps1` script.
 
 To set up a right diff tool for your system (if Verify reports an error
