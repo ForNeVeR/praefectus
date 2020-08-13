@@ -1,7 +1,6 @@
 ﻿module Praefectus.Console.EntryPoint
 
 open System
-open System.IO
 open System.Reflection
 
 open System.Runtime.CompilerServices
@@ -15,17 +14,31 @@ module ExitCodes =
     let CannotParseArguments = 2
 
 [<RequireQualifiedAccess>]
-type Arguments =
-    | [<Unique>] Config of configPath: string
-    | [<First; Last>] Version
+type ListArguments =
+    | [<Unique>] Json
     interface IArgParserTemplate with
         member s.Usage =
             match s with
+            | Json -> "write output in JSON format."
+
+[<RequireQualifiedAccess>]
+type Arguments =
+    | [<Unique>] Config of configPath: string
+    | [<Unique>] Version
+    | [<CliPrefix(CliPrefix.None)>] List of ParseResults<ListArguments>
+    interface IArgParserTemplate with
+        member s.Usage =
+            match s with
+            // Options:
             | Config _ -> "path to the JSON configuration file. Default: praefectus.json in the same directory as the executable file."
             | Version -> "print the program version."
 
-let private configure(configFilePath: string) =
+            // Commands:
+            | List _ -> "List all the tasks in the database."
+
+let private configure (basePath: string) (configFilePath: string) =
     ConfigurationBuilder()
+        .SetBasePath(basePath)
         .AddJsonFile(configFilePath)
         .Build()
 
@@ -35,20 +48,20 @@ let private createLogger config =
         .CreateLogger()
 
 [<MethodImpl(MethodImplOptions.NoInlining)>] // See https://github.com/dotnet/fsharp/issues/9283
-let getAppVersion() =
+let getAppVersion(): Version =
     Assembly.GetExecutingAssembly().GetName().Version
 
 let private parseArguments (argParser: ArgumentParser<_>) args =
     try
-       Some <| argParser.ParseCommandLine(args, raiseOnUsage = false)
+       Some <| argParser.ParseCommandLine(args, raiseOnUsage = true)
     with
     | :? ArguParseException as ex ->
-        eprintfn "Cannot parse the command line arguments.\n%s" ex.Message
+        eprintfn "%s" ex.Message
         None
 
-let private execute (currentDirectory: string) (arguments: ParseResults<Arguments>) =
-    let configPath = arguments.GetResult(Arguments.Config, Path.Combine(currentDirectory, "praefectus.json"))
-    let config = configure configPath
+let private execute (baseConfigDirectory: string) (arguments: ParseResults<Arguments>) =
+    let configPath = arguments.GetResult(Arguments.Config, "praefectus.json")
+    let config = configure baseConfigDirectory configPath
     let logger = createLogger config
 
     let version = getAppVersion()
@@ -57,8 +70,14 @@ let private execute (currentDirectory: string) (arguments: ParseResults<Argument
 
     let exitCode =
         try
+            let app = {
+                Config = Configuration.parse config
+                Logger = logger
+            }
             if arguments.Contains Arguments.Version then
                 printfn "Praefectus v%A" (getAppVersion())
+            else if arguments.Contains Arguments.List then
+                Commands.doList app
 
             ExitCodes.Success
         with
@@ -70,21 +89,17 @@ let private execute (currentDirectory: string) (arguments: ParseResults<Argument
     logger.Information "Praefectus is terminating"
     exitCode
 
-let run (currentDirectory: string) (args: string[]): int =
+let run (baseConfigDirectory: string) (args: string[]): int =
     let argParser = ArgumentParser.Create<Arguments>()
     match parseArguments argParser args with
     | None -> ExitCodes.CannotParseArguments
     | Some arguments ->
-        if arguments.IsUsageRequested then
-            printfn "%s" <| argParser.PrintUsage()
-            ExitCodes.Success
-        else
-            try
-                execute currentDirectory arguments
-            with
-            | ex ->
-                eprintfn "Runtime exception: %A" ex
-                ExitCodes.GenericError
+        try
+            execute baseConfigDirectory arguments
+        with
+        | ex ->
+            eprintfn "Runtime exception: %A" ex
+            ExitCodes.GenericError
 
 [<EntryPoint>]
 let private main (args: string[]): int =
