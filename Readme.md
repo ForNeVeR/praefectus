@@ -196,7 +196,7 @@ Core.
 
 ### User interface
 
-Praefectus has a query tool (Taskwarrior-like) and a Text UI dashboard
+Praefectus has a query tool (Taskwarrior-like), and a Text UI dashboard
 application that runs in any terminal.
 
 ### Decentralized
@@ -242,7 +242,7 @@ you expect to see in a good task management application is here in Praefectus.
 ### (A bit of) artificial intelligence
 
 Praefectus tries to be useful with some small AI components in it: it will try
-to derive the tasks completion percents and task estimation based on simple
+to derive the tasks' completion percents and task estimation based on simple
 machine learning algorithms. Everything it presumes then should be approved by
 a human, so don't worry, machines aren't (yet) going to take over your tasks.
 
