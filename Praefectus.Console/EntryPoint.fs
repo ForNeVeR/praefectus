@@ -2,11 +2,13 @@
 
 open System
 open System.Reflection
-
 open System.Runtime.CompilerServices
+
 open Argu
 open Microsoft.Extensions.Configuration
 open Serilog
+
+open Praefectus.Utils
 
 module ExitCodes =
     let Success = 0
@@ -76,8 +78,12 @@ let private execute (baseConfigDirectory: string) (arguments: ParseResults<Argum
             }
             if arguments.Contains Arguments.Version then
                 printfn "Praefectus v%A" (getAppVersion())
-            else if arguments.Contains Arguments.List then
-                Commands.doList app
+            else
+                match arguments.GetSubCommand() with
+                | Arguments.List listArgs ->
+                    let json = listArgs.Contains ListArguments.Json
+                    Commands.doList app json |> Task.RunSynchronously
+                | other -> failwithf "Impossible: option %A passed as a subcommand" other
 
             ExitCodes.Success
         with
