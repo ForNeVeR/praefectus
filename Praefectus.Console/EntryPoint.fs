@@ -55,7 +55,7 @@ let getAppVersion(): Version =
 
 let private parseArguments (argParser: ArgumentParser<_>) args =
     try
-       Some <| argParser.ParseCommandLine(args, raiseOnUsage = true)
+       Some <| argParser.ParseCommandLine(args, raiseOnUsage = false)
     with
     | :? ArguParseException as ex ->
         eprintfn "%s" ex.Message
@@ -81,8 +81,11 @@ let private execute (baseConfigDirectory: string) (arguments: ParseResults<Argum
             else
                 match arguments.GetSubCommand() with
                 | Arguments.List listArgs ->
-                    let json = listArgs.Contains ListArguments.Json
-                    Commands.doList app json |> Task.RunSynchronously
+                    if listArgs.IsUsageRequested then
+                        printfn "%s" <| listArgs.Parser.PrintUsage()
+                    else
+                        let json = listArgs.Contains ListArguments.Json
+                        Commands.doList app json |> Task.RunSynchronously
                 | other -> failwithf "Impossible: option %A passed as a subcommand" other
 
             ExitCodes.Success
@@ -100,12 +103,16 @@ let run (baseConfigDirectory: string) (args: string[]): int =
     match parseArguments argParser args with
     | None -> ExitCodes.CannotParseArguments
     | Some arguments ->
-        try
-            execute baseConfigDirectory arguments
-        with
-        | ex ->
-            eprintfn "Runtime exception: %A" ex
-            ExitCodes.GenericError
+        if arguments.IsUsageRequested then
+            printfn "%s" <| argParser.PrintUsage()
+            ExitCodes.Success
+        else
+            try
+                execute baseConfigDirectory arguments
+            with
+            | ex ->
+                eprintfn "Runtime exception: %A" ex
+                ExitCodes.GenericError
 
 [<EntryPoint>]
 let private main (args: string[]): int =

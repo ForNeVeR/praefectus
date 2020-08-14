@@ -21,11 +21,10 @@ convention for exit codes: code `0` means successful termination (i.e.
 Praefectus has successfully done whatever user asked), other codes mean various
 kinds of errors:
 
-- exit code `1` means unspecified error (which has no own specific code),
+- exit code `1` means unspecified error (which has no its own specific code),
   usually a runtime exception
 - exit code `2` means that Praefectus wasn't able to parse the command line
-  arguments passed by the user (or the user has explicitly requested to show the
-  help message)
+  arguments passed by the user
 
 Command Line Arguments
 ----------------------
@@ -33,8 +32,8 @@ Command Line Arguments
 Praefectus supports the following command line options:
 
 - `--config <configPath>` to choose a path to the configuration file. By
-  default, Praefectus will look for a `praefectus.json` file in the current
-  directory
+  default, Praefectus will look for a `praefectus.json` file in the same
+  directory as the Praefectus executable file
 - `--help` to print a quick help message
 - `--version` to print Praefectus version in format `Praefectus v{version}`
 

@@ -34,6 +34,27 @@ let ``Exit code should be zero by default``(): unit =
     } |> Async.RunSynchronously
 
 [<Fact>]
+let ``Exit code should be zero if help was explicitly requested``(): unit =
+    async {
+        let! exe = Process.run [| "--help" |]
+        do! Process.assertExitCode exe 0
+    } |> Async.RunSynchronously
+
+[<Fact>]
+let ``Exit code should be zero if subcommand help was explicitly requested``(): unit =
+    async {
+        let! exe = Process.run [| "list"; "--help" |]
+        do! Process.assertExitCode exe 0
+    } |> Async.RunSynchronously
+
+[<Fact>]
+let ``Exit code signal a subcommand parse error``(): unit =
+    async {
+        let! exe = Process.run [| "list"; "--unknown" |]
+        do! Process.assertExitCode exe EntryPoint.ExitCodes.CannotParseArguments
+    } |> Async.RunSynchronously
+
+[<Fact>]
 let ``Exit code should be signal argument parse error``(): unit =
     async {
         let! exe = Process.run [| "--unused" |]
