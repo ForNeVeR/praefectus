@@ -53,13 +53,21 @@ let private createLogger config =
 let getAppVersion(): Version =
     Assembly.GetExecutingAssembly().GetName().Version
 
-let private parseArguments (argParser: ArgumentParser<_>) args =
-    try
-       Some <| argParser.ParseCommandLine(args, raiseOnUsage = false)
-    with
-    | :? ArguParseException as ex ->
-        eprintfn "%s" ex.Message
-        None
+let private parseArguments args =
+    let errorHandler = { new IExiter with
+        member _.Name = "Praefectus Argu Error Handler"
+        member _.Exit(msg, errorCode) =
+            match errorCode with
+            | ErrorCode.HelpText ->
+                printfn "%s" msg
+                exit ExitCodes.Success
+            | _ ->
+                eprintfn "%s" msg
+                exit ExitCodes.CannotParseArguments
+    }
+
+    let argParser = ArgumentParser.Create<Arguments>(errorHandler = errorHandler)
+    argParser.ParseCommandLine(args)
 
 let private execute (baseConfigDirectory: string) (arguments: ParseResults<Arguments>) =
     let configPath = arguments.GetResult(Arguments.Config, "praefectus.json")
@@ -81,11 +89,8 @@ let private execute (baseConfigDirectory: string) (arguments: ParseResults<Argum
             else
                 match arguments.GetSubCommand() with
                 | Arguments.List listArgs ->
-                    if listArgs.IsUsageRequested then
-                        printfn "%s" <| listArgs.Parser.PrintUsage()
-                    else
-                        let json = listArgs.Contains ListArguments.Json
-                        Commands.doList app json |> Task.RunSynchronously
+                    let json = listArgs.Contains ListArguments.Json
+                    Commands.doList app json |> Task.RunSynchronously
                 | other -> failwithf "Impossible: option %A passed as a subcommand" other
 
             ExitCodes.Success
@@ -99,20 +104,13 @@ let private execute (baseConfigDirectory: string) (arguments: ParseResults<Argum
     exitCode
 
 let run (baseConfigDirectory: string) (args: string[]): int =
-    let argParser = ArgumentParser.Create<Arguments>()
-    match parseArguments argParser args with
-    | None -> ExitCodes.CannotParseArguments
-    | Some arguments ->
-        if arguments.IsUsageRequested then
-            printfn "%s" <| argParser.PrintUsage()
-            ExitCodes.Success
-        else
-            try
-                execute baseConfigDirectory arguments
-            with
-            | ex ->
-                eprintfn "Runtime exception: %A" ex
-                ExitCodes.GenericError
+    let arguments = parseArguments args
+    try
+        execute baseConfigDirectory arguments
+    with
+    | ex ->
+        eprintfn "Runtime exception: %A" ex
+        ExitCodes.GenericError
 
 [<EntryPoint>]
 let private main (args: string[]): int =
