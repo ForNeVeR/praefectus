@@ -1,6 +1,7 @@
 ﻿module Praefectus.Console.EntryPoint
 
 open System
+open System.IO
 open System.Reflection
 open System.Runtime.CompilerServices
 
@@ -114,4 +115,5 @@ let run (baseConfigDirectory: string) (args: string[]): int =
 
 [<EntryPoint>]
 let private main (args: string[]): int =
-    run Environment.CurrentDirectory args
+    let binDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+    run binDirectory args
