@@ -12,6 +12,7 @@
         <Compile Include="Configuration.fs" />
         <Compile Include="Application.fs" />
         <Compile Include="Commands.fs" />
+        <Compile Include="Terminator.fs" />
         <Compile Include="EntryPoint.fs" />
     </ItemGroup>
 

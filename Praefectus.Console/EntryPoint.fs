@@ -54,17 +54,17 @@ let private createLogger config =
 let getAppVersion(): Version =
     Assembly.GetExecutingAssembly().GetName().Version
 
-let private parseArguments args =
+let private parseArguments args (terminator: ITerminator) =
     let errorHandler = { new IExiter with
         member _.Name = "Praefectus Argu Error Handler"
         member _.Exit(msg, errorCode) =
             match errorCode with
             | ErrorCode.HelpText ->
                 printfn "%s" msg
-                exit ExitCodes.Success
+                terminator.Terminate ExitCodes.Success
             | _ ->
                 eprintfn "%s" msg
-                exit ExitCodes.CannotParseArguments
+                terminator.Terminate ExitCodes.CannotParseArguments
     }
 
     let argParser = ArgumentParser.Create<Arguments>(errorHandler = errorHandler)
@@ -104,8 +104,8 @@ let private execute (baseConfigDirectory: string) (arguments: ParseResults<Argum
     logger.Information "Praefectus is terminating"
     exitCode
 
-let run (baseConfigDirectory: string) (args: string[]): int =
-    let arguments = parseArguments args
+let run (baseConfigDirectory: string) (args: string[]) (terminator: ITerminator option): int =
+    let arguments = parseArguments args (defaultArg terminator (upcast ProgramTerminator()))
     try
         execute baseConfigDirectory arguments
     with
@@ -116,4 +116,4 @@ let run (baseConfigDirectory: string) (args: string[]): int =
 [<EntryPoint>]
 let private main (args: string[]): int =
     let binDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
-    run binDirectory args
+    run binDirectory args None
