@@ -27,10 +27,10 @@ let ``Version should be reported properly``(): unit =
     } |> Async.RunSynchronously
 
 [<Fact>]
-let ``Exit code should be zero by default``(): unit =
+let ``Exit code should be 2 by default``(): unit =
     async {
         let! exe = Process.run Array.empty
-        do! Process.assertExitCode exe 0
+        do! Process.assertExitCode exe EntryPoint.ExitCodes.CannotParseArguments
     } |> Async.RunSynchronously
 
 [<Fact>]
