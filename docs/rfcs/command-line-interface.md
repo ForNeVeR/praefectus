@@ -40,4 +40,13 @@ Praefectus supports the following command line options:
 By default (without any arguments), it will do nothing (but will still parse the
 configuration file).
 
+Commands
+--------
+
+Praefectus has certain commands with their own arguments that are usually passed
+after `--config`:
+
+- `list [--json]`: will list all the tasks in the current database (optionally
+  in a JSON format)
+
 [issue-13]: https://github.com/ForNeVeR/praefectus/issues/13
