@@ -57,7 +57,7 @@ jobs:
         shell: pwsh
         run: |
           $version = ./scripts/Get-Version.ps1
-          Write-Output "::set-env name=PRAEFECTUS_VERSION::$version"
+          "PRAEFECTUS_VERSION=$version" >> $env:GITHUB_ENV
       - name: Upload Self-Contained Distribution
         uses: actions/upload-artifact@v2
         with:
