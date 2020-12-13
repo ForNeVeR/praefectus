@@ -35,22 +35,23 @@ Documentation
 Prerequisites
 -------------
 
-Praefectus is a .NET Core 3.1 application, that is published both in a
+Praefectus is a .NET 5.0 application, that is published both in a
 [self-contained deployment mode][dotnet-publish.self-contained] (recommended for
 use by default) and [framework-dependent deployment
 mode][dotnet-publish.framework-dependent] (recommended for use in cases when you
-already have a .NET Core Runtime installed and want to save some disk space).
+already have a .NET Runtime installed and want to save some disk space).
 
-To run a self-contained application, you'll need to install [.NET Core
-prerequisites][dotnet-prerequisites] for your environment, and then download a
+To run a self-contained application, you'll need to install .NET prerequisites
+for your environment (see [the installation
+documentation][dotnet.installation]), and then download a
 `praefectus.<VERSION>.<RUNTIME>` package.
 
-To run a framework-dependent application, you'll need to install [.NET Core
-Runtime 3.1 or later][dotnet-download] for your environment, and then download a
+To run a framework-dependent application, you'll need to install [.NET Runtime
+5.0 or later][dotnet.download] for your environment, and then download a
 `praefectus.fd.<VERSION>.<RUNTIME>` package (where `fd` stands for
 "framework-dependent").
 
-For developers, [.NET Core 3.1 SDK][dotnet-download] is required.
+For developers, [.NET 5.0 SDK][dotnet.download] is required.
 
 Build
 -----
@@ -129,8 +130,8 @@ This will create a self-contained redistributable set of application files in
 the `publish` directory. `praefectus` (or `praefectus.exe`) binary is a console
 entry point.
 
-To prepare a distributable copy of application that will require .NET Core
-Runtime installed in the target environment, run the following command:
+To prepare a distributable copy of application that will require .NET Runtime
+installed in the target environment, run the following command:
 
 ```console
 $ dotnet publish --runtime <RUNTIME_IDENTIFIER> --self-contained false --configuration Release --output publish.fd Praefectus.Console
@@ -191,8 +192,7 @@ Features
 
 ### Cross-platform
 
-Praefectus is written in .NET Core and runs on any platform supported by .NET
-Core.
+Praefectus is written in .NET and runs on any platform supported by .NET.
 
 ### User interface
 
@@ -286,14 +286,14 @@ And I hope it will be fun to work _with_ Praefectus for the users.
 [docs.rfcs.command-line-interface]: docs/rfcs/command-line-interface.md
 [docs.rfcs.tasks-and-attributes]: docs/rfcs/tasks-and-attributes.md
 [docs.rfcs.version-control]: docs/rfcs/version-control.md
-[dotnet-download]: https://dotnet.microsoft.com/download
-[dotnet-prerequisites]: https://docs.microsoft.com/en-us/dotnet/core/install/dependencies?tabs=netcore31
 [dotnet-publish.framework-dependent]: https://docs.microsoft.com/en-us/dotnet/core/deploying/deploy-with-cli#framework-dependent-deployment
 [dotnet-publish.self-contained]: https://docs.microsoft.com/en-us/dotnet/core/deploying/deploy-with-cli#self-contained-deployment
 [dotnet-rid]: https://docs.microsoft.com/en-us/dotnet/core/rid-catalog
+[dotnet.download]: https://dotnet.microsoft.com/download
+[dotnet.installation]: https://docs.microsoft.com/en-us/dotnet/core/install/
 [issue-06]: https://github.com/ForNeVeR/praefectus/issues/6
 [issue-07]: https://github.com/ForNeVeR/praefectus/issues/7
 [issue-13]: https://github.com/ForNeVeR/praefectus/issues/13
 [taskwarrior]: https://taskwarrior.org/
-[verify]: https://github.com/VerifyTests/Verify
 [verify.diff-tool-order]: https://github.com/VerifyTests/DiffEngine/blob/HEAD/docs/diff-tool.order.md
+[verify]: https://github.com/VerifyTests/Verify
