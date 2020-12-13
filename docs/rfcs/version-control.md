@@ -13,8 +13,8 @@ a task in Praefectus) has its own history tree and may evolve independently.
 Object History
 --------------
 
-Any object (i.e. a task or an attribute) should have its own history, which is a
-set of _commits_. A commit is an object with the following attributes:
+Any object (i.e. a task) should have its own history, which is a set of _
+commits_. A commit is an object with the following properties:
 
 - `id: string`: a unique commit identifier. Any Praefectus node is recommended
   to use its own id combined with an [UUID][uuid] as the commit identifier.
@@ -25,8 +25,7 @@ set of _commits_. A commit is an object with the following attributes:
 - `parents: list<id>`: a list of parent commits; may only be empty for the first
   commit of a particular object.
 - `updated`: a map of an attribute id to attribute value that this commit has
-  added or changed.
-- `deleted`: a list of attribute ids this particular commit has deleted.
+  added (i.e. when adding a new object) or changed.
 - `conflicted`: see below. These values are considered to be effectively deleted
   from the object, but Praefectus node may render them in a special way, marking
   a conflict presence.
@@ -70,10 +69,9 @@ Merge algorithm follows these steps:
 2. Create a new commit with parent list filled by the merge heads, and begin to
    fill it with attributes.
 3. Now, consider set of differences between each of the merge heads and the base
-   commit. If any attribute was _changed_ (i.e. updated or deleted) in multiple
-   heads, add this attribute to the _conflict list_. If any attribute was only
-   changed in one of the merge heads, then copy this change to the resulting
-   commit.
+   commit. If any attribute was _changed_ in multiple heads, add this attribute
+   to the _conflict list_. If any attribute was only changed in one of the merge
+   heads, then copy this change to the resulting commit.
 4. Fill the `conflicted` list in the object (see the list structure below). The
    list gets additional values of every conflicted attribute, marked with the
    origin branch name.
@@ -95,9 +93,7 @@ Merge algorithm follows these steps:
    operation on an object already in a conflicted state), then the conflicts map
    may be updated; new values will replace older ones marked with the same
    branch names.
-5. Delete the conflicted attribute values from the resulting object; they should
-   probably be added back by the entity that will perform conflict resolution.
-6. Set a conflict flag for the object that has any conflicts.
+5. Set a conflict flag for the object that has any conflicts.
 
 In the future, the node may _resolve_ the conflicts: any changes to the
 conflicted attributes should clear their conflicted status. If an object has no
