@@ -45,7 +45,7 @@ jobs:
       - name: Test
         run: dotnet test --configuration Release
       - name: Publish Self-Contained Distribution
-        run: dotnet publish --runtime ${{ matrix.rid }} --self-contained true --configuration Release --output publish -p:PublishTrimmed=true Praefectus.Console
+        run: dotnet publish --runtime ${{ matrix.rid }} --self-contained true --configuration Release --output publish -p:PublishTrimmed=true -p:TrimMode=link Praefectus.Console
       - name: Integration Test After Publish
         run: dotnet test --configuration Release Praefectus.IntegrationTests
         env:

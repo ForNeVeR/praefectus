@@ -117,7 +117,7 @@ To prepare a distributable copy of application independent of installed runtime
 the following command:
 
 ```console
-$ dotnet publish --runtime <RUNTIME_IDENTIFIER> --self-contained true --configuration Release --output publish -p:PublishTrimmed=true Praefectus.Console
+$ dotnet publish --runtime <RUNTIME_IDENTIFIER> --self-contained true --configuration Release --output publish -p:PublishTrimmed=true -p:TrimMode=link Praefectus.Console
 ```
 
 Here `<RUNTIME_IDENTIFIER>` is a [RID][dotnet-rid] for the target platform.
