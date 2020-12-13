@@ -43,8 +43,7 @@ configuration file).
 Commands
 --------
 
-Praefectus has certain commands with their own arguments that are usually passed
-after `--config`:
+Praefectus has certain commands with their own arguments:
 
 - `list [--json]`: will list all the tasks in the current database (optionally
   in a JSON format)
