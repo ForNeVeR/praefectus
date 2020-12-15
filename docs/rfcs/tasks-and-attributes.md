@@ -43,8 +43,7 @@ Attribute itself may be described by the following properties:
 Data Attributes
 ---------------
 
-Basic task in Praefectus has the following attributes, of which only `id` is
-mandatory.
+Basic task in Praefectus has the following attributes:
 
 - `id: string`: a task identifier. Should be unique across all the Praefectus
   network; thus, nodes are recommended to add unique node identifier before task
