@@ -44,27 +44,3 @@ jobs:
         run: dotnet build --configuration Release
       - name: Test
         run: dotnet test --configuration Release
-      - name: Publish Self-Contained Distribution
-        run: dotnet publish --runtime ${{ matrix.rid }} --self-contained true --configuration Release --output publish -p:PublishTrimmed=true -p:TrimMode=link Praefectus.Console
-      - name: Integration Test After Publish
-        run: dotnet test --configuration Release Praefectus.IntegrationTests
-        env:
-          PRAEFECTUS_TEST_EXECUTABLE: "${{ github.workspace }}/publish/${{ matrix.executable }}"
-      - name: Publish Framework-Dependent Distribution
-        run: dotnet publish --runtime ${{ matrix.rid }} --self-contained false --configuration Release --output publish.fd Praefectus.Console
-
-      - name: Get Version
-        shell: pwsh
-        run: |
-          $version = ./scripts/Get-Version.ps1
-          "PRAEFECTUS_VERSION=$version" >> $env:GITHUB_ENV
-      - name: Upload Self-Contained Distribution
-        uses: actions/upload-artifact@v2
-        with:
-          name: praefectus.${{ env.PRAEFECTUS_VERSION }}.${{ matrix.rid }}
-          path: publish
-      - name: Upload Framework-Dependent Distribution
-        uses: actions/upload-artifact@v2
-        with:
-          name: praefectus.fd.${{ env.PRAEFECTUS_VERSION }}.${{ matrix.rid }}
-          path: publish.fd

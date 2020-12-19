@@ -1,21 +1,29 @@
 Praefectus [![Status Zero][status-zero]][andivionian-status-classifier]
 ==========
 
-Praefectus is a Getting Things Done (GTD) application that manages your tasks.
+Praefectus is a Getting Things Done (GTD) framework that helps to manage your
+tasks.
 
 **⚠ Currently the project is in the planning state, nothing is ready yet.**
 
 General Description
 -------------------
 
-Praefectus is a modern GTD application that allows you to store the information
-on all sorts of your current tasks, manage them, view their change history,
-import or export from/into various sources.
+Praefectus is a modern GTD framework that allows you to store the information on
+all sorts of your current tasks, manage them, view their change history, import
+or export from/into various sources.
 
-It is also a task planning application: it allows to schedule the tasks and
+It is also a task planning framework: it allows to schedule the tasks and
 predict their real schedule.
 
-It has a terminal UI (inspired by [Taskwarrior][taskwarrior]) and an API.
+It is mainly distributed as a .NET library (and a bit of configuration and
+programming knowledge is required to use it), and offers an optional terminal
+UI (inspired by [Taskwarrior][taskwarrior]) and an API for programmatic access
+to all of its entities.
+
+Praefectus is configured in an unorthodox way: technically, you create your own
+application that uses the Praefectus API (and configures it accordingly to your
+needs), and then execute it with your data.
 
 Documentation
 -------------
@@ -25,6 +33,8 @@ Documentation
 
 ### RFCs
 
+- [Setting Up Your Project][docs.rfcs.setting-up-your-project]: an RFC for the
+  issue [#43: Praefectus Prime][issue-43]
 - [Command Line Interface][docs.rfcs.command-line-interface]: an RFC for the
   issue [#13: Simple UI/UX to navigate the database][issue-13]
 - [Tasks and Attributes][docs.rfcs.tasks-and-attributes]: an RFC for the issue
@@ -35,32 +45,25 @@ Documentation
 Prerequisites
 -------------
 
-Praefectus is a .NET 5.0 application, that is published both in a
-[self-contained deployment mode][dotnet-publish.self-contained] (recommended for
-use by default) and [framework-dependent deployment
-mode][dotnet-publish.framework-dependent] (recommended for use in cases when you
-already have a .NET Runtime installed and want to save some disk space).
-
-To run a self-contained application, you'll need to install .NET prerequisites
-for your environment (see [the installation
-documentation][dotnet.installation]), and then download a
-`praefectus.<VERSION>.<RUNTIME>` package.
-
-To run a framework-dependent application, you'll need to install [.NET Runtime
-5.0 or later][dotnet.download] for your environment, and then download a
-`praefectus.fd.<VERSION>.<RUNTIME>` package (where `fd` stands for
-"framework-dependent").
-
-For developers, [.NET 5.0 SDK][dotnet.download] is required.
+Praefectus is a .NET 5.0 library. To use it on your own, [.NET 5.0
+SDK][dotnet.download] is required.
 
 Build
 -----
 
-To build the application, run the following command in the terminal:
+To build the library, tests and the example application, run the following
+command in the terminal:
 
 ```console
 $ dotnet build --configuration Release
 ```
+
+Setting Up Your Project
+-----------------------
+
+See the example application that is built on Praefectus in [the
+`Praefectus.Example` directory][praefectus.example]. See [the corresponding
+documentation section][docs.2.setting-up-your-project] on details.
 
 Configure
 ---------
@@ -68,20 +71,21 @@ Configure
 By default, Praefectus will use the `praefectus.json` file found in the same
 directory as the executable file. Default configuration distributed alongside
 the console client will only set up the logging framework. See more information
-in [the configuration RFC][docs.rfcs.configuration].
+in [the configuration documentation][docs.2.configuration].
 
 Run
 ---
 
-To start the application in the development mode, run the following command in
-the terminal:
+See the [command line interface][docs.rfcs.command-line-interface] documentation
+on possible arguments that may be passed to the application that's built on
+Praefectus; pass `--help` to see the option list.
+
+To start the example application in the development mode, run the following
+command in the terminal:
 
 ```console
 $ dotnet run --project Praefectus.Console -- [arguments…]
 ```
-
-See the [command line interface][docs.rfcs.command-line-interface] documentation
-on possible arguments, or pass `--help` to see the option list.
 
 Test
 ----
@@ -100,45 +104,6 @@ To set up a right diff tool for your system (if Verify reports an error
 launching diff tool or just using a wrong one), set up the
 `DiffEngine.ToolOrder` environment variable. Consult [the
 documentation][verify.diff-tool-order] for details.
-
-To execute integration tests for the distribution ready for publishing, set the
-`PRAEFECTUS_TEST_EXECUTABLE` environment variable to the absolute path to the
-executable for testing, and then run the following command in the terminal:
-
-```console
-$ dotnet test --configuration Release Praefectus.IntegrationTests
-```
-
-Publish
--------
-
-To prepare a distributable copy of application independent of installed runtime
-(so-called [self-contained deployment][dotnet-publish.self-contained] mode), run
-the following command:
-
-```console
-$ dotnet publish --runtime <RUNTIME_IDENTIFIER> --self-contained true --configuration Release --output publish -p:PublishTrimmed=true -p:TrimMode=link Praefectus.Console
-```
-
-Here `<RUNTIME_IDENTIFIER>` is a [RID][dotnet-rid] for the target platform.
-Currently used RIDs are:
-- `linux-x64`
-- `osx-x64`
-- `win-x64`
-
-This will create a self-contained redistributable set of application files in
-the `publish` directory. `praefectus` (or `praefectus.exe`) binary is a console
-entry point.
-
-To prepare a distributable copy of application that will require .NET Runtime
-installed in the target environment, run the following command:
-
-```console
-$ dotnet publish --runtime <RUNTIME_IDENTIFIER> --self-contained false --configuration Release --output publish.fd Praefectus.Console
-```
-
-This will create a framework-dependent redistributable set of application files
-in the `publish.fd` directory.
 
 Questions
 ---------
@@ -284,16 +249,15 @@ And I hope it will be fun to work _with_ Praefectus for the users.
 [docs.1.development-process]: docs/1.development-process.md
 [docs.2.configuration]: docs/2.configuration.md
 [docs.rfcs.command-line-interface]: docs/rfcs/command-line-interface.md
+[docs.rfcs.setting-up-your-project]: docs/rfcs/setting-up-your-project.md
 [docs.rfcs.tasks-and-attributes]: docs/rfcs/tasks-and-attributes.md
 [docs.rfcs.version-control]: docs/rfcs/version-control.md
-[dotnet-publish.framework-dependent]: https://docs.microsoft.com/en-us/dotnet/core/deploying/deploy-with-cli#framework-dependent-deployment
-[dotnet-publish.self-contained]: https://docs.microsoft.com/en-us/dotnet/core/deploying/deploy-with-cli#self-contained-deployment
-[dotnet-rid]: https://docs.microsoft.com/en-us/dotnet/core/rid-catalog
 [dotnet.download]: https://dotnet.microsoft.com/download
-[dotnet.installation]: https://docs.microsoft.com/en-us/dotnet/core/install/
 [issue-06]: https://github.com/ForNeVeR/praefectus/issues/6
 [issue-07]: https://github.com/ForNeVeR/praefectus/issues/7
 [issue-13]: https://github.com/ForNeVeR/praefectus/issues/13
+[issue-43]: https://github.com/ForNeVeR/praefectus/issues/43
+[praefectus.example]: Praefectus.Example
 [taskwarrior]: https://taskwarrior.org/
 [verify.diff-tool-order]: https://github.com/VerifyTests/DiffEngine/blob/HEAD/docs/diff-tool.order.md
 [verify]: https://github.com/VerifyTests/Verify

@@ -8,7 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="praefectus.json" CopyToOutputDirectory="PreserveNewest" />
         <Compile Include="Configuration.fs" />
         <Compile Include="Application.fs" />
         <Compile Include="Commands.fs" />

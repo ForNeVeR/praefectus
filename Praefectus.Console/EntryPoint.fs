@@ -104,6 +104,10 @@ let private execute (baseConfigDirectory: string) (arguments: ParseResults<Argum
     logger.Information "Praefectus is terminating"
     exitCode
 
+/// <summary>Runs the Praefectus application using the provided configuration data.</summary>
+/// <param name="baseConfigDirectory">Configuration directory where <c>praefectus.json</c> file will be loaded.</param>
+/// <param name="args">Command line arguments passed to the Praefectus.</param>
+/// <param name="terminator">An optional object used to terminate the program in case of errors.</param>
 let run (baseConfigDirectory: string) (args: string[]) (terminator: ITerminator option): int =
     let arguments = parseArguments args (defaultArg terminator (upcast ProgramTerminator()))
     try
