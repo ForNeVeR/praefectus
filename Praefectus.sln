@@ -26,6 +26,7 @@ ProjectSection(SolutionItems) = preProject
 	Readme.md = Readme.md
 	License.md = License.md
 	global.json = global.json
+	NuGet.Config = NuGet.Config
 EndProjectSection
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Praefectus.Tests", "Praefectus.Tests\Praefectus.Tests.fsproj", "{99061F2D-EF4A-4E5B-B9C2-549D0026DA93}"
