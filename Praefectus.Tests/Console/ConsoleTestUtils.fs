@@ -10,7 +10,7 @@ exception private ExitCodeException of code: int
 
 let private testDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
 
-let runMainWithOutput (arguments: string[]) (stdOut: Stream): int =
+let private runMainWithOutput arguments stdOut =
     let mutable exitCode = None
     let terminator =
         { new ITerminator with
