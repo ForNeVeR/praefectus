@@ -7,16 +7,7 @@ database][issue-13]._
 Praefectus offers a command line interface to operate the application. This
 command application is distributed along the main Praefectus release package.
 
-The application is started via `Praefectus.Console.EntryPoint.run` static
-method. You may pass the following parameters:
-
-- `baseConfigDirectory`: configuration directory where `praefectus.json` file
-  will be loaded.
-- `args`: command line arguments passed to the Praefectus.
-- `terminator`: an optional object used to terminate the program in case of
-  errors.
-
-The application communicates with user via a terminal interface. User may pass
+The application communicates with user via a console interface. User may pass
 command line arguments, and the application will print output as required.
 
 Exit Codes

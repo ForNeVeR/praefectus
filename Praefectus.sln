@@ -44,8 +44,6 @@ ProjectSection(SolutionItems) = preProject
 	scripts\Approve-All.ps1 = scripts\Approve-All.ps1
 EndProjectSection
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Praefectus.IntegrationTests", "Praefectus.IntegrationTests\Praefectus.IntegrationTests.fsproj", "{F7CEF024-88D8-4312-A45B-2F8AACBAF087}"
-EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Praefectus.Core", "Praefectus.Core\Praefectus.Core.fsproj", "{082A0B0E-2593-4149-A420-0EC783B4EC0A}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Praefectus.Storage", "Praefectus.Storage\Praefectus.Storage.fsproj", "{B6852C90-C78C-4951-B1A5-11440C19E07A}"
@@ -71,10 +69,6 @@ Global
 		{99061F2D-EF4A-4E5B-B9C2-549D0026DA93}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99061F2D-EF4A-4E5B-B9C2-549D0026DA93}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99061F2D-EF4A-4E5B-B9C2-549D0026DA93}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F7CEF024-88D8-4312-A45B-2F8AACBAF087}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F7CEF024-88D8-4312-A45B-2F8AACBAF087}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F7CEF024-88D8-4312-A45B-2F8AACBAF087}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F7CEF024-88D8-4312-A45B-2F8AACBAF087}.Release|Any CPU.Build.0 = Release|Any CPU
 		{082A0B0E-2593-4149-A420-0EC783B4EC0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{082A0B0E-2593-4149-A420-0EC783B4EC0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{082A0B0E-2593-4149-A420-0EC783B4EC0A}.Release|Any CPU.ActiveCfg = Release|Any CPU

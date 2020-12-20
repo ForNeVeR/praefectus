@@ -7,7 +7,9 @@
 
     <ItemGroup>
         <Content Include="..\Praefectus.Example\praefectus.json" CopyToOutputDirectory="PreserveNewest" />
+        <Compile Include="Console\ConsoleTestUtils.fs" />
         <Compile Include="Console\EntryPointTests.fs" />
+        <Compile Include="Console\DatabaseTests.fs" />
         <Compile Include="Storage\JsonTests.fs" />
         <None Include="**\*.txt" />
     </ItemGroup>

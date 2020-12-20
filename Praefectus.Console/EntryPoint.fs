@@ -1,7 +1,6 @@
 ﻿module Praefectus.Console.EntryPoint
 
 open System
-open System.IO
 open System.Reflection
 open System.Runtime.CompilerServices
 
@@ -70,7 +69,7 @@ let private parseArguments args (terminator: ITerminator) =
     let argParser = ArgumentParser.Create<Arguments>(errorHandler = errorHandler)
     argParser.ParseCommandLine(args)
 
-let private execute (baseConfigDirectory: string) (arguments: ParseResults<Arguments>) =
+let private execute (baseConfigDirectory: string) (arguments: ParseResults<Arguments>) stdOut =
     let configPath = arguments.GetResult(Arguments.Config, "praefectus.json")
     let config = configure baseConfigDirectory configPath
     let logger = createLogger config
@@ -91,7 +90,7 @@ let private execute (baseConfigDirectory: string) (arguments: ParseResults<Argum
                 match arguments.GetSubCommand() with
                 | Arguments.List listArgs ->
                     let json = listArgs.Contains ListArguments.Json
-                    Commands.doList app json |> Task.RunSynchronously
+                    Commands.doList app json stdOut |> Task.RunSynchronously
                 | other -> failwithf "Impossible: option %A passed as a subcommand" other
 
             ExitCodes.Success
@@ -107,17 +106,12 @@ let private execute (baseConfigDirectory: string) (arguments: ParseResults<Argum
 /// <summary>Runs the Praefectus application using the provided configuration data.</summary>
 /// <param name="baseConfigDirectory">Configuration directory where <c>praefectus.json</c> file will be loaded.</param>
 /// <param name="args">Command line arguments passed to the Praefectus.</param>
-/// <param name="terminator">An optional object used to terminate the program in case of errors.</param>
-let run (baseConfigDirectory: string) (args: string[]) (terminator: ITerminator option): int =
-    let arguments = parseArguments args (defaultArg terminator (upcast ProgramTerminator()))
+/// <param name="environment">Environment to run the program at.</param>
+let run (baseConfigDirectory: string) (args: string[]) (environment: Praefectus.Console.Environment): int =
+    let arguments = parseArguments args environment.Terminator
     try
-        execute baseConfigDirectory arguments
+        execute baseConfigDirectory arguments environment.Output
     with
     | ex ->
         eprintfn "Runtime exception: %A" ex
         ExitCodes.GenericError
-
-[<EntryPoint>]
-let private main (args: string[]): int =
-    let binDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
-    run binDirectory args None

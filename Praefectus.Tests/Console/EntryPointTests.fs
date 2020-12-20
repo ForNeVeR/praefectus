@@ -1,28 +1,9 @@
 module Praefectus.Tests.Console.EntryPointTests
 
-open System.IO
-open System.Reflection
-
-open Praefectus.Console
 open Xunit
 
 open Praefectus.Console.EntryPoint
-
-exception private ExitCodeException of code: int
-
-let private testDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
-let private runMain arguments =
-    let mutable exitCode = None
-    let terminator =
-        { new ITerminator with
-            member _.Terminate code =
-                exitCode <- Some code
-                raise <| ExitCodeException code }
-    try
-        let actualCode = run testDirectory arguments (Some terminator)
-        Option.defaultValue actualCode exitCode
-    with
-    | :? ExitCodeException as ex -> ex.code
+open Praefectus.Tests.Console.ConsoleTestUtils
 
 [<Fact>]
 let ``Console should return code 2 without options``(): unit =
@@ -32,4 +13,18 @@ let ``Console should return code 2 without options``(): unit =
 [<Fact>]
 let ``Console should return special code on unknown option``(): unit =
     let exitCode = runMain [| "unknown" |]
+    Assert.Equal(ExitCodes.CannotParseArguments, exitCode)
+
+let ``Exit code should be zero if help was explicitly requested``(): unit =
+    let exitCode = runMain [| "--help" |]
+    Assert.Equal(ExitCodes.Success, exitCode)
+
+[<Fact>]
+let ``Exit code should be zero if subcommand help was explicitly requested``(): unit =
+    let exitCode = runMain [| "list"; "--help" |]
+    Assert.Equal(ExitCodes.Success, exitCode)
+
+[<Fact>]
+let ``Exit code signal a subcommand parse error``(): unit =
+    let exitCode = runMain [| "list"; "--unknown" |]
     Assert.Equal(ExitCodes.CannotParseArguments, exitCode)

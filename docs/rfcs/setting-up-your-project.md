@@ -1,6 +1,8 @@
 Setting Up Your Project
 =======================
 
+_This is an RFC for the issue [#43: Praefectus Prime][issue-43]._
+
 Technically, Praefectus is a .NET library that should be used in an application
 to make it work.
 
@@ -19,4 +21,15 @@ $ dotnet add package Praefectus
 $ dotnet run -- --help # to run the app and pass the --help option to Praefectus
 ```
 
-[praefectus.example]: ../Praefectus.Example
+The application is started via `Praefectus.Console.EntryPoint.run` static
+method. You may pass the following parameters:
+
+- `baseConfigDirectory`: configuration directory where `praefectus.json` file
+  will be loaded.
+- `args`: command line arguments passed to the Praefectus.
+- `environment`: an object used to describe the application environment. If you
+  don't want to override any specifics, use
+  `Praefectus.Console.Environment.OpenDefault()`.
+
+[issue-43]: https://github.com/ForNeVeR/praefectus/issues/43
+[praefectus.example]: ../../Praefectus.Example

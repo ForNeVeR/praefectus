@@ -1,4 +1,4 @@
-﻿module Praefectus.IntegrationTests.DatabaseTests
+﻿module Praefectus.Tests.Console.DatabaseTests
 
 open System
 open System.IO
@@ -10,6 +10,7 @@ open Xunit
 open Praefectus.Console
 open Praefectus.Core
 open Praefectus.Storage
+open Praefectus.Tests.Console.ConsoleTestUtils
 
 let private saveDatabaseToTempFile database = task {
     let databasePath = Path.GetTempFileName()
@@ -25,7 +26,8 @@ let private saveConfigToTempFile config = task {
     return configPath
 }
 
-let private deserializeTasks(reader: StreamReader) = task {
+let private deserializeTasks(stream: Stream) = task {
+    use reader = new StreamReader(stream)
     let serializer = JsonSerializer()
     return serializer.Deserialize(reader, typeof<Task[]>) :?> Task[]
 }
@@ -46,8 +48,9 @@ let ``Database should be exported in JSON``(): System.Threading.Tasks.Task = upc
     let config = { DatabaseLocation = databasePath }
     let! configPath = saveConfigToTempFile config
 
-    let! proc = Process.run [| "--config"; configPath; "list"; "--json" |] |> Async.StartAsTask
-    let! tasks = deserializeTasks proc.StandardOutput
+    let (exitCode, stdOut) = runMainCapturingOutput [| "--config"; configPath; "list"; "--json" |]
+    let! tasks = deserializeTasks stdOut
 
+    Assert.Equal(EntryPoint.ExitCodes.Success, exitCode)
     Assert.Equal<Task>(testDatabase.Tasks, tasks)
 }
