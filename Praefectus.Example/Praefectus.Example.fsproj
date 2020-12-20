@@ -7,9 +7,6 @@
 
     <ItemGroup>
         <Compile Include="Program.fs" />
-        <Content Include="praefectus.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
     </ItemGroup>
 
     <ItemGroup>

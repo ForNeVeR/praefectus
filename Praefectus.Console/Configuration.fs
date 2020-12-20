@@ -1,12 +1,7 @@
 ﻿namespace Praefectus.Console
 
-open Microsoft.Extensions.Configuration
-
+/// Praefectus application configuration.
 type Configuration = {
+    /// Location of the Praefectus database file.
     DatabaseLocation: string
 }
-
-module Configuration =
-    let parse(config: IConfigurationRoot): Configuration = {
-        DatabaseLocation = config.["databaseLocation"] |> Option.ofObj |> Option.defaultValue "praefectus.data.json"
-    }

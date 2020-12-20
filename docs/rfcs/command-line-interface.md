@@ -28,9 +28,6 @@ Command Line Arguments
 
 Praefectus supports the following command line options:
 
-- `--config <configPath>` to choose a path to the configuration file. By
-  default, Praefectus will look for a `praefectus.json` file in the same
-  directory as the Praefectus executable file
 - `--help` to print a quick help message
 - `--version` to print Praefectus version in format `Praefectus v{version}`
 

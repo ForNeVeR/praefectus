@@ -3,6 +3,8 @@
 open System
 open System.IO
 
+open Serilog
+
 /// Console application environment.
 type Environment =
     {
@@ -10,6 +12,8 @@ type Environment =
         Terminator: ITerminator
         /// An output stream.
         Output: Stream
+        /// Logger configuration details.
+        LoggerConfiguration: LoggerConfiguration
     }
     interface IDisposable with
         member this.Dispose() = this.Output.Dispose()
@@ -19,4 +23,5 @@ module Environment =
         {
             Terminator = ProgramTerminator()
             Output = Console.OpenStandardOutput()
+            LoggerConfiguration = LoggerConfiguration().WriteTo.Console()
         }

@@ -4,13 +4,15 @@ open System
 open System.IO
 open System.Reflection
 
+open Serilog
+
 open Praefectus.Console
 
 exception private ExitCodeException of code: int
 
 let private testDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
 
-let private runMainWithOutput arguments stdOut =
+let private runMainWithOutput configuration arguments stdOut =
     let mutable exitCode = None
     let terminator =
         { new ITerminator with
@@ -20,19 +22,21 @@ let private runMainWithOutput arguments stdOut =
     let env = {
         Terminator = terminator
         Output = stdOut
+        LoggerConfiguration = LoggerConfiguration()
     }
     try
-        let actualCode = EntryPoint.run testDirectory arguments env
+        let actualCode = EntryPoint.run configuration arguments env
         Option.defaultValue actualCode exitCode
     with
     | :? ExitCodeException as ex -> ex.code
 
 let runMain (arguments: string[]): int =
     use stdOut = Console.OpenStandardOutput()
-    runMainWithOutput arguments stdOut
+    let configuration = { DatabaseLocation = Path.Combine(testDirectory, "data.json") }
+    runMainWithOutput configuration arguments stdOut
 
-let runMainCapturingOutput (arguments: string[]): int * Stream =
+let runMainCapturingOutput (configuration: Configuration) (arguments: string[]): int * Stream =
     let stream = new MemoryStream()
-    let exitCode = runMainWithOutput arguments stream
+    let exitCode = runMainWithOutput configuration arguments stream
     stream.Position <- 0L
     exitCode, upcast stream

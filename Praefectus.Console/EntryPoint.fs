@@ -5,8 +5,6 @@ open System.Reflection
 open System.Runtime.CompilerServices
 
 open Argu
-open Microsoft.Extensions.Configuration
-open Serilog
 
 open Praefectus.Utils
 
@@ -25,29 +23,16 @@ type ListArguments =
 
 [<RequireQualifiedAccess>]
 type Arguments =
-    | [<Unique>] Config of configPath: string
     | [<Unique>] Version
     | [<CliPrefix(CliPrefix.None)>] List of ParseResults<ListArguments>
     interface IArgParserTemplate with
         member s.Usage =
             match s with
             // Options:
-            | Config _ -> "path to the JSON configuration file. Default: praefectus.json in the same directory as the executable file."
             | Version -> "print the program version."
 
             // Commands:
             | List _ -> "List all the tasks in the database."
-
-let private configure (basePath: string) (configFilePath: string) =
-    ConfigurationBuilder()
-        .SetBasePath(basePath)
-        .AddJsonFile(configFilePath)
-        .Build()
-
-let private createLogger config =
-    LoggerConfiguration()
-        .ReadFrom.Configuration(config)
-        .CreateLogger()
 
 [<MethodImpl(MethodImplOptions.NoInlining)>] // See https://github.com/dotnet/fsharp/issues/9283
 let getAppVersion(): Version =
@@ -69,28 +54,21 @@ let private parseArguments args (terminator: ITerminator) =
     let argParser = ArgumentParser.Create<Arguments>(errorHandler = errorHandler)
     argParser.ParseCommandLine(args)
 
-let private execute (baseConfigDirectory: string) (arguments: ParseResults<Arguments>) stdOut =
-    let configPath = arguments.GetResult(Arguments.Config, "praefectus.json")
-    let config = configure baseConfigDirectory configPath
-    let logger = createLogger config
-
+let private execute application (arguments: ParseResults<Arguments>) stdOut =
     let version = getAppVersion()
+    let logger = application.Logger
     logger.Information("Praefectus v{version} started", version)
     logger.Information("Arguments received: {arguments}", arguments)
 
     let exitCode =
         try
-            let app = {
-                Config = Configuration.parse config
-                Logger = logger
-            }
             if arguments.Contains Arguments.Version then
                 printfn "Praefectus v%A" (getAppVersion())
             else
                 match arguments.GetSubCommand() with
                 | Arguments.List listArgs ->
                     let json = listArgs.Contains ListArguments.Json
-                    Commands.doList app json stdOut |> Task.RunSynchronously
+                    Commands.doList application json stdOut |> Task.RunSynchronously
                 | other -> failwithf "Impossible: option %A passed as a subcommand" other
 
             ExitCodes.Success
@@ -104,13 +82,17 @@ let private execute (baseConfigDirectory: string) (arguments: ParseResults<Argum
     exitCode
 
 /// <summary>Runs the Praefectus application using the provided configuration data.</summary>
-/// <param name="baseConfigDirectory">Configuration directory where <c>praefectus.json</c> file will be loaded.</param>
+/// <param name="config">Praefectus configuration object.</param>
 /// <param name="args">Command line arguments passed to the Praefectus.</param>
-/// <param name="environment">Environment to run the program at.</param>
-let run (baseConfigDirectory: string) (args: string[]) (environment: Praefectus.Console.Environment): int =
+/// <param name="environment">Environment to run the program in.</param>
+let run (config: Configuration) (args: string[]) (environment: Praefectus.Console.Environment): int =
+    let app = {
+        Logger = environment.LoggerConfiguration.CreateLogger()
+        Config = config
+    }
     let arguments = parseArguments args environment.Terminator
     try
-        execute baseConfigDirectory arguments environment.Output
+        execute app arguments environment.Output
     with
     | ex ->
         eprintfn "Runtime exception: %A" ex

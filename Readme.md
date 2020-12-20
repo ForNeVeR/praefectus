@@ -33,8 +33,6 @@ Documentation
 
 ### RFCs
 
-- [Setting Up Your Project][docs.rfcs.setting-up-your-project]: an RFC for the
-  issue [#43: Praefectus Prime][issue-43]
 - [Command Line Interface][docs.rfcs.command-line-interface]: an RFC for the
   issue [#13: Simple UI/UX to navigate the database][issue-13]
 - [Tasks and Attributes][docs.rfcs.tasks-and-attributes]: an RFC for the issue
@@ -249,14 +247,12 @@ And I hope it will be fun to work _with_ Praefectus for the users.
 [docs.1.development-process]: docs/1.development-process.md
 [docs.2.configuration]: docs/2.configuration.md
 [docs.rfcs.command-line-interface]: docs/rfcs/command-line-interface.md
-[docs.rfcs.setting-up-your-project]: docs/rfcs/setting-up-your-project.md
 [docs.rfcs.tasks-and-attributes]: docs/rfcs/tasks-and-attributes.md
 [docs.rfcs.version-control]: docs/rfcs/version-control.md
 [dotnet.download]: https://dotnet.microsoft.com/download
 [issue-06]: https://github.com/ForNeVeR/praefectus/issues/6
 [issue-07]: https://github.com/ForNeVeR/praefectus/issues/7
 [issue-13]: https://github.com/ForNeVeR/praefectus/issues/13
-[issue-43]: https://github.com/ForNeVeR/praefectus/issues/43
 [praefectus.example]: Praefectus.Example
 [taskwarrior]: https://taskwarrior.org/
 [verify.diff-tool-order]: https://github.com/VerifyTests/DiffEngine/blob/HEAD/docs/diff-tool.order.md

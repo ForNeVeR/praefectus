@@ -19,13 +19,6 @@ let private saveDatabaseToTempFile database = task {
     return databasePath
 }
 
-let private saveConfigToTempFile config = task {
-    let configPath = Path.GetTempFileName()
-    use stream = new FileStream(configPath, FileMode.Create)
-    do! Json.serializeData config stream
-    return configPath
-}
-
 let private deserializeTasks(stream: Stream) = task {
     use reader = new StreamReader(stream)
     let serializer = JsonSerializer()
@@ -46,9 +39,8 @@ let private testDatabase =
 let ``Database should be exported in JSON``(): System.Threading.Tasks.Task = upcast task {
     let! databasePath = saveDatabaseToTempFile testDatabase
     let config = { DatabaseLocation = databasePath }
-    let! configPath = saveConfigToTempFile config
 
-    let (exitCode, stdOut) = runMainCapturingOutput [| "--config"; configPath; "list"; "--json" |]
+    let (exitCode, stdOut) = runMainCapturingOutput config [| "list"; "--json" |]
     let! tasks = deserializeTasks stdOut
 
     Assert.Equal(EntryPoint.ExitCodes.Success, exitCode)

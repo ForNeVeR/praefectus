@@ -36,7 +36,6 @@ ProjectSection(SolutionItems) = preProject
 	docs\rfcs\command-line-interface.md = docs\rfcs\command-line-interface.md
 	docs\rfcs\tasks-and-attributes.md = docs\rfcs\tasks-and-attributes.md
 	docs\rfcs\version-control.md = docs\rfcs\version-control.md
-	docs\rfcs\setting-up-your-project.md = docs\rfcs\setting-up-your-project.md
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{B0720CD7-C3D3-4FC1-986D-83D8AC8FC283}"
