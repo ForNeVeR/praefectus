@@ -1,4 +1,5 @@
 ﻿open System
+
 open Praefectus.Console
 
 [<EntryPoint>]
