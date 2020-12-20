@@ -3,4 +3,5 @@ open Praefectus.Console
 
 [<EntryPoint>]
 let main argv =
-    EntryPoint.run Environment.CurrentDirectory argv None
+    use env = Environment.OpenStandard()
+    EntryPoint.run Environment.CurrentDirectory argv env
