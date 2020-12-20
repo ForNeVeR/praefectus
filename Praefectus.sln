@@ -41,7 +41,6 @@ EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{B0720CD7-C3D3-4FC1-986D-83D8AC8FC283}"
 ProjectSection(SolutionItems) = preProject
-	scripts\Get-Version.ps1 = scripts\Get-Version.ps1
 	scripts\Approve-All.ps1 = scripts\Approve-All.ps1
 EndProjectSection
 EndProject
