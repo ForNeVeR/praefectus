@@ -1,33 +1,39 @@
-module Praefectus.Tests.Storage.JsonTests
+﻿module Praefectus.Tests.Storage.JsonTests
 
-open System
 open System.IO
 open System.Text
 
+open FSharp.Control.Tasks
+open Newtonsoft.Json
 open Quibble.Xunit
-open VerifyXunit
 open Xunit
 
 open Praefectus.Core
 open Praefectus.Storage
 
-let private createTask id title av = {
-    Id = id
-    Title = title
-    Created = DateTimeOffset.UnixEpoch
-    Updated = DateTimeOffset.UnixEpoch
-    Status = TaskStatus.Open
-    AttributeValues = Map.ofArray av
+let private createTask id title = {
+    Id = Some id
+    Title = Some title
+    Status = Some TaskStatus.Open
+    Order = None
+    Name = None
+    Description = None
+    DependsOn = Array.empty
 }
 
 let private testDatabase =
     { Database.defaultDatabase with
         Tasks = [|
-            createTask "Task1" "Perform tests" [|
-                DefaultAttributes.DependsOn.Id, AttributeValue.TaskReference "Task1"
-            |]
+            createTask "Task1" "Perform tests"
         |]
     }
+
+let private loadDatabase(source: Stream): System.Threading.Tasks.Task<Database> = task {
+    use reader = new StreamReader(source)
+    let serializer = JsonSerializer()
+    return serializer.Deserialize(reader, typeof<Database>) :?> Database
+}
+
 [<Fact>]
 let ``Json should serialize the database successfully``(): unit =
     Async.RunSynchronously <| async {
@@ -63,72 +69,6 @@ let ``Json should be able to load the database after save``(): unit =
         do! Async.AwaitTask <| Json.save database stream
         rewindStream stream
 
-        let! newDatabase = Async.AwaitTask <| Json.load stream
+        let! newDatabase = Async.AwaitTask <| loadDatabase stream
         do! assertEqual database newDatabase
     }
-
-[<UsesVerify>]
-module DeserializationTests =
-    let private createId x = { Namespace = "praefectus.tests"; Id = x }
-    let private createAttribute id dataType = {
-        Id = createId id
-        Type = dataType
-        Description = ""
-    }
-
-    let private allAttributes = [|
-        createAttribute "boolean" DataType.Boolean
-        createAttribute "enum" (DataType.Enum [| "A"; "B"; "C" |])
-        createAttribute "string" DataType.String
-        createAttribute "integer" DataType.Integer
-        createAttribute "double" DataType.Double
-        createAttribute "timestamp" DataType.Timestamp
-        createAttribute "taskReference" DataType.TaskReference
-        createAttribute "taskReferenceList" (DataType.List ScalarDataType.TaskReference)
-    |]
-
-    let private databaseWithEveryAttribute = {
-        Metadata = allAttributes
-        Tasks = [||]
-    }
-
-    let private verifyDatabase database =
-        Async.RunSynchronously <| async {
-            use stream = new MemoryStream()
-            do! Async.AwaitTask <| Json.save database stream
-            let string = streamToString stream
-
-            return! Async.AwaitTask(Verifier.Verify string)
-        }
-
-    [<Fact>]
-    let everyAttributeType(): unit =
-        verifyDatabase databaseWithEveryAttribute
-
-    let private allAttributeValues = [|
-        createId "boolean", AttributeValue.Boolean true
-        createId "enum", AttributeValue.Enum "X"
-        createId "string", AttributeValue.String "Z"
-        createId "integer", AttributeValue.Integer 123
-        createId "double.nan", AttributeValue.Double Double.NaN
-        createId "double.maxValue", AttributeValue.Double Double.MaxValue
-        createId "double.inf", AttributeValue.Double Double.PositiveInfinity
-        createId "double.epsilon", AttributeValue.Double Double.Epsilon
-        createId "timestamp", AttributeValue.Timestamp DateTimeOffset.UnixEpoch
-        createId "taskReference", AttributeValue.TaskReference "Task1"
-        createId "taskReferenceList", AttributeValue.List [|
-            ScalarAttributeValue.TaskReference "Task1"
-            ScalarAttributeValue.TaskReference "Task2"
-        |]
-    |]
-
-    let private databaseWithEveryAttributeValue =
-        { databaseWithEveryAttribute with
-            Tasks = [|
-                createTask "Task1" "Use all the attributes" allAttributeValues
-            |]
-        }
-
-    [<Fact>]
-    let everyAttributeValue(): unit =
-        verifyDatabase databaseWithEveryAttributeValue

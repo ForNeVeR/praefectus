@@ -32,7 +32,7 @@ let private runMainWithOutput configuration arguments stdOut =
 
 let runMain (arguments: string[]): int =
     use stdOut = Console.OpenStandardOutput()
-    let configuration = { DatabaseLocation = Path.Combine(testDirectory, "data.json") }
+    let configuration = { DatabaseLocation = testDirectory }
     runMainWithOutput configuration arguments stdOut
 
 let runMainCapturingOutput (configuration: Configuration) (arguments: string[]): int * Stream =

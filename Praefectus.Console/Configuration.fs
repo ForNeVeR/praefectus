@@ -2,6 +2,6 @@
 
 /// Praefectus application configuration.
 type Configuration = {
-    /// Location of the Praefectus database file.
+    /// Location of the Praefectus storage directory.
     DatabaseLocation: string
 }

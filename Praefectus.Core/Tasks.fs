@@ -11,10 +11,11 @@ type TaskStatus =
 | Deleted
 
 type Task = {
-    Id: string
-    Title: string
-    Created: DateTimeOffset
-    Updated: DateTimeOffset
-    Status: TaskStatus
-    AttributeValues: IReadOnlyDictionary<AttributeIdentification, AttributeValue>
+    Order: int option
+    Id: string option
+    Name: string option
+    Title: string option
+    Description: string option
+    Status: TaskStatus option
+    DependsOn: IReadOnlyCollection<string>
 }

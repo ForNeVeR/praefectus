@@ -37,6 +37,8 @@ Documentation
   issue [#13: Simple UI/UX to navigate the database][issue-13]
 - [Tasks and Attributes][docs.rfcs.tasks-and-attributes]: an RFC for the issue
   [#6: Foundational concept design: task attributes][issue-06]
+- [Data Storage][docs.rfcs.data-storage]: an RFC for the issue [#43: Praefectus
+  Prime][issue-43]
 - [Version Control][docs.rfcs.version-control]: an RFC for the issue
   [#7: Foundational concept design: version control][issue-07]
 
@@ -93,15 +95,6 @@ To execute the automatic test suite, run the following command in the terminal:
 ```console
 $ dotnet test --configuration Release
 ```
-
-Some unit tests use the [Verify library][verify]. If you update part of the code
-that requires changing of the test data (`*.verified.txt`), you may use the
-`scripts/Approve-All.ps1` script.
-
-To set up a right diff tool for your system (if Verify reports an error
-launching diff tool or just using a wrong one), set up the
-`DiffEngine.ToolOrder` environment variable. Consult [the
-documentation][verify.diff-tool-order] for details.
 
 Questions
 ---------
@@ -247,13 +240,13 @@ And I hope it will be fun to work _with_ Praefectus for the users.
 [docs.1.development-process]: docs/1.development-process.md
 [docs.2.configuration]: docs/2.configuration.md
 [docs.rfcs.command-line-interface]: docs/rfcs/command-line-interface.md
+[docs.rfcs.data-storage]: docs/rfcs/data-storage.md
 [docs.rfcs.tasks-and-attributes]: docs/rfcs/tasks-and-attributes.md
 [docs.rfcs.version-control]: docs/rfcs/version-control.md
 [dotnet.download]: https://dotnet.microsoft.com/download
 [issue-06]: https://github.com/ForNeVeR/praefectus/issues/6
 [issue-07]: https://github.com/ForNeVeR/praefectus/issues/7
 [issue-13]: https://github.com/ForNeVeR/praefectus/issues/13
+[issue-43]: https://github.com/ForNeVeR/praefectus/issues/43
 [praefectus.example]: Praefectus.Example
 [taskwarrior]: https://taskwarrior.org/
-[verify.diff-tool-order]: https://github.com/VerifyTests/DiffEngine/blob/HEAD/docs/diff-tool.order.md
-[verify]: https://github.com/VerifyTests/Verify

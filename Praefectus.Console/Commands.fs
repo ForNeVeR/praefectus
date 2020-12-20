@@ -8,8 +8,7 @@ open FSharp.Control.Tasks
 open Praefectus.Storage
 
 let doList (app: Application) (isJson: bool) (output: Stream): Task<unit> = task {
-    use source = new FileStream(app.Config.DatabaseLocation, FileMode.Open)
-    let! database = Json.load source
+    let! database = MarkdownDirectory.readDatabase app.Config.DatabaseLocation
     let tasks = database.Tasks
     if isJson then
         do! Json.serializeData tasks output

@@ -5,10 +5,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Attributes.fs" />
-        <Compile Include="AttributeValues.fs" />
         <Compile Include="Tasks.fs" />
         <Compile Include="Database.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="YamlDotNet" Version="9.1.0" />
     </ItemGroup>
 
 </Project>

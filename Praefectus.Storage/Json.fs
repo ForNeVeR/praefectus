@@ -16,9 +16,3 @@ let serializeData (data: 'a) (output: Stream): Task<unit> = task {
 
 let save (database: Database) (target: Stream): Task<unit> =
     serializeData database target
-
-let load(source: Stream): Task<Database> = task {
-    use reader = new StreamReader(source)
-    let serializer = JsonSerializer()
-    return serializer.Deserialize(reader, typeof<Database>) :?> Database
-}
