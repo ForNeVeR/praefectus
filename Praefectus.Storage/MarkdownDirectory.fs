@@ -1,15 +1,17 @@
 ﻿module Praefectus.Storage.MarkdownDirectory
 
 open System
+open System.Collections.Generic
 open System.Globalization
 open System.IO
 open System.Text
 
 open Markdig
 open Markdig.Extensions.Yaml
-
 open Markdig.Renderers.Normalize
 open Markdig.Syntax
+open YamlDotNet.Serialization
+
 open Praefectus.Core
 
 module FileName =
@@ -42,14 +44,49 @@ module FileName =
             | 1 -> order, None, Some components.[idIndex]
             | _ -> order, Some components.[idIndex], Some <| String.Join('.', Seq.skip (idIndex + 1) components)
 
+module private Yaml =
+    let private deserializer = DeserializerBuilder().Build()
+    let read(text: string) =
+        deserializer.Deserialize<Dictionary<string, obj>> text
+
+    let private serializer = SerializerBuilder().Build()
+    let write value =
+        use writer = new StringWriter(NewLine = "\n")
+        serializer.Serialize(writer, value)
+        writer.ToString()
+
 module private Markdown =
     let private pipeline =
         MarkdownPipelineBuilder()
             .UseYamlFrontMatter()
             .Build()
 
-    let private parseYamlFrontMatterMetadata _block =
-        failwith "TODO: Parse YAML data"
+    let private parseYamlFrontMatterMetadata (block: YamlFrontMatterBlock) =
+        let yamlText = block.Lines.ToString()
+        let metadata = Yaml.read yamlText
+
+        let readValue key mapping =
+            match metadata.TryGetValue key with
+            | (true, v) -> Some(mapping (v :?> 'a))
+            | (false, _) -> None
+
+        let readInt32 key = readValue key (fun (s: string) -> int s)
+        let readString key: string option = readValue key id
+        let readEnum key = readValue key (fun s -> Enum.Parse(s, ignoreCase = true))
+        let readList key =
+            readValue key Seq.cast<string>
+            |> Option.defaultValue Seq.empty
+            |> ResizeArray
+
+        {
+            Order = readInt32 "order"
+            Id = readString "id"
+            Name = readString "name"
+            Title = readString "title"
+            Description = readString "description"
+            Status = readEnum "status"
+            DependsOn = readList "depends-on"
+        }
 
     let private toText document =
         use writer = new StringWriter()
@@ -68,7 +105,7 @@ module private Markdown =
                 let metadata = parseYamlFrontMatterMetadata frontMatter
 
                 document.RemoveAt 0
-                metadata
+                Some metadata
             | _ -> None
         let title =
             match Seq.tryHead document with
@@ -112,14 +149,40 @@ let readTask (filePath: string) (stream: Stream) = async {
 let writeTask (task: Task) (stream: Stream) = async {
     use writer = new StreamWriter(stream, leaveOpen = true)
 
-    let text =
-        match (task.Title, task.Description) with
-        | (Some title, Some description) -> String.Format("# {0}\n\n{1}\n", title, description)
-        | (Some title, None) -> String.Format("# {0}\n", title)
-        | (None, Some description) -> String.Format("{0}\n", description)
-        | (None, None) -> ""
+    let writeStatus = Option.map (fun s -> box(Enum.GetName(s).ToLowerInvariant()))
+    let writeDependsOn: IReadOnlyCollection<_> -> _ = function
+    | collection when collection.Count = 0 -> None
+    | collection -> Some(box collection)
 
-    do! Async.AwaitTask(writer.WriteAsync(text))
+    let metadata =
+        seq {
+            "status", writeStatus task.Status
+            "depends-on", writeDependsOn task.DependsOn
+        }
+        |> Seq.choose(fun(k, v) ->
+            v |> Option.map (fun v -> KeyValuePair(k, v))
+        )
+        |> Dictionary
+
+    let text = StringBuilder()
+
+    if metadata.Count > 0 then
+        let frontMatter = Yaml.write metadata
+        text.AppendFormat("---\n{0}---\n", frontMatter) |> ignore
+
+    task.Title |> Option.iter (fun title ->
+        text.AppendFormat("# {0}\n", title) |> ignore
+    )
+
+    task.Description |> Option.iter (fun description ->
+        if description <> "" then
+            if Option.isSome task.Title then
+                text.Append '\n' |> ignore
+            text.AppendFormat("{0}\n", description) |> ignore
+    )
+
+    let! ct = Async.CancellationToken
+    do! Async.AwaitTask(writer.WriteAsync(text, ct))
 }
 
 let readDatabase (directory: string): Async<Database> = async {

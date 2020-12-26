@@ -9,10 +9,17 @@ open Praefectus.Core
 open Praefectus.Storage
 
 module ReadTaskTests =
+    let private doTest expectedTask (fileContent: string) = Async.RunSynchronously <| async {
+        use stream = new MemoryStream(Encoding.UTF8.GetBytes fileContent)
+        let! task = MarkdownDirectory.readTask "task.md" stream
+        Assert.Equal(expectedTask, task)
+    }
+
+
     [<Fact>]
-    let ``readTask should parse text``(): unit = Async.RunSynchronously <| async {
+    let ``readTask should parse text``(): unit =
         let content = "Foo bar baz"
-        let expectedTask = {
+        let task = {
             Id = None
             Order = None
             Name = Some "task"
@@ -22,28 +29,34 @@ module ReadTaskTests =
             DependsOn = Array.empty
         }
 
-        use stream = new MemoryStream(Encoding.UTF8.GetBytes content)
-        let! task = MarkdownDirectory.readTask "task.md" stream
-        Assert.Equal(expectedTask, task)
-    }
+        doTest task content
 
     [<Fact>]
-    let ``readTask should read task title from Markdown``(): unit = Async.RunSynchronously <| async {
-        let content = "# Task title\n\nTask content."
-        let expectedTask = {
+    let ``readTask should read task title from Markdown``(): unit =
+        let task = {
             Id = None
             Order = None
-            Name = Some ""
+            Name = Some "task"
             Title = Some "Task title"
             Description = Some "Task content."
             Status = None
             DependsOn = Array.empty
         }
 
-        use stream = new MemoryStream(Encoding.UTF8.GetBytes content)
-        let! task = MarkdownDirectory.readTask ".md" stream
-        Assert.Equal(expectedTask, task)
-    }
+        doTest task "# Task title\n\nTask content."
+
+    [<Fact>]
+    let ``readTask should read the metadata to task attributes``(): unit =
+        let task =
+            { Task.empty with
+                Order = Some 5
+                Id = Some "1_2_3"
+                Name = Some "task"
+                Status = Some TaskStatus.Open
+                Title = Some "Task 123"
+                Description = Some ""
+                DependsOn = [| "123"; "456" |] }
+        doTest task "---\norder: 5\nstatus: open\nid: 1_2_3\ndepends-on: [123, 456]\n---\n# Task 123"
 
 module WriteTaskTests =
     let private doTest task expectedContent = Async.RunSynchronously <| async {
@@ -72,6 +85,16 @@ module WriteTaskTests =
                 Title = Some "Task title"
                 Description = Some "Task description." }
         doTest task "# Task title\n\nTask description.\n"
+
+    [<Fact>]
+    let ``writeTask should save some attributes into a Front Matter block``(): unit =
+        let task =
+            { Task.empty with
+                Order = Some 123
+                Title = Some "title"
+                Status = Some TaskStatus.Deleted
+                DependsOn = [| "123"; "345" |] }
+        doTest task "---\nstatus: deleted\ndepends-on:\n- 123\n- 345\n---\n# title\n"
 
 let private testDatabase = {
     Tasks = [| {
