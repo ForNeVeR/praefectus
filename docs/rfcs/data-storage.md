@@ -3,16 +3,24 @@
 
 By default, Praefectus stores its tasks and other information in a set of
 Markdown files (according to the [CommonMark specification][commonmark]), each
-with an optional [YAML Front Matter][yaml-front-matter] block.
+prepended with an optional [YAML Front Matter][yaml-front-matter] block.
 
-Some tasks attributes may be inferred from the files' contents or names, and
-some are stored in a YAML front matter block.
+When reading the database directory, Praefectus will try to infer some of the
+task attributes from the task file names and Markdown content; though, any
+attributes (including the ones that are read from the file name) may be
+overridden by the front matter block.
+
+File name scheme is the following: `[order.][id.]<name>.md`.
+
+If the first Markdown block in the file is a level 1 heading, then its contents
+will be read as the task title. Everything else in the file is read as the task
+description.
 
 Here's an example task file (say, `42.my-task.md`):
 
 ```markdown
 ---
-custom-attribute: 123
+depends-on: [123, 456]
 ---
 # Task Title
 Some task description.
@@ -22,7 +30,7 @@ This task has the following explicit attributes:
 - `order`: `42`
 - `name`: `my-task`
 - `title`: `Task Title`
-- `custom-attribute`: `123`
+- `dependsOn`: `[123, 465]` (a list with two task ids)
 - `description`: `Some task description.`
 
 When processing the tasks, Praefectus may change their attributes, which will
