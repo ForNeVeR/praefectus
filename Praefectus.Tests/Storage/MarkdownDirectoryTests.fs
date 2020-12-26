@@ -8,43 +8,70 @@ open Xunit
 open Praefectus.Core
 open Praefectus.Storage
 
-[<Fact>]
-let ``readTask should parse text``(): unit = Async.RunSynchronously <| async {
-    let content = "Foo bar baz"
-    let expectedTask = {
-        Id = None
-        Order = None
-        Name = Some "task"
-        Title = None
-        Description = Some content
-        Status = None
-        DependsOn = Array.empty
+module ReadTaskTests =
+    [<Fact>]
+    let ``readTask should parse text``(): unit = Async.RunSynchronously <| async {
+        let content = "Foo bar baz"
+        let expectedTask = {
+            Id = None
+            Order = None
+            Name = Some "task"
+            Title = None
+            Description = Some content
+            Status = None
+            DependsOn = Array.empty
+        }
+
+        use stream = new MemoryStream(Encoding.UTF8.GetBytes content)
+        let! task = MarkdownDirectory.readTask "task.md" stream
+        Assert.Equal(expectedTask, task)
     }
 
-    use stream = new MemoryStream(Encoding.UTF8.GetBytes content)
-    let! task = MarkdownDirectory.readTask "task.md" stream
-    Assert.Equal(expectedTask, task)
-}
+    [<Fact>]
+    let ``readTask should read task title from Markdown``(): unit = Async.RunSynchronously <| async {
+        let content = "# Task title\n\nTask content."
+        let expectedTask = {
+            Id = None
+            Order = None
+            Name = Some ""
+            Title = Some "Task title"
+            Description = Some "Task content."
+            Status = None
+            DependsOn = Array.empty
+        }
 
-[<Fact>]
-let ``writeTask should write task description``(): unit = Async.RunSynchronously <| async {
-    let task = {
-        Id = None
-        Order = None
-        Name = Some "task"
-        Title = None
-        Description = Some "Foo bar baz"
-        Status = Some TaskStatus.Open
-        DependsOn = Array.empty
+        use stream = new MemoryStream(Encoding.UTF8.GetBytes content)
+        let! task = MarkdownDirectory.readTask ".md" stream
+        Assert.Equal(expectedTask, task)
     }
 
-    use stream = new MemoryStream()
-    do! MarkdownDirectory.writeTask task stream
+module WriteTaskTests =
+    let private doTest task expectedContent = Async.RunSynchronously <| async {
+        use stream = new MemoryStream()
+        do! MarkdownDirectory.writeTask task stream
 
-    stream.Position <- 0L
-    let contents = Encoding.UTF8.GetString(stream.ToArray())
-    Assert.Equal(task.Description.Value, contents)
-}
+        stream.Position <- 0L
+        let content = Encoding.UTF8.GetString(stream.ToArray())
+        Assert.Equal(expectedContent, content)
+    }
+
+    [<Fact>]
+    let ``writeTask should write task description``(): unit =
+        let task = { Task.empty with Description = Some "Foo bar baz" }
+        doTest task "Foo bar baz\n"
+
+    [<Fact>]
+    let ``writeTask should preserve task title``(): unit =
+        let task = { Task.empty with Title = Some "Task title" }
+        doTest task "# Task title\n"
+
+    [<Fact>]
+    let ``writeTask should format title + description properly``(): unit =
+        let task =
+            { Task.empty with
+                Title = Some "Task title"
+                Description = Some "Task description." }
+        doTest task "# Task title\n\nTask description.\n"
 
 let private testDatabase = {
     Tasks = [| {

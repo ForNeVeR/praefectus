@@ -19,3 +19,14 @@ type Task = {
     Status: TaskStatus option
     DependsOn: IReadOnlyCollection<string>
 }
+
+module Task =
+    let empty = {
+        Order = None
+        Id = None
+        Name = None
+        Title = None
+        Description = None
+        Status = None
+        DependsOn = Array.empty
+    }
