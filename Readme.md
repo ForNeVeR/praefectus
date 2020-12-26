@@ -30,6 +30,7 @@ Documentation
 
 1. [Development Process][docs.1.development-process]
 2. [Configuration][docs.2.configuration]
+3. [Data Storage][docs.3.data-storage]
 
 ### RFCs
 
@@ -37,8 +38,6 @@ Documentation
   issue [#13: Simple UI/UX to navigate the database][issue-13]
 - [Tasks and Attributes][docs.rfcs.tasks-and-attributes]: an RFC for the issue
   [#6: Foundational concept design: task attributes][issue-06]
-- [Data Storage][docs.rfcs.data-storage]: an RFC for the issue [#43: Praefectus
-  Prime][issue-43]
 - [Version Control][docs.rfcs.version-control]: an RFC for the issue
   [#7: Foundational concept design: version control][issue-07]
 
@@ -239,14 +238,13 @@ And I hope it will be fun to work _with_ Praefectus for the users.
 [andivionian-status-classifier]: https://github.com/ForNeVeR/andivionian-status-classifier#status-zero-
 [docs.1.development-process]: docs/1.development-process.md
 [docs.2.configuration]: docs/2.configuration.md
+[docs.3.data-storage]: docs/3.data-storage.md
 [docs.rfcs.command-line-interface]: docs/rfcs/command-line-interface.md
-[docs.rfcs.data-storage]: docs/rfcs/data-storage.md
 [docs.rfcs.tasks-and-attributes]: docs/rfcs/tasks-and-attributes.md
 [docs.rfcs.version-control]: docs/rfcs/version-control.md
 [dotnet.download]: https://dotnet.microsoft.com/download
 [issue-06]: https://github.com/ForNeVeR/praefectus/issues/6
 [issue-07]: https://github.com/ForNeVeR/praefectus/issues/7
 [issue-13]: https://github.com/ForNeVeR/praefectus/issues/13
-[issue-43]: https://github.com/ForNeVeR/praefectus/issues/43
 [praefectus.example]: Praefectus.Example
 [taskwarrior]: https://taskwarrior.org/
