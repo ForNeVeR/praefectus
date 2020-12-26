@@ -7,5 +7,8 @@ indent_size = 4
 trim_trailing_whitespace = true
 insert_final_newline = true
 
+[*.md]
+max_line_length = 80
+
 [*.yml]
 indent_size = 2
