@@ -29,8 +29,8 @@ let private testDatabase =
     { Database.defaultDatabase with
         Tasks = [| {
             Id = Some "Test1"
-            Title = None // TODO: Some "Test task"
-            Status = None // TODO: Some TaskStatus.Open
+            Title = Some "Test task"
+            Status = Some TaskStatus.Open
             Order = Some 42
             Name = Some "name"
             Description = Some "description"

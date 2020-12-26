@@ -103,7 +103,7 @@ let private testDatabase = {
         Name = Some "task"
         Title = None
         Description = Some "Foo bar baz"
-        Status = None // TODO: Some TaskStatus.Open
+        Status = Some TaskStatus.Open
         DependsOn = Array.empty
     } |]
 }
