@@ -89,7 +89,7 @@ module private Markdown =
         }
 
     let private toText document =
-        use writer = new StringWriter()
+        use writer = new StringWriter(NewLine = "\n")
         let renderer = NormalizeRenderer writer
         renderer.Render document |> ignore
         writer.ToString()
