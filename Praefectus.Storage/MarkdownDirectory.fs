@@ -2,7 +2,6 @@
 
 open System
 open System.Collections.Generic
-open System.Globalization
 open System.IO
 open System.Text
 
@@ -13,36 +12,7 @@ open Markdig.Syntax
 open YamlDotNet.Serialization
 
 open Praefectus.Core
-
-module FileName =
-    let internal generate task =
-        let append (x: string option) (builder: StringBuilder) =
-            match x with
-            | Some(x: string) -> builder.AppendFormat("{0}.", x)
-            | None -> builder
-
-        (StringBuilder()
-        |> append(task.Order |> Option.map string)
-        |> append task.Id
-        |> append task.Name)
-            .Append("md")
-            .ToString()
-
-    let readAttributes(filePath: string) =
-        let fileName = Path.GetFileNameWithoutExtension filePath
-        let components = fileName.Split(".")
-        match components.Length with
-        | 0 -> None, None, None
-        | _ ->
-            let (order, idIndex) =
-                match Int32.TryParse(components.[0], NumberStyles.None, CultureInfo.InvariantCulture) with
-                | (true, order) -> (Some order, 1)
-                | (false, _) -> (None, 0)
-
-            match components.Length - idIndex with
-            | 0 -> order, None, None
-            | 1 -> order, None, Some components.[idIndex]
-            | _ -> order, Some components.[idIndex], Some <| String.Join('.', Seq.skip (idIndex + 1) components)
+open Praefectus.Storage.FileSystemStorage
 
 module private Yaml =
     let private deserializer = DeserializerBuilder().Build()
@@ -86,6 +56,7 @@ module private Markdown =
             Description = readString "description"
             Status = readEnum "status"
             DependsOn = readList "depends-on"
+            StorageState = ()
         }
 
     let private toText document =
@@ -119,7 +90,7 @@ module private Markdown =
 
 let private applyMetadata task = function
     | None -> task
-    | Some metadata ->
+    | Some (metadata: Task<_>) ->
         let pick (a: _ option) (b: _ option) = Seq.tryPick id (seq { a; b })
         { task with
             Order = pick metadata.Order task.Order
@@ -130,8 +101,8 @@ let private applyMetadata task = function
             Status = metadata.Status
             DependsOn = metadata.DependsOn }
 
-let readTask (filePath: string) (stream: Stream) = async {
-    let (order, id, name) = FileName.readAttributes filePath
+let readTask (filePath: string) (stream: Stream): Async<Task<FileSystemTaskState>> = async {
+    let { FsAttributes.Order = order; Id = id; Name = name } = readFsAttributes filePath
     let! (metadata, title, content) = Markdown.read stream
     let task = {
         Order = order
@@ -141,12 +112,13 @@ let readTask (filePath: string) (stream: Stream) = async {
         Description = Some content
         Status = None
         DependsOn = Array.empty
+        StorageState = { FileName = Path.GetFileName filePath }
     }
 
     return applyMetadata task metadata
 }
 
-let writeTask (task: Task) (stream: Stream) = async {
+let writeTask (task: Task<FileSystemTaskState>) (stream: Stream): Async<unit> = async {
     use writer = new StreamWriter(stream, leaveOpen = true)
 
     let writeStatus = Option.map (fun s -> box(Enum.GetName(s).ToLowerInvariant()))
@@ -185,7 +157,7 @@ let writeTask (task: Task) (stream: Stream) = async {
     do! Async.AwaitTask(writer.WriteAsync(text, ct))
 }
 
-let readDatabase (directory: string): Async<Database> = async {
+let readDatabase (directory: string): Async<Database<FileSystemTaskState>> = async {
     let! tasks =
         Directory.GetFileSystemEntries(directory, "*.md")
         |> Array.map(fun path -> async {
@@ -196,9 +168,13 @@ let readDatabase (directory: string): Async<Database> = async {
     return { Tasks = tasks }
 }
 
-let saveDatabase (database: Database) (directory: string): Async<unit> = async {
+let applyStorageInstructions (databaseDirectory: string)
+                             (instructions: seq<StorageInstruction<FileSystemTaskState>>): Async<unit> =
+    failwith "TODO: implement"
+
+let saveDatabase (database: Database<FileSystemTaskState>) (directory: string): Async<unit> = async {
     for task in database.Tasks do
-        let path = Path.Combine(directory, FileName.generate task)
+        let path = Path.Combine(directory, generateFileName task)
         use stream = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.Read)
         do! writeTask task stream
 }

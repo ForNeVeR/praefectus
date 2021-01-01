@@ -8,42 +8,35 @@ open Xunit
 
 open Praefectus.Console
 open Praefectus.Core
-open Praefectus.Storage
+open Praefectus.Storage.FileSystemStorage
 open Praefectus.Tests.Console.ConsoleTestUtils
-
-let private saveDatabaseToTempDirectory database = task {
-    let databasePath = Path.GetTempFileName()
-    File.Delete databasePath
-    Directory.CreateDirectory databasePath |> ignore
-    do! MarkdownDirectory.saveDatabase database databasePath
-    return databasePath
-}
+open Praefectus.Tests.TestFramework
 
 let private deserializeTasks(stream: Stream) = task {
     use reader = new StreamReader(stream)
     let serializer = JsonSerializer()
-    return serializer.Deserialize(reader, typeof<Task[]>) :?> Task[]
+    return serializer.Deserialize(reader, typeof<Task<FileSystemTaskState>[]>) :?> Task<FileSystemTaskState>[]
 }
 
 let private testDatabase =
-    { Database.defaultDatabase with
-        Tasks = [| {
-            Id = Some "Test1"
-            Title = Some "Test task"
-            Status = Some TaskStatus.Open
-            Order = Some 42
-            Name = Some "name"
-            Description = Some "description"
-            DependsOn = Array.empty } |] }
+    { Tasks = [| {
+        Id = Some "Test1"
+        Title = Some "Test task"
+        Status = Some TaskStatus.Open
+        Order = Some 42
+        Name = Some "name"
+        Description = Some "description"
+        DependsOn = Array.empty
+        StorageState = { FileName = "Test1.md" } } |] }
 
 [<Fact>]
-let ``Database should be exported in JSON``(): System.Threading.Tasks.Task = upcast task {
-    let! databasePath = saveDatabaseToTempDirectory testDatabase
-    let config = { DatabaseLocation = databasePath }
+let ``Database should be exported to JSON``(): System.Threading.Tasks.Task = upcast task {
+    let! databasePath = DatabaseUtils.saveDatabaseToTempDirectory testDatabase
+    let config = { DatabaseLocation = databasePath; Ordering = Array.empty }
 
     let (exitCode, stdOut) = runMainCapturingOutput config [| "list"; "--json" |]
     let! tasks = deserializeTasks stdOut
 
     Assert.Equal(EntryPoint.ExitCodes.Success, exitCode)
-    Assert.Equal<Task>(testDatabase.Tasks, tasks)
+    Assert.Equal<Task<_>>(testDatabase.Tasks, tasks)
 }

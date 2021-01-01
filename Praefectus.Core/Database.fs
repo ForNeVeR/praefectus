@@ -2,11 +2,11 @@ namespace Praefectus.Core
 
 open System.Collections.Generic
 
-type Database = {
-    Tasks: IReadOnlyCollection<Task>
+type Database<'StorageState> when 'StorageState : equality = {
+    Tasks: IReadOnlyCollection<Task<'StorageState>>
 }
 
-module Database =
-    let defaultDatabase = {
-        Tasks = [||]
-    }
+type StorageInstruction<'StorageState> when 'StorageState : equality = {
+    Task: Task<'StorageState>
+    NewState: 'StorageState
+}

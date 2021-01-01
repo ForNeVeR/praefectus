@@ -6,6 +6,7 @@
 
     <ItemGroup>
         <Compile Include="Json.fs" />
+        <Compile Include="FileSystemStorage.fs" />
         <Compile Include="MarkdownDirectory.fs" />
     </ItemGroup>
 

@@ -2,15 +2,13 @@
 
 open System
 open System.IO
-open System.Reflection
 
+open Praefectus.Storage.FileSystemStorage
 open Serilog
 
 open Praefectus.Console
 
 exception private ExitCodeException of code: int
-
-let private testDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
 
 let private runMainWithOutput configuration arguments stdOut =
     let mutable exitCode = None
@@ -30,12 +28,11 @@ let private runMainWithOutput configuration arguments stdOut =
     with
     | :? ExitCodeException as ex -> ex.code
 
-let runMain (arguments: string[]): int =
+let runMain (configuration: Configuration<FileSystemTaskState>) (arguments: string[]): int =
     use stdOut = Console.OpenStandardOutput()
-    let configuration = { DatabaseLocation = testDirectory }
     runMainWithOutput configuration arguments stdOut
 
-let runMainCapturingOutput (configuration: Configuration) (arguments: string[]): int * Stream =
+let runMainCapturingOutput (configuration: Configuration<FileSystemTaskState>) (arguments: string[]): int * Stream =
     let stream = new MemoryStream()
     let exitCode = runMainWithOutput configuration arguments stream
     stream.Position <- 0L

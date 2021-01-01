@@ -6,11 +6,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Console\ConsoleTestUtils.fs" />
+        <Compile Include="TestFramework\ConsoleTestUtils.fs" />
+        <Compile Include="TestFramework\DatabaseUtils.fs" />
         <Compile Include="Console\EntryPointTests.fs" />
         <Compile Include="Console\DatabaseTests.fs" />
+        <Compile Include="Console\SortCommandTests.fs" />
+        <Compile Include="Core\OrderingTests.fs" />
         <Compile Include="Storage\JsonTests.fs" />
         <Compile Include="Storage\MarkdownDirectoryTests.fs" />
+        <Compile Include="Storage\FileSystemStorageTests.fs" />
     </ItemGroup>
 
     <ItemGroup>

@@ -11,7 +11,7 @@ type TaskStatus =
 | Deleted = 3
 
 [<CustomEquality; NoComparison>]
-type Task =
+type Task<'StorageState> when 'StorageState : equality =
     {
         Order: int option
         Id: string option
@@ -20,12 +20,13 @@ type Task =
         Description: string option
         Status: TaskStatus option
         DependsOn: IReadOnlyCollection<string>
+        StorageState: 'StorageState
     }
     with
         override this.Equals other =
             match other with
-            | :? Task as other when LanguagePrimitives.PhysicalEquality this other -> true
-            | :? Task as other ->
+            | :? Task<'StorageState> as other when LanguagePrimitives.PhysicalEquality this other -> true
+            | :? Task<'StorageState> as other ->
                 this.Order = other.Order
                     && this.Id = other.Id
                     && this.Name = other.Name
@@ -33,13 +34,14 @@ type Task =
                     && this.Description = other.Description
                     && this.Status = other.Status
                     && Enumerable.SequenceEqual(this.DependsOn, other.DependsOn)
+                    && this.StorageState = other.StorageState
             | _ -> false
         override this.GetHashCode() =
             HashCode.Combine(this.Order, this.Id, this.Name, this.Title, this.Description, this.Status)
             // NOTE: this.DependsOn is omitted purposefully: it shouldn't break correctness of the implementation, and
             // currently there're no known cases when this matters.
 
-        static member empty = {
+        static member Empty<'ss when 'ss : equality>(ss: 'ss): Task<'ss> = {
             Order = None
             Id = None
             Name = None
@@ -47,4 +49,5 @@ type Task =
             Description = None
             Status = None
             DependsOn = Array.empty
+            StorageState = ss
         }

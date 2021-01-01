@@ -2,7 +2,7 @@
 
 open Serilog
 
-type Application = {
-    Config: Configuration
+type Application<'StorageState> when 'StorageState : equality = {
+    Config: Configuration<'StorageState>
     Logger: ILogger
 }

@@ -7,6 +7,7 @@
     <ItemGroup>
         <Compile Include="Tasks.fs" />
         <Compile Include="Database.fs" />
+        <Compile Include="Ordering.fs" />
     </ItemGroup>
 
     <ItemGroup>

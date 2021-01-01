@@ -5,6 +5,7 @@ open System.Text
 
 open FSharp.Control.Tasks
 open Newtonsoft.Json
+open Praefectus.Storage.FileSystemStorage
 open Quibble.Xunit
 open Xunit
 
@@ -19,19 +20,18 @@ let private createTask id title = {
     Name = None
     Description = None
     DependsOn = Array.empty
+    StorageState = ()
 }
 
 let private testDatabase =
-    { Database.defaultDatabase with
-        Tasks = [|
-            createTask "Task1" "Perform tests"
-        |]
-    }
+    { Tasks = [|
+        createTask "Task1" "Perform tests"
+    |] }
 
-let private loadDatabase(source: Stream): System.Threading.Tasks.Task<Database> = task {
+let private loadDatabase(source: Stream): System.Threading.Tasks.Task<Database<FileSystemTaskState>> = task {
     use reader = new StreamReader(source)
     let serializer = JsonSerializer()
-    return serializer.Deserialize(reader, typeof<Database>) :?> Database
+    return serializer.Deserialize(reader, typeof<Database<FileSystemTaskState>>) :?> Database<FileSystemTaskState>
 }
 
 [<Fact>]

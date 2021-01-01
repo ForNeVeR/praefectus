@@ -6,6 +6,7 @@ open System.Runtime.CompilerServices
 
 open Argu
 
+open Praefectus.Storage.FileSystemStorage
 open Praefectus.Utils
 
 module ExitCodes =
@@ -21,10 +22,18 @@ type ListArguments =
             match s with
             | Json -> "write output in JSON format."
 
+type SortArguments =
+    | [<Unique>] WhatIf
+    interface IArgParserTemplate with
+        member s.Usage =
+            match s with
+            | WhatIf -> "do not do anything; just show the suggested changes."
+
 [<RequireQualifiedAccess>]
 type Arguments =
     | [<Unique>] Version
     | [<CliPrefix(CliPrefix.None)>] List of ParseResults<ListArguments>
+    | [<CliPrefix(CliPrefix.None)>] Sort of ParseResults<SortArguments>
     interface IArgParserTemplate with
         member s.Usage =
             match s with
@@ -33,6 +42,7 @@ type Arguments =
 
             // Commands:
             | List _ -> "List all the tasks in the database."
+            | Sort _ -> "Sort the tasks according to the configured ordering rules."
 
 [<MethodImpl(MethodImplOptions.NoInlining)>] // See https://github.com/dotnet/fsharp/issues/9283
 let getAppVersion(): Version =
@@ -85,7 +95,9 @@ let private execute application (arguments: ParseResults<Arguments>) stdOut =
 /// <param name="config">Praefectus configuration object.</param>
 /// <param name="args">Command line arguments passed to the Praefectus.</param>
 /// <param name="environment">Environment to run the program in.</param>
-let run (config: Configuration) (args: string[]) (environment: Praefectus.Console.Environment): int =
+let run (config: Configuration<FileSystemTaskState>)
+        (args: string[])
+        (environment: Praefectus.Console.Environment): int =
     let app = {
         Logger = environment.LoggerConfiguration.CreateLogger()
         Config = config
