@@ -79,6 +79,9 @@ let private execute application (arguments: ParseResults<Arguments>) stdOut =
                 | Arguments.List listArgs ->
                     let json = listArgs.Contains ListArguments.Json
                     Commands.doList application json stdOut |> Task.RunSynchronously
+                | Arguments.Sort sortArgs ->
+                    let whatIf = sortArgs.Contains SortArguments.WhatIf
+                    Commands.doSort application.Config whatIf |> Async.RunSynchronously
                 | other -> failwithf "Impossible: option %A passed as a subcommand" other
 
             ExitCodes.Success

@@ -50,7 +50,7 @@ let ``Sort command should reorder the data``(): unit =
     Assert.Equal(sortedTasks, tasksAfterSort)
 
 [<Fact>]
-let ``Sort command should not change anything if called with --what-if``(): unit =
+let ``Sort command should not change anything if called with --whatif``(): unit =
     let database1 = { Tasks = unsortedTasks }
-    let tasksAfterSort = readTasksAfterSort database1 [| "--what-if" |]
+    let tasksAfterSort = readTasksAfterSort database1 [| "--whatif" |]
     Assert.Equal(unsortedTasks, tasksAfterSort)
