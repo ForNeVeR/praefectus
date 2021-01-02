@@ -19,6 +19,19 @@ let applyInstructions (instructions: EditInstruction<'a> seq) (sequence: 'a seq)
                 yield sequenceEnumerator.Current
     }
 
+let private doSesLengthTest initial required expectedLength =
+    let actualSesLength = shortestEditScriptLength (Seq.toArray initial) (Seq.toArray required)
+    Assert.Equal(expectedLength, actualSesLength)
+
+[<Fact>]
+let ``Shortest edit script test 1``(): unit = doSesLengthTest "" "" 0
+[<Fact>]
+let ``Shortest edit script test 2``(): unit = doSesLengthTest "" "a" 1
+[<Fact>]
+let ``Shortest edit script test 3``(): unit = doSesLengthTest "a" "" 1
+[<Fact>]
+let ``Shortest edit script test 4``(): unit = doSesLengthTest "abc" "b" 2
+
 let private doDiffTest initial required =
     let instructions = diff initial required
     let result = applyInstructions instructions initial
@@ -26,6 +39,7 @@ let private doDiffTest initial required =
 
 [<Fact>]
 let ``Diff algorithm works on simple cases``(): unit =
+    doDiffTest "" ""
     doDiffTest "abcabc" "abc"
     doDiffTest "abcabc" ""
     doDiffTest "" "abcabc"
