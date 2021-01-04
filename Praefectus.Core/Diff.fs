@@ -13,21 +13,24 @@ type EditInstruction<'a> =
     | LeaveItem
 
 /// Fig. 2. The greedy LCS/SES algorithm.
-let shortestEditScriptLength (a: IReadOnlyList<_>) (b: IReadOnlyList<_>) =
+let shortestEditScriptTrace (a: IReadOnlyList<'a>) (b: IReadOnlyList<'a>): int * IReadOnlyList<Array> * int =
     let M = b.Count
     let N = a.Count
     let MAX = M + N
 
-    if MAX < 1 then 0 else
+    if MAX < 1 then 0, upcast Array.empty, -1 else
 
     let mutable V = Array.CreateInstance(typeof<int>, [| MAX * 2 + 1 |], [| -MAX |])
     let V_set (index: int) value = V.SetValue(value, index)
     let V_get (index: int) = V.GetValue(index) :?> int
 
+    let vHistory = ResizeArray()
+    vHistory.Add V
+
     V_set 1 0
-    let mutable ses = None
+    let mutable sesLengthAndLastK = None
     let mutable D = 0
-    while D <= MAX && ses.IsNone do
+    while D <= MAX && sesLengthAndLastK.IsNone do
         for k in -D .. 2 .. D do
             let mutable x =
                 if k = -D || (k <> D && V_get(k - 1) < V_get(k + 1)) then
@@ -40,14 +43,23 @@ let shortestEditScriptLength (a: IReadOnlyList<_>) (b: IReadOnlyList<_>) =
                 y <- y + 1
             V_set k x
             if x >= N && y >= M then
-                ses <- Some D
-        D <- D + 1
+                sesLengthAndLastK <- Some (D, k)
 
-    match ses with
-    | Some x -> x
+        if sesLengthAndLastK = None then
+            V <- V.Clone() :?> Array
+            vHistory.Add V
+
+            D <- D + 1
+
+    match sesLengthAndLastK with
+    | Some(sesLength, lastK) -> sesLength, upcast vHistory, lastK
     | None ->
         failwithf "Algorithmic error: length of shortest edit script is greater than %d" MAX
 
-let diff (sequenceA: 'a seq) (sequenceB: 'a seq): EditInstruction<'a> seq =
-    failwith "TODO: implement"
+let diff (sequenceA: IReadOnlyList<'a>) (sequenceB: IReadOnlyList<'a>): EditInstruction<'a> seq =
+    let (sesLength, vHistory, lastK) = shortestEditScriptTrace sequenceA sequenceB
 
+    match Seq.tryLast vHistory with
+    | None -> Seq.empty
+    | Some lastLevel ->
+        Seq.empty
