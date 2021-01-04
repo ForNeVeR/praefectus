@@ -117,7 +117,7 @@ let ``Decyphered backtrace for diff from paper``(): unit =
 let private doDiffTest initial required =
     let instructions = diff (Seq.toArray initial) (Seq.toArray required)
     let result = applyInstructions instructions initial |> Seq.toArray |> String
-    Assert.Equal(initial, result)
+    Assert.Equal(required, result)
 
 [<Fact>]
 let ``Diff test 0``(): unit = doDiffTest "ABCABBA" "CBABAC"

@@ -19,7 +19,7 @@ let shortestEditScriptTrace<'a when 'a : equality> (a: IReadOnlyList<'a>)
     let N = a.Count
     let MAX = M + N
 
-    if MAX < 1 then 0, upcast Array.empty, -1 else
+    if MAX < 1 then 0, upcast [| [| 0 |] :> Array |], 0 else
 
     let mutable V = Array.CreateInstance(typeof<int>, [| MAX * 2 + 1 |], [| -MAX |])
     let V_set (index: int) value = V.SetValue(value, index)
@@ -66,36 +66,46 @@ let decypherBacktrace (sequenceA: IReadOnlyList<'a>) (sequenceB: IReadOnlyList<'
         let y = x - k
         x, y
 
+    let validIndex d k =
+        let level = vHistory.[d]
+        level.GetLowerBound 0 <= k && level.GetUpperBound 0 >= k
+
     seq {
         let mutable k = lastK
         for d = sesLength downto 0 do
             let (x, y) = getXYFromDK d k
             yield x, y
             if d <> 0 then
-                let possibleCandidates = (
-                    getXYFromDK (d - 1) (k - 1),
-                    getXYFromDK (d - 1) (k + 1)
-                )
-                let ((x1, y1), (x2, y2)) = possibleCandidates
-                k <- if x1 >= x2 then k - 1 else k + 1
+                let possibleCandidates = seq {
+                    if validIndex (d - 1) (k - 1) then
+                        k - 1, getXYFromDK (d - 1) (k - 1)
+                    if validIndex (d - 1) (k + 1) then
+                        k + 1, getXYFromDK (d - 1) (k + 1)
+                }
+
+                let bestCandidate = possibleCandidates |> Seq.maxBy (fun (_, (x, _)) -> x)
+                let (k', _) = bestCandidate
+                k <- k'
     }
 
 let diff (sequenceA: IReadOnlyList<'a>) (sequenceB: IReadOnlyList<'a>): EditInstruction<'a> seq =
     let forwardtrace = decypherBacktrace sequenceA sequenceB |> Seq.rev
     seq {
-        let enumerator = forwardtrace.GetEnumerator()
-        enumerator.MoveNext() |> ignore // always should succeed
-        let mutable x, y = enumerator.Current
+        let mutable x, y = 0, 0
+        use enumerator = forwardtrace.GetEnumerator()
         while enumerator.MoveNext() do
             let x', y' = enumerator.Current
-            while x < x' || y < y' do
+            let diagonalAllowed() =
+                x' - x = y' - y
+
+            while not(diagonalAllowed()) && y < y' do
+                yield InsertItem sequenceB.[y]
+                y <- y + 1
+            while x < x' && not(diagonalAllowed()) do
+                yield DeleteItem
+                x <- x + 1
+            while x < x' && y < y' do
                 yield LeaveItem
                 x <- x + 1
                 y <- y + 1
-            while x < x' do
-                yield DeleteItem
-                x <- x + 1
-            while y < y' do
-                yield InsertItem sequenceB.[y]
-                y <- y + 1
-    }
+    } |> Seq.toArray |> Seq.ofArray
