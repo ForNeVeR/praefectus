@@ -43,9 +43,10 @@ let private convertHistory a b array2d =
     |> Array.map (fun sampleArray ->
         let realArray = Array.CreateInstance(typeof<int>, [| max * 2 + 1 |], [| -max |])
         let offset = 1 - Array.length sampleArray
+        for i in -max..max do
+            realArray.SetValue(-1, i)
         sampleArray |> Array.iteri (fun i x ->
-            if x <> -1 then
-                realArray.SetValue(x, i * 2 + offset)
+            realArray.SetValue(x, i * 2 + offset)
         )
         realArray
     )
@@ -64,8 +65,13 @@ let private assertHistoryEqual (expected: Array[]) (actual: IReadOnlyList<Array>
         for k in lower..upper do
             let expectedItem = expectedStep.GetValue k :?> int
             let actualItem = actualStep.GetValue k :?> int
-            if expectedItem <> actualItem then
-                let expectedString = String.Join("; ", Seq.cast<int> expectedStep)
+            if expectedItem <> -1 && expectedItem <> actualItem then
+                let expectedStringified =
+                     expectedStep
+                     |> Seq.cast<int>
+                     |> Seq.map (fun x -> if x = -1 then "_" else string x)
+
+                let expectedString = String.Join("; ", expectedStringified)
                 let actualString = String.Join("; ", Seq.cast<int> actualStep)
                 let message = $"Historical arrays aren't equal at step {i}.\nExpected: [{expectedString}],\nactual:   [{actualString}]"
                 Assert.True(false, message)
