@@ -81,9 +81,21 @@ let decypherBacktrace (sequenceA: IReadOnlyList<'a>) (sequenceB: IReadOnlyList<'
     }
 
 let diff (sequenceA: IReadOnlyList<'a>) (sequenceB: IReadOnlyList<'a>): EditInstruction<'a> seq =
-    let (sesLength, vHistory, lastK) = shortestEditScriptTrace sequenceA sequenceB
-
-    match Seq.tryLast vHistory with
-    | None -> Seq.empty
-    | Some lastLevel ->
-        failwith "TODO"
+    let forwardtrace = decypherBacktrace sequenceA sequenceB |> Seq.rev
+    seq {
+        let enumerator = forwardtrace.GetEnumerator()
+        enumerator.MoveNext() |> ignore // always should succeed
+        let mutable x, y = enumerator.Current
+        while enumerator.MoveNext() do
+            let x', y' = enumerator.Current
+            while x < x' || y < y' do
+                yield LeaveItem
+                x <- x + 1
+                y <- y + 1
+            while x < x' do
+                yield DeleteItem
+                x <- x + 1
+            while y < y' do
+                yield InsertItem sequenceB.[y]
+                y <- y + 1
+    }
