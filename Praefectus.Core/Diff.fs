@@ -13,7 +13,8 @@ type EditInstruction<'a> =
     | LeaveItem
 
 /// Fig. 2. The greedy LCS/SES algorithm.
-let shortestEditScriptTrace (a: IReadOnlyList<'a>) (b: IReadOnlyList<'a>): int * IReadOnlyList<Array> * int =
+let shortestEditScriptTrace<'a when 'a : equality> (a: IReadOnlyList<'a>)
+                                                   (b: IReadOnlyList<'a>): int * IReadOnlyList<Array> * int =
     let M = b.Count
     let N = a.Count
     let MAX = M + N
@@ -56,10 +57,33 @@ let shortestEditScriptTrace (a: IReadOnlyList<'a>) (b: IReadOnlyList<'a>): int *
     | None ->
         failwithf "Algorithmic error: length of shortest edit script is greater than %d" MAX
 
+let decypherBacktrace (sequenceA: IReadOnlyList<'a>) (sequenceB: IReadOnlyList<'a>): (int * int) seq =
+    let (sesLength, vHistory, lastK) = shortestEditScriptTrace sequenceA sequenceB
+
+    let getXYFromDK d (k: int) =
+        let level = vHistory.[d]
+        let x = level.GetValue k :?> int
+        let y = x - k
+        x, y
+
+    seq {
+        let mutable k = lastK
+        for d = sesLength downto 0 do
+            let (x, y) = getXYFromDK d k
+            yield x, y
+            if d <> 0 then
+                let possibleCandidates = (
+                    getXYFromDK (d - 1) (k - 1),
+                    getXYFromDK (d - 1) (k + 1)
+                )
+                let ((x1, y1), (x2, y2)) = possibleCandidates
+                k <- if x1 >= x2 then k - 1 else k + 1
+    }
+
 let diff (sequenceA: IReadOnlyList<'a>) (sequenceB: IReadOnlyList<'a>): EditInstruction<'a> seq =
     let (sesLength, vHistory, lastK) = shortestEditScriptTrace sequenceA sequenceB
 
     match Seq.tryLast vHistory with
     | None -> Seq.empty
     | Some lastLevel ->
-        Seq.empty
+        failwith "TODO"

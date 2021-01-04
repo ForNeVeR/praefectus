@@ -43,7 +43,7 @@ let private convertHistory a b array2d =
     |> Array.map (fun sampleArray ->
         let realArray = Array.CreateInstance(typeof<int>, [| max * 2 + 1 |], [| -max |])
         let offset = 1 - Array.length sampleArray
-        for i in -max..max do
+        for i = -max to max do
             realArray.SetValue(-1, i)
         sampleArray |> Array.iteri (fun i x ->
             realArray.SetValue(x, i * 2 + offset)
@@ -62,7 +62,7 @@ let private assertHistoryEqual (expected: Array[]) (actual: IReadOnlyList<Array>
         Assert.Equal(upper, actualStep.GetUpperBound 0)
         Assert.Equal(length, actualStep.GetLength 0)
 
-        for k in lower..upper do
+        for k = lower to upper do
             let expectedItem = expectedStep.GetValue k :?> int
             let actualItem = actualStep.GetValue k :?> int
             if expectedItem <> -1 && expectedItem <> actualItem then
@@ -76,7 +76,6 @@ let private assertHistoryEqual (expected: Array[]) (actual: IReadOnlyList<Array>
                 let message = $"Historical arrays aren't equal at step {i}.\nExpected: [{expectedString}],\nactual:   [{actualString}]"
                 Assert.True(false, message)
     )
-
 
 [<Fact>]
 let ``Trace array test from the paper``(): unit =
@@ -98,11 +97,30 @@ let ``Trace array test from the paper``(): unit =
     Assert.Equal(k, 1)
     assertHistoryEqual expectedHistory history
 
+let private assertDecypheredBacktraceEqual a b (expectedTrace: (int * int) seq) =
+    let trace = decypherBacktrace a b
+    Assert.Equal<int * int>(expectedTrace, trace)
+
+[<Fact>]
+let ``Decyphered backtrace for diff from paper``(): unit =
+    let a = Seq.toArray "ABCABBA"
+    let b = Seq.toArray "CBABAC"
+    assertDecypheredBacktraceEqual a b [|
+        7, 6
+        7, 5
+        5, 4
+        3, 1
+        1, 0
+        0, 0
+    |]
+
 let private doDiffTest initial required =
     let instructions = diff (Seq.toArray initial) (Seq.toArray required)
     let result = applyInstructions instructions initial
     Assert.Equal<'a>(initial, result)
 
+[<Fact>]
+let ``Diff test 0``(): unit = doDiffTest "ABCABBA" "CBABAC"
 [<Fact>]
 let ``Diff test 1``(): unit = doDiffTest "" ""
 [<Fact>]
