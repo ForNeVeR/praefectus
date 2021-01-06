@@ -7,7 +7,7 @@ open Xunit
 open Praefectus.Core
 open Praefectus.Storage
 
-let private generateTasksByName = Seq.mapi (fun i name ->
+let private generateTasksByName = Array.mapi (fun i name ->
     { Task.Empty<_> { FileSystemStorage.FileName = sprintf "%d.%s.md" i name } with
         Order = Some i
         Name = Some name }
@@ -53,19 +53,19 @@ let ``reorder should move unordered items to the end``(): unit =
 [<Fact>]
 let ``applyOrderInStorage should do nothing if order is already right``(): unit =
     let tasks = generateTasksByName [| "a"; "b"; "c"; "d"; "e"; "f" |]
-    let instructions = Ordering.applyOrderInStorage tasks
+    let instructions = Ordering.applyOrderInStorage FileSystemStorage.getNewState tasks
     Assert.Equal(Array.empty, instructions)
 
 [<Fact>]
 let ``applyOrderInStorage order test case 1``(): unit =
     let tasks = generateTasksByName [| "b"; "c"; "d"; "a" |] |> Seq.cache
     let a = Seq.last tasks
-    let reorderedTasks = seq {
+    let reorderedTasks = [|
         a
         yield! Seq.take 4 tasks
-    }
+    |]
 
-    let instructions = Ordering.applyOrderInStorage reorderedTasks |> Seq.toArray
+    let instructions = Ordering.applyOrderInStorage FileSystemStorage.getNewState reorderedTasks |> Seq.toArray
     Assert.Equal(4, instructions.Length)
 
     let isTask fileName =
@@ -105,7 +105,7 @@ let ``applyOrderInStorage order test case 4``(): unit =
 [<Fact>]
 let ``applyOrderInStorage should rename minimal amount of items``(): unit =
     let tasks = generateTasksByName [| "a"; "a" |] |> Seq.rev |> Seq.toArray
-    let instructions = Ordering.applyOrderInStorage tasks
+    let instructions = Ordering.applyOrderInStorage FileSystemStorage.getNewState tasks
     Assert.Collection(instructions, fun i ->
         Assert.Equal(tasks.[0], i.Task)
         Assert.Equal("3.a.md", i.NewState.FileName)

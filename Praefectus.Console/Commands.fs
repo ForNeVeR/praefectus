@@ -33,8 +33,8 @@ let private printInstruction { Task = task; NewState = { FileSystemStorage.FileN
 
 let doSort (config: Configuration<FileSystemStorage.FileSystemTaskState>) (whatIf: bool): Async<unit> = async {
     let! database = MarkdownDirectory.readDatabase config.DatabaseLocation
-    let reorderedTasks = Ordering.reorder config.Ordering database.Tasks
-    let instructions = Ordering.applyOrderInStorage reorderedTasks
+    let reorderedTasks = Ordering.reorder config.Ordering database.Tasks |> Seq.toArray
+    let instructions = Ordering.applyOrderInStorage FileSystemStorage.getNewState reorderedTasks
     if whatIf then
         instructions |> Seq.iter printInstruction
     else

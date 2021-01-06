@@ -28,6 +28,10 @@ let readMetadata(path: string): FileSystemTaskState = {
     FileName = Path.GetFileName path
 }
 
+let getNewState(order: int) (task: Task<FileSystemTaskState>): FileSystemTaskState =
+    let newTask = { task with Order = Some order }
+    { FileName = generateFileName newTask }
+
 type FsAttributes = { Order: int option; Name: string option; Id: string option }
 
 let readFsAttributes(filePath: string): FsAttributes =
