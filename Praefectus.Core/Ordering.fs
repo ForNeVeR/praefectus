@@ -20,7 +20,6 @@ let applyOrderInStorage<'ss when 'ss : equality>(getNewState: int -> Task<'ss> -
     let instructions = Diff.diff initialTasks orderedTasks
     seq {
         use initialTaskEnumerator = (initialTasks :> IEnumerable<_>).GetEnumerator()
-        initialTaskEnumerator.MoveNext() |> ignore
 
         let mutable currentFreeOrder = 1
         for instruction in instructions do
