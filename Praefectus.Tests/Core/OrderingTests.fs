@@ -14,6 +14,12 @@ let private generateTasksByName = Array.mapi (fun i id ->
         Id = Some id }
 )
 
+let private generateTaskByAttributes fileName (attributes: FileSystemStorage.FsAttributes) =
+    { Task.Empty<_> { FileSystemStorage.FileName = fileName } with
+       Order = attributes.Order
+       Id = attributes.Id
+       Name = attributes.Name }
+
 [<Fact>]
 let ``Ordering should be stable``(): unit =
     let tasks = generateTasksByName [| "b"; "ab"; "aa" |]
@@ -57,17 +63,12 @@ let ``applyOrderInStorage should do nothing if order is already right``(): unit 
     let instructions = Ordering.applyOrderInStorage FileSystemStorage.getNewState tasks
     Assert.Equal(Array.empty, instructions)
 
-[<Fact>]
-let ``applyOrderInStorage order test case 1``(): unit =
-    let tasks = generateTasksByName [| "b"; "c"; "d"; "a" |] |> Seq.cache
-    let a = Seq.last tasks
-    let reorderedTasks = [|
-        a
-        yield! Seq.take 3 tasks
-    |]
-
-    let instructions = Ordering.applyOrderInStorage FileSystemStorage.getNewState reorderedTasks |> Seq.toArray
-    Assert.Equal(4, instructions.Length)
+let private generateRenameRequirements initialFileNames requiredFileNames =
+    let fileNamesById =
+        initialFileNames
+        |> Seq.map FileSystemStorage.readFsAttributes
+        |> Seq.map(fun ({ Id = id } as attrs) -> id, attrs)
+        |> Map.ofSeq
 
     let isTask fileName =
         let attributes = FileSystemStorage.readFsAttributes fileName
@@ -76,18 +77,48 @@ let ``applyOrderInStorage order test case 1``(): unit =
             Assert.Equal(fileName, instruction.NewState.FileName)
         )
 
-    Assert.Collection(instructions,
-                      isTask "1.a.md",
-                      isTask "2.b.md",
-                      isTask "3.c.md",
-                      isTask "4.d.md")
+    requiredFileNames
+    |> Seq.choose(fun fileName ->
+        let attrs = FileSystemStorage.readFsAttributes fileName
+        let oldAttrs = fileNamesById.[attrs.Id]
+        if oldAttrs.Order <> attrs.Order then
+            Some(isTask fileName)
+        else
+            None
+    )
+
+let private testTaskOrdering initialFileNames orderedFileNames =
+    let tasks =
+        initialFileNames
+        |> Seq.map (fun fileName ->
+            let attributes =  FileSystemStorage.readFsAttributes fileName
+            generateTaskByAttributes fileName attributes
+        )
+        |> Seq.cache
+    let tasksByIdMap =
+        tasks
+        |> Seq.map (fun t -> t.Id, t)
+        |> Map.ofSeq
+    let requiredOrder =
+        orderedFileNames
+        |> Seq.map FileSystemStorage.readFsAttributes
+        |> Seq.map (fun { Id = id } -> tasksByIdMap.[id])
+        |> Seq.toArray
+
+    let instructions = Ordering.applyOrderInStorage FileSystemStorage.getNewState requiredOrder
+    let requirements = generateRenameRequirements initialFileNames orderedFileNames
+
+    Assert.Collection(instructions, Seq.toArray requirements)
+
+[<Fact>]
+let ``applyOrderInStorage order test case 1``(): unit =
+    testTaskOrdering [| "1.b.md"; "2.c.md"; "3.d.md"; "4.a.md" |]
+                     [| "1.a.md"; "2.b.md"; "3.c.md"; "4.d.md" |]
 
 [<Fact>]
 let ``applyOrderInStorage order test case 2``(): unit =
-    // TODO: Test case for:
-    //   1.a.md ; 2.c.md ; 3.b.md ; 4.d.md
-    // → 1.a.md ; 2.b.md ; 3.c.md ; 4.d.md
-    Assert.True false
+    testTaskOrdering [| "1.a.md"; "2.c.md"; "3.b.md"; "4.d.md" |]
+                     [| "1.a.md"; "2.b.md"; "3.c.md"; "4.d.md" |]
 
 [<Fact>]
 let ``applyOrderInStorage order test case 3``(): unit =
