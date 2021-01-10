@@ -63,6 +63,14 @@ let ``applyOrderInStorage should do nothing if order is already right``(): unit 
     let instructions = Ordering.applyOrderInStorage FileSystemStorage.getNewState tasks
     Assert.Equal(Array.empty, instructions)
 
+let private isTask fileName additionalChecks =
+    let attributes = FileSystemStorage.readFsAttributes fileName
+    Action<_>(fun (instruction: StorageInstruction<FileSystemStorage.FileSystemTaskState>) ->
+        Assert.Equal(attributes.Id, instruction.Task.Id)
+        Assert.Equal(fileName, instruction.NewState.FileName)
+        additionalChecks instruction
+    )
+
 let private generateRenameRequirements initialFileNames requiredFileNames =
     let fileNamesById =
         initialFileNames
@@ -70,22 +78,16 @@ let private generateRenameRequirements initialFileNames requiredFileNames =
         |> Seq.map(fun ({ Id = id } as attrs) -> id, attrs)
         |> Map.ofSeq
 
-    let isTask fileName =
-        let attributes = FileSystemStorage.readFsAttributes fileName
-        Action<_>(fun (instruction: StorageInstruction<FileSystemStorage.FileSystemTaskState>) ->
-            Assert.Equal(attributes.Id, instruction.Task.Id)
-            Assert.Equal(fileName, instruction.NewState.FileName)
-        )
-
     requiredFileNames
     |> Seq.choose(fun fileName ->
         let attrs = FileSystemStorage.readFsAttributes fileName
         let oldAttrs = fileNamesById.[attrs.Id]
         if oldAttrs.Order <> attrs.Order then
-            Some(isTask fileName)
+            Some(isTask fileName ignore)
         else
             None
     )
+    |> Seq.toArray
 
 let private testTaskOrdering initialFileNames orderedFileNames =
     let tasks =
@@ -108,7 +110,7 @@ let private testTaskOrdering initialFileNames orderedFileNames =
     let instructions = Ordering.applyOrderInStorage FileSystemStorage.getNewState requiredOrder
     let requirements = generateRenameRequirements initialFileNames orderedFileNames
 
-    Assert.Collection(instructions, Seq.toArray requirements)
+    Assert.Collection(instructions, requirements)
 
 [<Fact>]
 let ``applyOrderInStorage order test case 1``(): unit =
@@ -122,17 +124,48 @@ let ``applyOrderInStorage order test case 2``(): unit =
 
 [<Fact>]
 let ``applyOrderInStorage order test case 3``(): unit =
-    // TODO: Test case for:
-    //   1.a.md ; 2.b.md ; 3.b.md ; 4.d.md (switch order for two files named *.b.md)
-    // → 1.a.md ; 3.b.md ; 4.b.md ; 5.d.md
-    Assert.True false
+    testTaskOrdering [| "1.a.md"; "3.c.md"; "4.b.md"; "5.d.md" |]
+                     [| "1.a.md"; "2.b.md"; "3.c.md"; "5.d.md" |]
 
 [<Fact>]
 let ``applyOrderInStorage order test case 4``(): unit =
-    // TODO: Test case for:
-    //   1.a.md ; 3.c.md ; 4.b.md ; 5.d.md
-    // → 1.a.md ; 2.b.md ; 3.c.md ; 5.d.md
-    Assert.True false
+    testTaskOrdering [| "1.a.md"; "4.d.md"; "5.e.md"; "6.b.md"; "7.c.md" |]
+                     [| "1.a.md"; "2.b.md"; "3.c.md"; "5.d.md"; "6.e.md" |]
+
+[<Fact>]
+let ``applyOrderInStorage order test case 5``(): unit =
+    testTaskOrdering [| "1.a.md"; "3.d.md"; "4.e.md"; "6.b.md"; "7.c.md" |]
+                     [| "1.a.md"; "2.b.md"; "3.c.md"; "5.d.md"; "6.e.md" |]
+
+[<Fact>]
+let ``applyOrderInStorage order test case 6``(): unit =
+    testTaskOrdering [| "2.a.md"; "4.d.md"; "5.e.md"; "6.f.md"; "7.g.md"; "8.b.md"; "9.c.md" |]
+                     [| "1.a.md"; "2.b.md"; "3.c.md"; "4.d.md"; "5.e.md"; "6.f.md"; "7.g.md" |]
+
+[<Fact>]
+let ``applyOrderInStorage order test case 7``(): unit =
+    testTaskOrdering [| "2.a.md"; "3.d.md"; "4.e.md"; "5.f.md"; "6.g.md"; "7.b.md"; "8.c.md" |]
+                     [| "2.a.md"; "3.b.md"; "4.c.md"; "5.d.md"; "6.e.md"; "7.f.md"; "8.g.md" |]
+
+[<Fact>]
+let ``applyOrderInStorage order test case with same name``(): unit =
+    // 1.a.md ; 2.b.md ; 3.b.md ; 4.d.md
+    // -> 1.a.md ; 3.b.md ; 4.b.md ; 5.d.md (change order of 2.b.md and 3.b.md)
+    let tasks = generateTasksByName [| "a"; "b"; "b"; "d" |]
+    let reorderedTasks = [|
+        tasks.[0]
+        tasks.[2]
+        tasks.[1]
+        tasks.[3]
+    |]
+
+    let instructions = Ordering.applyOrderInStorage FileSystemStorage.getNewState reorderedTasks
+
+    Assert.Collection(instructions,
+                      isTask "4.b.md" (fun instruction ->
+                          Assert.Equal("2.b.md", instruction.Task.StorageState.FileName)
+                      ),
+                      isTask "5.d.md" ignore)
 
 [<Fact>]
 let ``applyOrderInStorage should rename minimal amount of items``(): unit =
