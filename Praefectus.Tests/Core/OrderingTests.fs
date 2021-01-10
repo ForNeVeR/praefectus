@@ -7,10 +7,11 @@ open Xunit
 open Praefectus.Core
 open Praefectus.Storage
 
-let private generateTasksByName = Array.mapi (fun i name ->
-    { Task.Empty<_> { FileSystemStorage.FileName = sprintf "%d.%s.md" i name } with
-        Order = Some i
-        Name = Some name }
+let private generateTasksByName = Array.mapi (fun i id ->
+    let order = i + 1
+    { Task.Empty<_> { FileSystemStorage.FileName = sprintf "%d.%s.md" order id } with
+        Order = Some order
+        Id = Some id }
 )
 
 [<Fact>]
@@ -62,7 +63,7 @@ let ``applyOrderInStorage order test case 1``(): unit =
     let a = Seq.last tasks
     let reorderedTasks = [|
         a
-        yield! Seq.take 4 tasks
+        yield! Seq.take 3 tasks
     |]
 
     let instructions = Ordering.applyOrderInStorage FileSystemStorage.getNewState reorderedTasks |> Seq.toArray
@@ -71,7 +72,7 @@ let ``applyOrderInStorage order test case 1``(): unit =
     let isTask fileName =
         let attributes = FileSystemStorage.readFsAttributes fileName
         Action<_>(fun (instruction: StorageInstruction<FileSystemStorage.FileSystemTaskState>) ->
-            Assert.Equal(attributes.Name, instruction.Task.Name)
+            Assert.Equal(attributes.Id, instruction.Task.Id)
             Assert.Equal(fileName, instruction.NewState.FileName)
         )
 
