@@ -108,4 +108,4 @@ let diff (sequenceA: IReadOnlyList<'a>) (sequenceB: IReadOnlyList<'a>): EditInst
                 yield LeaveItem
                 x <- x + 1
                 y <- y + 1
-    } |> Seq.toArray |> Seq.ofArray
+    }
