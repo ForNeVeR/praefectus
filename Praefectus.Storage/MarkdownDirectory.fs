@@ -168,9 +168,17 @@ let readDatabase (directory: string): Async<Database<FileSystemTaskState>> = asy
     return { Tasks = tasks }
 }
 
+let private applyInstruction databaseDirectory { Task = { StorageState = oldState }; NewState = newState } = async {
+    do! Async.SwitchToThreadPool()
+    let getPath state = Path.Combine(databaseDirectory, state.FileName)
+    File.Move(getPath oldState, getPath newState)
+}
+
 let applyStorageInstructions (databaseDirectory: string)
-                             (instructions: seq<StorageInstruction<FileSystemTaskState>>): Async<unit> =
-    failwith "TODO: implement"
+                             (instructions: seq<StorageInstruction<FileSystemTaskState>>): Async<unit> = async {
+    for instruction in instructions do
+        do! applyInstruction databaseDirectory instruction
+}
 
 let saveDatabase (database: Database<FileSystemTaskState>) (directory: string): Async<unit> = async {
     for task in database.Tasks do
