@@ -25,20 +25,24 @@ let readTasksAfterSort database sortOptions = Async.RunSynchronously <| async {
     return database.Tasks
 }
 
+let private emptyTask fileName =
+    { Task.Empty<_> { FileName = fileName } with
+        Description = Some "" }
+
 let private unsortedTasks = [|
-    { Task.Empty<_> { FileName = "1.2.md" } with
+    { emptyTask "1.2.md" with
         Order = Some 1
         Id = Some "2" }
-    { Task.Empty<_> { FileName = "2.1.md" } with
+    { emptyTask "2.1.md" with
         Order = Some 2
         Id = Some "1" }
 |]
 
 let private sortedTasks = [|
-    { Task.Empty<_> { FileName = "2.1.md" } with
+    { emptyTask "2.1.md" with
         Order = Some 2
         Id = Some "1" }
-    { Task.Empty<_> { FileName = "3.2.md" } with
+    { emptyTask "3.2.md" with
         Order = Some 3
         Id = Some "2" }
 |]
