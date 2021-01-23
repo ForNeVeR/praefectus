@@ -68,7 +68,7 @@ let decypherBacktrace (sequenceA: IReadOnlyList<'a>) (sequenceB: IReadOnlyList<'
 
     let validIndex d k =
         let level = vHistory.[d]
-        level.GetLowerBound 0 <= k && level.GetUpperBound 0 >= k
+        abs k <= d && level.GetLowerBound 0 <= k && level.GetUpperBound 0 >= k
 
     seq {
         let mutable k = lastK
@@ -95,16 +95,25 @@ let diff (sequenceA: IReadOnlyList<'a>) (sequenceB: IReadOnlyList<'a>): EditInst
         use enumerator = forwardtrace.GetEnumerator()
         while enumerator.MoveNext() do
             let x', y' = enumerator.Current
-            let diagonalAllowed() =
-                x' - x = y' - y
 
-            while not(diagonalAllowed()) && y < y' do
-                yield InsertItem sequenceB.[y]
-                y <- y + 1
-            while x < x' && not(diagonalAllowed()) do
+            let isOnSnake() = x' - x = y' - y
+
+            // Here, we're always looking for the end of a snake. Calculate whether snake starts from point to the
+            // right or to the bottom from the current point (x, y).
+            //
+            // Snake itself is a line y = y_0 + x
+            let y_0 = y' - x'
+            let snake x = y_0 + x
+            let snakeToRight = snake x < y
+            let snakeToBottom = snake x > y
+
+            while snakeToRight && not(isOnSnake()) do
                 yield DeleteItem
                 x <- x + 1
-            while x < x' && y < y' do
+            while snakeToBottom && not(isOnSnake()) do
+                yield InsertItem sequenceB.[y]
+                y <- y + 1
+            while x < x' && y < y' do // snake body itself
                 yield LeaveItem
                 x <- x + 1
                 y <- y + 1

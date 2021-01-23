@@ -114,10 +114,23 @@ let ``Decyphered backtrace for diff from paper``(): unit =
         0, 0
     |]
 
-let private doDiffTest initial required =
-    let instructions = diff (Seq.toArray initial) (Seq.toArray required)
+[<Fact>]
+let ``Decyphered backtrace test 0``(): unit =
+    let a = Seq.toArray "23"
+    let b = Seq.toArray "123"
+    assertDecypheredBacktraceEqual a b [|
+        2, 3
+        0, 0
+    |]
+
+let private doDiffAndAssert initial required =
+    let instructions = diff (Seq.toArray initial) (Seq.toArray required) |> Seq.cache
     let result = applyInstructions instructions initial |> Seq.toArray |> String
     Assert.Equal(required, result)
+    instructions
+
+let private doDiffTest initial required =
+    doDiffAndAssert initial required |> ignore
 
 [<Fact>]
 let ``Diff test 0``(): unit = doDiffTest "ABCABBA" "CBABAC"
@@ -135,3 +148,24 @@ let ``Diff test 5``(): unit = doDiffTest "abcdef" "ade"
 let ``Diff test 6``(): unit = doDiffTest "abcdef" "fedcba"
 [<Fact>]
 let ``Diff test 7``(): unit = doDiffTest "abcdef" "afedcbabcd"
+
+let private doDiffInstructionTest initial required expectedInstructions =
+    let instructions = doDiffAndAssert initial required
+    Assert.Equal<EditInstruction<_>>(expectedInstructions, instructions)
+
+[<Fact>]
+let ``Diff instruction test 0``(): unit =
+    doDiffInstructionTest "21" "12" [|
+        DeleteItem
+        LeaveItem
+        InsertItem '2'
+    |]
+
+
+[<Fact>]
+let ``Diff instruction test 1``(): unit =
+    doDiffInstructionTest "23" "123" [|
+        InsertItem '1'
+        LeaveItem
+        LeaveItem
+    |]
