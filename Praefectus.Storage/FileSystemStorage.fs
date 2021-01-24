@@ -16,7 +16,7 @@ let generateFileName(task: Task<_>): string =
     (StringBuilder()
     |> append(task.Order |> Option.map string)
     |> append task.Id
-    |> append task.Name)
+    |> append (task.Name |> Option.orElse(Some "")))
         .Append("md")
         .ToString()
 

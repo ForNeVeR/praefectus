@@ -33,5 +33,9 @@ let ``Full id test``(): unit =
     Assert.Equal({ Order = Some 1; Id = Some "id"; Name = Some "name" }, readFsAttributes("1.id.name.md"))
 
 [<Fact>]
+let ``Only id``(): unit =
+    Assert.Equal({ Order = Some 1; Id = Some "id"; Name = Some "" }, readFsAttributes("1.id..md"))
+
+[<Fact>]
 let ``Name concatenation``(): unit =
     Assert.Equal({ Order = Some 1; Id = Some "id"; Name = Some "name.test.1" }, readFsAttributes("1.id.name.test.1.md"))
