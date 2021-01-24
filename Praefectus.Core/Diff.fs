@@ -98,7 +98,7 @@ let diff (sequenceA: IReadOnlyList<'a>) (sequenceB: IReadOnlyList<'a>): EditInst
 
             let isOnSnake() = x' - x = y' - y
 
-            // Here, we're always looking for the end of a snake. Calculate whether snake starts from point to the
+            // Here, (x', y') always points towards the end of a snake. Calculate whether snake starts from point to the
             // right or to the bottom from the current point (x, y).
             //
             // Snake itself is a line y = y_0 + x
