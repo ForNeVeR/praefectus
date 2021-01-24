@@ -27,7 +27,7 @@ let private testDatabase =
         Name = Some "name"
         Description = Some "description"
         DependsOn = Array.empty
-        StorageState = { FileName = "Test1.md" } } |] }
+        StorageState = { FileName = "42.Test1.name.md" } } |] }
 
 [<Fact>]
 let ``Database should be exported to JSON``(): System.Threading.Tasks.Task = upcast task {

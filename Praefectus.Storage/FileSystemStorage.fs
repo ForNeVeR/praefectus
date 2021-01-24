@@ -40,16 +40,16 @@ let readFsAttributes(filePath: string): FsAttributes =
     match components.Length with
     | 0 -> { Order = None; Id = None; Name = None }
     | _ ->
-        let (order, idIndex) =
+        let (order, nextIndex) =
             match Int32.TryParse(components.[0], NumberStyles.None, CultureInfo.InvariantCulture) with
             | (true, order) -> (Some order, 1)
             | (false, _) -> (None, 0)
 
-        let (name, id) =
-            match components.Length - idIndex with
+        let (id, name) =
+            match components.Length - nextIndex with
             | 0 -> None, None
-            | 1 -> None, Some components.[idIndex]
-            | _ -> Some components.[idIndex], Some <| String.Join('.', Seq.skip (idIndex + 1) components)
+            | 1 -> None, Some components.[nextIndex]
+            | _ -> Some components.[nextIndex], Some <| String.Join('.', Seq.skip (nextIndex + 1) components)
 
-        { Order = order; Name = name; Id = id }
+        { Order = order; Id = id; Name = name }
 
