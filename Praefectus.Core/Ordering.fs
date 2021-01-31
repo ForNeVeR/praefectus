@@ -24,7 +24,8 @@ let private createPositionedSequence tasks =
     let maxOrder = Seq.max orderDictionary.Values
     { new Diff.IPositionedSequence<_> with
         member _.MaxPosition = maxOrder
-        member _.AcceptsOn(position, item) =
+        member _.AcceptsOn(index, item) =
+            let position = index + 1
             if not(Set.contains position occupiedIndices) then true
             else
                 match orderDictionary.TryGetValue item with

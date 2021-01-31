@@ -25,9 +25,9 @@ let applyInstructions (instructions: EditInstruction<'a> seq) (sequence: 'a seq)
 let private toSimplePositionedSequence items =
     let itemArray = Seq.toArray items
     { new IPositionedSequence<_> with
-        member _.MaxPosition = itemArray.Length + 1
-        member _.AcceptsOn(position, item) =
-            itemArray.[position - 1] = item
+        member _.MaxPosition = itemArray.Length
+        member _.AcceptsOn(index, item) =
+            itemArray.[index] = item
     }
 
 let private doSesLengthTest initial required expectedLength =
@@ -53,7 +53,8 @@ let private createPositionedSequence(numberedItems: IReadOnlyList<_>) =
     let itemsByPosition = Map.ofSeq numberedItems
     { new IPositionedSequence<_> with
         member _.MaxPosition = maxPosition
-        member _.AcceptsOn(position, item) =
+        member _.AcceptsOn(index, item) =
+            let position = index + 1
             match Map.tryFind position itemsByPosition with
             | None -> true
             | Some existingItem when existingItem = item -> true
