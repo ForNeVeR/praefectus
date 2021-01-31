@@ -169,3 +169,7 @@ let ``Diff instruction test 1``(): unit =
         LeaveItem
         LeaveItem
     |]
+
+[<Fact>]
+let ``Constrained diff algorithm tests``(): unit =
+    Assert.True false

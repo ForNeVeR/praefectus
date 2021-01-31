@@ -1,5 +1,125 @@
 /// Implementation of the Eugene W. Myers diff algorithm [1].
 ///
+/// TODO: Implement the constrained diff algorithm, based on an algorithm by Eugene W. Myers [1].
+///
+/// The original algorithm by Eugene W. Myers [1] considers a sequence edit graph in the following form (for example,
+/// when trying to construct a target sequence ABCD from an initial sequence ACBD):
+///
+///  0   A  C  B  D
+///   ·──·──·──·──·
+///   │╲ │  │  │  │
+///   │ ╲│  │  │  │
+/// A ·──·──·──·──·
+///   │  │  │╲ │  │
+///   │  │  │ ╲│  │
+/// B ·──·──·──·──·
+///   │  │╲ │  │  │
+///   │  │ ╲│  │  │
+/// C ·──·──·──·──·
+///   │  │  │  │╲ │
+///   │  │  │  │ ╲│
+/// D ·──·──·──·──·
+///
+/// The goal is to get to the bottom right corner, while traversing the edit graph. Horizontal movements (from left to
+/// right) correspond to deletions of the corresponding item of the initial sequence; vertical movements (from top to
+/// bottom) correspond to insertions of an item from the target sequence; diagonal movements (only available in places
+/// where the initial and the target sequences match) correspond to leaving an item of the initial sequence.
+///
+/// Myers' algorithm helps to find the shortest path in this graph.
+///
+/// This algorithm only takes into account item sequences, and allows no constraints on their placement. For purpose of
+/// this project, this is insufficient. In reality, we could have additional constraints that forbid certain paths in
+/// the edit graph.
+///
+/// Let's consider an example of converting file sequence 1A, 3C, 4B, 5D to order ABCD with a minimal amount of renames.
+/// The resulting file sequence has to be numbered, and no number should be repeated twice.
+///
+///  0   1A 3C 4B 5D
+///   ·──·──·──·──·
+///   │╲ │  ║  ║  │
+///   │ ╲│  ║  ║  │
+/// A ·──·──·──·──·
+///   │  │  ║╲ ║  │
+///   │  │  ║ ╲║  │
+/// B ·──·──·──·──·
+///   │  │╲ ║  ║  │
+///   │  │ ╲║  ║  │
+/// C ·──·──·──·──·
+///   │  │  ║  ║╲ │
+///   │  │  ║  ║ ╲│
+/// D ·──·──·──·──·
+///
+/// In this graph, certain paths (marked as double lines ║) are forbidden, because they would lead to insertion of the
+/// file in between of pair of another two subsequent files, which would lead to us having to renumber the latter file
+/// anyway, which is essentially the same in complexity as removing a file and inserting a new one.
+///
+/// In other words, any vertical movements in columns between 3 and 4 are forbidden, because after 3 there's already 4,
+/// and after 4 there's already 5, to we cannot insert anything for free, and the graph could be drawn as this:
+///
+///  0   1A 3C 4B 5D
+///   ·──·──·──·──·
+///   │╲ │        │
+///   │ ╲│        │
+/// A ·──·──·──·──·
+///   │  │   ╲    │
+///   │  │    ╲   │
+/// B ·──·──·──·──·
+///   │  │╲       │
+///   │  │ ╲      │
+/// C ·──·──·──·──·
+///   │  │      ╲ │
+///   │  │       ╲│
+/// D ·──·──·──·──·
+///
+/// But even this is not all. Some of the paths are conditionally forbidden. For example, this path is forbidden,
+/// because it would insert more than one item between 1 and 3, where there's a place only for one item:
+///
+///  0   1A 3C …
+///   ·──·  ·
+///      │
+///      │
+/// A ·  ·  ·
+///      │
+///      │
+/// B ·  ·  ·
+/// …
+///
+/// Such conditionality breaks algorithm completely, and there's no easy way to fix it without changing the structure of
+/// the graph.
+///
+/// For such constrained scenarios, the following graph modifications are suggested:
+/// 1. The initial sequence is considered with all the empty places within it. So, "1A 3C 4B 5D" becomes "1A 2_ 3C 4B
+///    5D".
+/// 2. Diagonal movements from any item to an item marked with "_" is allowed (as if it was equal to any item).
+/// 3. No vertical movements are allowed except for the rightmost column: insertions to any place should use diagonals
+///    left by empty spaces, but after the last item of the initial sequence, unlimited amount of space is available.
+///
+/// With these considerations, the graph for the initial task will look in the following way:
+///
+///  0   1A 2_ 3C 4B 5D
+///   ·──·──·──·──·──·
+///    ╲  ╲          │
+///     ╲  ╲         │
+/// A ·──·──·──·──·──·
+///       ╲     ╲    │
+///        ╲     ╲   │
+/// B ·──·──·──·──·──·
+///       ╲  ╲       │
+///        ╲  ╲      │
+/// C ·──·──·──·──·──·
+///       ╲        ╲ │
+///        ╲        ╲│
+/// D ·──·──·──·──·──·
+///
+/// On this graph, the only best trace look like this:
+/// - (0, 0) → (1A, A) (leave the file 1A)
+/// - (1A, A) → (2_, B) (insert the item B as 2B)
+/// - (2_, B) → (3C, C) (leave the file 3C)
+/// - (3C, C) → (4B, C) (delete the item 4B)
+/// - (4B, C) → (5D, D) (leave the file 5D)
+///
+/// So, resulting file sequence will be "1A 2B 3C 5D".
+///
 /// [1]: Eugene W. Myers, An O(ND) Difference Algorithm and Its Variations: Algorithmica (1986), pp. 251-266
 /// (http://www.grantjenks.com/wiki/_media/ideas:diffalgorithmlcs.pdf)
 module Praefectus.Core.Diff
