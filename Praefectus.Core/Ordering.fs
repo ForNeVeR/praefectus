@@ -28,7 +28,15 @@ let applyOrderInStorage<'ss when 'ss : equality>(getNewState: int -> Task<'ss> -
             | Diff.LeaveItem ->
                 initialTaskEnumerator.MoveNext() |> ignore
                 let currentTask = initialTaskEnumerator.Current
-                currentFreeOrder <- currentTask.Order.Value + 1
+                if currentTask.Order.Value < currentFreeOrder then
+                    let newOrder = currentFreeOrder
+                    yield {
+                        Task = { currentTask with Order = Some newOrder }
+                        NewState = getNewState newOrder currentTask
+                    }
+                    currentFreeOrder <- newOrder + 1
+                else
+                    currentFreeOrder <- currentTask.Order.Value + 1
             | Diff.InsertItem(newTask) ->
                 let newOrder = currentFreeOrder
                 let newState = getNewState newOrder newTask
@@ -36,5 +44,5 @@ let applyOrderInStorage<'ss when 'ss : equality>(getNewState: int -> Task<'ss> -
                     Task = { newTask with Order = Some newOrder }
                     NewState = newState
                 }
-                currentFreeOrder <- currentFreeOrder + 1
+                currentFreeOrder <- newOrder + 1
     }
