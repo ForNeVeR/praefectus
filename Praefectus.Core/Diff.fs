@@ -37,39 +37,41 @@
 ///
 ///  0   1A 3C 4B 5D
 ///   ·──·──·──·──·
-///   │╲ │  ║  ║  │
-///   │ ╲│  ║  ║  │
+///   ║╲ │  ║  ║  │
+///   ║ ╲│  ║  ║  │
 /// A ·──·──·──·──·
-///   │  │  ║╲ ║  │
-///   │  │  ║ ╲║  │
+///   ║  │  ║╲ ║  │
+///   ║  │  ║ ╲║  │
 /// B ·──·──·──·──·
-///   │  │╲ ║  ║  │
-///   │  │ ╲║  ║  │
+///   ║  │╲ ║  ║  │
+///   ║  │ ╲║  ║  │
 /// C ·──·──·──·──·
-///   │  │  ║  ║╲ │
-///   │  │  ║  ║ ╲│
+///   ║  │  ║  ║╲ │
+///   ║  │  ║  ║ ╲│
 /// D ·──·──·──·──·
 ///
 /// In this graph, certain paths (marked as double lines ║) are forbidden, because they would lead to insertion of the
-/// file in between of two existing subsequent files, which would lead to us having to renumber the latter file anyway,
-/// which is essentially the same in complexity as removing a file and inserting a new one.
+/// file in between of two existing subsequent files (or with a number below 1), which would lead to us having to
+/// renumber the latter file anyway, which is essentially the same in complexity as removing a file and inserting a new
+/// one.
 ///
-/// In other words, any vertical movements in columns 3 and 4 are forbidden, because after 3 there's already 4, and
-/// after 4 there's already 5, and we cannot insert anything there for free, so the graph could be drawn as this:
+/// In other words, any vertical movements in columns 0, 3 and 4 are forbidden, because 1 is occupied, after 3 there's
+/// already 4, and after 4 there's already 5, and we cannot insert anything there for free, so the graph could be drawn
+/// as this:
 ///
 ///  0   1A 3C 4B 5D
 ///   ·──·──·──·──·
-///   │╲ │        │
-///   │ ╲│        │
+///    ╲ │        │
+///     ╲│        │
 /// A ·──·──·──·──·
-///   │  │   ╲    │
-///   │  │    ╲   │
+///      │   ╲    │
+///      │    ╲   │
 /// B ·──·──·──·──·
-///   │  │╲       │
-///   │  │ ╲      │
+///      │╲       │
+///      │ ╲      │
 /// C ·──·──·──·──·
-///   │  │      ╲ │
-///   │  │       ╲│
+///      │      ╲ │
+///      │       ╲│
 /// D ·──·──·──·──·
 ///
 /// But even this is not all. Some of the paths are conditionally forbidden. For example, this path is forbidden,
@@ -83,7 +85,7 @@
 ///      │
 ///      │
 /// B ·  ·  ·
-/// …
+/// ⋮
 ///
 /// But any separate step of this path could freely be taken in other routes, if necessary, if no two steps are taken in
 /// this column across a route.
