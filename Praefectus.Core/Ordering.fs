@@ -22,10 +22,14 @@ let private createPositionedSequence tasks =
         |> fun seq -> Enumerable.ToDictionary(seq, fst, snd)
     let occupiedIndices = Set.ofSeq orderDictionary.Values
     let maxOrder = Seq.max orderDictionary.Values
+
+    let indexToOrder i = i + 1
+
     { new Diff.IPositionedSequence<_> with
-        member _.MaxPosition = maxOrder
+        member _.AllowedToInsertAtArbitraryPlaces = false
+        member _.MaxOrder = maxOrder
         member _.AcceptsOn(index, item) =
-            let position = index + 1
+            let position = indexToOrder index
             if not(Set.contains position occupiedIndices) then true
             else
                 match orderDictionary.TryGetValue item with
@@ -36,7 +40,8 @@ let private createPositionedSequence tasks =
 let applyOrderInStorage<'ss when 'ss : equality>(getNewState: int -> Task<'ss> -> 'ss)
                                                 (orderedTasks: IReadOnlyList<Task<'ss>>): StorageInstruction<'ss> seq =
     let initialTasks = orderedTasks |> Seq.sortBy(fun t -> t.Order) |> Seq.toArray
-    let instructions = Diff.diff (createPositionedSequence initialTasks) orderedTasks
+    let positionedSequence = createPositionedSequence initialTasks
+    let instructions = Diff.diff positionedSequence orderedTasks
     seq {
         use initialTaskEnumerator = (initialTasks :> IEnumerable<_>).GetEnumerator()
 

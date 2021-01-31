@@ -127,7 +127,7 @@
 /// So, resulting file sequence will be "1A 2B 3C 5D".
 ///
 /// Implementation of the algorithm in this file works both for its constrained and the original variants. The selection
-/// is chosen based on the provided implementation of IPositionedSequence.
+/// is chosen based on the provided implementation of IPositionedSequence and the allowedToInsert function.
 ///
 /// [1]: Eugene W. Myers, An O(ND) Difference Algorithm and Its Variations: Algorithmica (1986), pp. 251-266
 /// (http://www.grantjenks.com/wiki/_media/ideas:diffalgorithmlcs.pdf)
@@ -142,14 +142,15 @@ type EditInstruction<'a> =
     | LeaveItem
 
 type IPositionedSequence<'a> =
-    abstract MaxPosition: int
+    abstract AllowedToInsertAtArbitraryPlaces: bool
+    abstract MaxOrder: int
     abstract AcceptsOn: index: int * item: 'a -> bool
 
 /// Fig. 2. The greedy LCS/SES algorithm [1].
 let shortestEditScriptTrace<'a when 'a : equality> (a: IPositionedSequence<'a>)
                                                    (b: IReadOnlyList<'a>): int * IReadOnlyList<Array> * int =
     let M = b.Count
-    let N = a.MaxPosition
+    let N = a.MaxOrder
     let MAX = M + N
 
     if MAX < 1 then 0, upcast [| [| 0 |] :> Array |], 0 else
@@ -165,12 +166,16 @@ let shortestEditScriptTrace<'a when 'a : equality> (a: IPositionedSequence<'a>)
     let mutable sesLengthAndLastK = None
     let mutable D = 0
     while D <= MAX && sesLengthAndLastK.IsNone do
-        for k in -D .. 2 .. D do
+        let lowerBoundary, pointOfNoReturn =
+            match a.AllowedToInsertAtArbitraryPlaces with
+            | true -> -D, -D
+            | false when D % 2 = 0 -> 0, 0
+            | _ -> 1, 0
+        for k in lowerBoundary .. 2 .. D do
             let mutable x =
-                if k = -D || (k <> D && V_get(k - 1) < V_get(k + 1)) then
+                if k = pointOfNoReturn || (k <> D && V_get(k - 1) < V_get(k + 1)) then
                     V_get(k + 1)
                 else
-                    failwith "TODO: Should only be possible in the last column (or when `a` allows that)"
                     V_get(k - 1) + 1
             let mutable y = x - k
             while x < N && y < M && a.AcceptsOn(x, b.[y]) do
@@ -192,7 +197,7 @@ let shortestEditScriptTrace<'a when 'a : equality> (a: IPositionedSequence<'a>)
         failwithf "Algorithmic error: length of shortest edit script is greater than %d" MAX
 
 let decypherBacktrace (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnlyList<'a>): (int * int) seq =
-    let (sesLength, vHistory, lastK) = shortestEditScriptTrace sequenceA sequenceB
+    let sesLength, vHistory, lastK = shortestEditScriptTrace sequenceA sequenceB
 
     let getXYFromDK d (k: int) =
         let level = vHistory.[d]
