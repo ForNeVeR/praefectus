@@ -93,7 +93,7 @@
 /// Such conditionality breaks algorithm completely, and there's no easy way to fix it without changing the structure of
 /// the graph.
 ///
-/// For such constrained scenarios, the following graph modifications are suggested:
+/// For such constrained scenarios, the following graph modifications are proposed:
 ///
 /// 1. The initial sequence is considered with all the empty places within it. So, "1A 3C 4B 5D" becomes "1A 2_ 3C 4B
 ///    5D".
