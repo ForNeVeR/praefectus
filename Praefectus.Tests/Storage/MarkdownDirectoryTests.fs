@@ -37,7 +37,7 @@ let private saveTestDatabase() =
 module ReadTaskTests =
     let private doTest expectedTask (fileContent: string) = Async.RunSynchronously <| async {
         use stream = new MemoryStream(Encoding.UTF8.GetBytes fileContent)
-        let! task = MarkdownDirectory.readTask "task.md" stream
+        let! task = MarkdownDirectory.readTask expectedTask.StorageState.FileName stream
         Assert.Equal(expectedTask, task)
     }
 
