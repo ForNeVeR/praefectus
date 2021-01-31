@@ -124,7 +124,7 @@ let ``applyOrderInStorage order test case 1``(): unit =
 [<Fact>]
 let ``applyOrderInStorage order test case 2``(): unit =
     testTaskOrdering [| "1.a.md"; "2.c.md"; "3.b.md"; "4.d.md" |]
-                     [| "1.a.md"; "2.b.md"; "3.c.md"; "4.d.md" |]
+                     [| "1.a.md"; "3.b.md"; "4.c.md"; "5.d.md" |]
 
 [<Fact>]
 let ``applyOrderInStorage order test case 3``(): unit =
