@@ -179,3 +179,7 @@ let ``applyOrderInStorage should rename minimal amount of items``(): unit =
         Assert.Equal(tasks.[0], i.Task)
         Assert.Equal("3.a.md", i.NewState.FileName)
     )
+
+[<Fact>]
+let ``applyOrderInStorage should work for duplicated orders``(): unit =
+    Assert.True false

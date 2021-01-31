@@ -1,7 +1,5 @@
 /// Implementation of the Eugene W. Myers diff algorithm [1].
 ///
-/// TODO: Implement the constrained diff algorithm, based on an algorithm by Eugene W. Myers [1].
-///
 /// The original algorithm by Eugene W. Myers [1] considers a sequence edit graph in the following form (for example,
 /// when trying to construct a target sequence ABCD from an initial sequence ACBD):
 ///
@@ -128,6 +126,9 @@
 ///
 /// So, resulting file sequence will be "1A 2B 3C 5D".
 ///
+/// Implementation of the algorithm in this file works both for its constrained and the original variants. The selection
+/// is chosen based on the provided implementation of IPositionedSequence.
+///
 /// [1]: Eugene W. Myers, An O(ND) Difference Algorithm and Its Variations: Algorithmica (1986), pp. 251-266
 /// (http://www.grantjenks.com/wiki/_media/ideas:diffalgorithmlcs.pdf)
 module Praefectus.Core.Diff
@@ -140,11 +141,15 @@ type EditInstruction<'a> =
     | InsertItem of 'a
     | LeaveItem
 
-/// Fig. 2. The greedy LCS/SES algorithm.
-let shortestEditScriptTrace<'a when 'a : equality> (a: IReadOnlyList<'a>)
+type IPositionedSequence<'a> =
+    abstract MaxPosition: int
+    abstract AcceptsOn: index: int * item: 'a -> bool
+
+/// Fig. 2. The greedy LCS/SES algorithm [1].
+let shortestEditScriptTrace<'a when 'a : equality> (a: IPositionedSequence<'a>)
                                                    (b: IReadOnlyList<'a>): int * IReadOnlyList<Array> * int =
     let M = b.Count
-    let N = a.Count
+    let N = a.MaxPosition
     let MAX = M + N
 
     if MAX < 1 then 0, upcast [| [| 0 |] :> Array |], 0 else
@@ -165,9 +170,10 @@ let shortestEditScriptTrace<'a when 'a : equality> (a: IReadOnlyList<'a>)
                 if k = -D || (k <> D && V_get(k - 1) < V_get(k + 1)) then
                     V_get(k + 1)
                 else
+                    failwith "TODO: Should only be possible in the last column (or when `a` allows that)"
                     V_get(k - 1) + 1
             let mutable y = x - k
-            while x < N && y < M && a.[x] = b.[y] do
+            while x < N && y < M && a.AcceptsOn(x, b.[y]) do
                 x <- x + 1
                 y <- y + 1
             V_set k x
@@ -185,7 +191,7 @@ let shortestEditScriptTrace<'a when 'a : equality> (a: IReadOnlyList<'a>)
     | None ->
         failwithf "Algorithmic error: length of shortest edit script is greater than %d" MAX
 
-let decypherBacktrace (sequenceA: IReadOnlyList<'a>) (sequenceB: IReadOnlyList<'a>): (int * int) seq =
+let decypherBacktrace (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnlyList<'a>): (int * int) seq =
     let (sesLength, vHistory, lastK) = shortestEditScriptTrace sequenceA sequenceB
 
     let getXYFromDK d (k: int) =
@@ -216,7 +222,7 @@ let decypherBacktrace (sequenceA: IReadOnlyList<'a>) (sequenceB: IReadOnlyList<'
                 k <- k'
     }
 
-let diff (sequenceA: IReadOnlyList<'a>) (sequenceB: IReadOnlyList<'a>): EditInstruction<'a> seq =
+let diff (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnlyList<'a>): EditInstruction<'a> seq =
     let forwardtrace = decypherBacktrace sequenceA sequenceB |> Seq.rev
     seq {
         let mutable x, y = 0, 0

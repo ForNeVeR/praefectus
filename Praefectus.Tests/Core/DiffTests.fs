@@ -22,20 +22,55 @@ let applyInstructions (instructions: EditInstruction<'a> seq) (sequence: 'a seq)
                 yield sequenceEnumerator.Current
     }
 
+let private toSimplePositionedSequence items =
+    let itemArray = Seq.toArray items
+    { new IPositionedSequence<_> with
+        member _.MaxPosition = itemArray.Length + 1
+        member _.AcceptsOn(position, item) =
+            itemArray.[position - 1] = item
+    }
+
 let private doSesLengthTest initial required expectedLength =
-    let actualSesLength, _, _ = shortestEditScriptTrace (Seq.toArray initial) (Seq.toArray required)
+    let actualSesLength, _, _ = shortestEditScriptTrace initial (Seq.toArray required)
     Assert.Equal(expectedLength, actualSesLength)
 
+let private doSimpleSesLengthTest initial required expectedLength =
+    doSesLengthTest (toSimplePositionedSequence initial) required expectedLength
+
 [<Fact>]
-let ``Shortest edit script test 1``(): unit = doSesLengthTest "" "" 0
+let ``Simple shortest edit script test 1``(): unit = doSimpleSesLengthTest "" "" 0
 [<Fact>]
-let ``Shortest edit script test 2``(): unit = doSesLengthTest "" "a" 1
+let ``Simple shortest edit script test 2``(): unit = doSimpleSesLengthTest "" "a" 1
 [<Fact>]
-let ``Shortest edit script test 3``(): unit = doSesLengthTest "a" "" 1
+let ``Simple shortest edit script test 3``(): unit = doSimpleSesLengthTest "a" "" 1
 [<Fact>]
-let ``Shortest edit script test 4``(): unit = doSesLengthTest "abc" "b" 2
+let ``Simple shortest edit script test 4``(): unit = doSimpleSesLengthTest "abc" "b" 2
 [<Fact>]
-let ``Shortest edit script test 5``(): unit = doSesLengthTest "abcabc" "abc" 3
+let ``Simple shortest edit script test 5``(): unit = doSimpleSesLengthTest "abcabc" "abc" 3
+
+let private createPositionedSequence(numberedItems: IReadOnlyList<_>) =
+    let maxPosition = numberedItems |> Seq.map fst |> Seq.max
+    let itemsByPosition = Map.ofSeq numberedItems
+    { new IPositionedSequence<_> with
+        member _.MaxPosition = maxPosition
+        member _.AcceptsOn(position, item) =
+            match Map.tryFind position itemsByPosition with
+            | None -> true
+            | Some existingItem when existingItem = item -> true
+            | _ -> false
+    }
+
+let private doConstrainedSesLengthTest initial required expectedLength =
+    doSesLengthTest (createPositionedSequence initial) required expectedLength
+
+[<Fact>]
+let ``Constrained shortest edit script test 0``(): unit =
+    doConstrainedSesLengthTest [|
+        1, 'A'
+        3, 'C'
+        4, 'B'
+        5, 'D'
+    |] "ABCD" 1
 
 let private convertHistory a b array2d =
     let max = Array.length a + Array.length b
@@ -81,7 +116,7 @@ let private assertHistoryEqual (expected: Array[]) (actual: IReadOnlyList<Array>
 let ``Trace array test from the paper``(): unit =
     let seqA = Seq.toArray "ABCABBA"
     let seqB = Seq.toArray "CBABAC"
-    let sesLength, history, k = shortestEditScriptTrace seqA seqB
+    let sesLength, history, k = shortestEditScriptTrace (toSimplePositionedSequence seqA) seqB
 
     let expectedHistory = convertHistory seqA seqB [|
         //          0 1 2 3 4
@@ -98,14 +133,15 @@ let ``Trace array test from the paper``(): unit =
     assertHistoryEqual expectedHistory history
 
 let private assertDecypheredBacktraceEqual a b (expectedTrace: (int * int) seq) =
-    let trace = decypherBacktrace a b
+    let trace = decypherBacktrace a (Seq.toArray b)
     Assert.Equal<int * int>(expectedTrace, trace)
 
+let private assertSimpleDecypheredBacktraceEqual a b expectedTrace =
+    assertDecypheredBacktraceEqual (toSimplePositionedSequence a) b expectedTrace
+
 [<Fact>]
-let ``Decyphered backtrace for diff from paper``(): unit =
-    let a = Seq.toArray "ABCABBA"
-    let b = Seq.toArray "CBABAC"
-    assertDecypheredBacktraceEqual a b [|
+let ``Simple decyphered backtrace test 0``(): unit =
+    assertSimpleDecypheredBacktraceEqual "ABCABBA" "CBABAC" [|
         7, 6
         7, 5
         5, 4
@@ -115,47 +151,81 @@ let ``Decyphered backtrace for diff from paper``(): unit =
     |]
 
 [<Fact>]
-let ``Decyphered backtrace test 0``(): unit =
-    let a = Seq.toArray "23"
-    let b = Seq.toArray "123"
-    assertDecypheredBacktraceEqual a b [|
+let ``Simple decyphered backtrace test 1``(): unit =
+    assertSimpleDecypheredBacktraceEqual "23" "123" [|
         2, 3
         0, 0
     |]
 
-let private doDiffAndAssert initial required =
-    let instructions = diff (Seq.toArray initial) (Seq.toArray required) |> Seq.cache
-    let result = applyInstructions instructions initial |> Seq.toArray |> String
+let assertConditionalDecypheredBacktraceEqual a b expectedTrace =
+    assertDecypheredBacktraceEqual (createPositionedSequence a) b expectedTrace
+
+[<Fact>]
+let ``Constrained decyphered backtrace test 0``(): unit =
+    assertConditionalDecypheredBacktraceEqual [|
+        1, 'A'
+        3, 'C'
+        4, 'B'
+        5, 'D'
+    |] "ABCD" [|
+        4, 4
+        4, 3
+        3, 3
+        0, 0
+    |]
+
+let private doDiffAndAssert initialSequence expectedResult required =
+    let instructions = diff initialSequence (Seq.toArray required) |> Seq.cache
+    let result = applyInstructions instructions expectedResult |> Seq.toArray |> String
     Assert.Equal(required, result)
     instructions
 
-let private doDiffTest initial required =
-    doDiffAndAssert initial required |> ignore
+let private doSimpleDiffTest (initial: string) required =
+    doDiffAndAssert (toSimplePositionedSequence initial) required initial |> ignore
 
 [<Fact>]
-let ``Diff test 0``(): unit = doDiffTest "ABCABBA" "CBABAC"
+let ``Simple diff test 0``(): unit = doSimpleDiffTest "ABCABBA" "CBABAC"
 [<Fact>]
-let ``Diff test 1``(): unit = doDiffTest "" ""
+let ``Simple diff test 1``(): unit = doSimpleDiffTest "" ""
 [<Fact>]
-let ``Diff test 2``(): unit = doDiffTest "abcabc" "abc"
+let ``Simple diff test 2``(): unit = doSimpleDiffTest "abcabc" "abc"
 [<Fact>]
-let ``Diff test 3``(): unit = doDiffTest "abcabc" ""
+let ``Simple diff test 3``(): unit = doSimpleDiffTest "abcabc" ""
 [<Fact>]
-let ``Diff test 4``(): unit = doDiffTest "" "abcabc"
+let ``Simple diff test 4``(): unit = doSimpleDiffTest "" "abcabc"
 [<Fact>]
-let ``Diff test 5``(): unit = doDiffTest "abcdef" "ade"
+let ``Simple diff test 5``(): unit = doSimpleDiffTest "abcdef" "ade"
 [<Fact>]
-let ``Diff test 6``(): unit = doDiffTest "abcdef" "fedcba"
+let ``Simple diff test 6``(): unit = doSimpleDiffTest "abcdef" "fedcba"
 [<Fact>]
-let ``Diff test 7``(): unit = doDiffTest "abcdef" "afedcbabcd"
+let ``Simple diff test 7``(): unit = doSimpleDiffTest "abcdef" "afedcbabcd"
 
-let private doDiffInstructionTest initial required expectedInstructions =
-    let instructions = doDiffAndAssert initial required
+let private constrainedSequenceToString sequence =
+    sequence |> Seq.map snd |> Seq.toArray |> String
+
+let private doConstrainedDiffTest (initial: IReadOnlyList<_>) required =
+    let expectedSequence = constrainedSequenceToString initial
+    doDiffAndAssert (createPositionedSequence initial) required expectedSequence |> ignore
+
+[<Fact>]
+let ``Constrained diff test 0``(): unit =
+    doConstrainedDiffTest [|
+        1, 'A'
+        3, 'C'
+        4, 'B'
+        5, 'D'
+    |] "ABCD"
+
+let private doDiffInstructionTest initial required expectedSequence expectedInstructions =
+    let instructions = doDiffAndAssert initial required expectedSequence
     Assert.Equal<EditInstruction<_>>(expectedInstructions, instructions)
 
+let private doSimpleDiffInstructionTest initial required expectedInstructions =
+    doDiffInstructionTest (toSimplePositionedSequence initial) required initial expectedInstructions
+
 [<Fact>]
-let ``Diff instruction test 0``(): unit =
-    doDiffInstructionTest "21" "12" [|
+let ``Simple diff instruction test 0``(): unit =
+    doSimpleDiffInstructionTest "21" "12" [|
         DeleteItem
         LeaveItem
         InsertItem '2'
@@ -163,13 +233,28 @@ let ``Diff instruction test 0``(): unit =
 
 
 [<Fact>]
-let ``Diff instruction test 1``(): unit =
-    doDiffInstructionTest "23" "123" [|
+let ``Simple diff instruction test 1``(): unit =
+    doSimpleDiffInstructionTest "23" "123" [|
         InsertItem '1'
         LeaveItem
         LeaveItem
     |]
 
+let private doConstrainedDiffInstructionTest (initial: IReadOnlyList<_>) order expectedInstructions =
+    let requiredSequence = constrainedSequenceToString initial
+    doDiffInstructionTest (createPositionedSequence initial) order requiredSequence expectedInstructions
+
 [<Fact>]
-let ``Constrained diff algorithm tests``(): unit =
-    Assert.True false
+let ``Constrained diff instruction test 0``(): unit =
+    doConstrainedDiffInstructionTest [|
+        1, 'A'
+        3, 'C'
+        4, 'B'
+        5, 'D'
+    |] "ABCD" [|
+        LeaveItem
+        InsertItem 'B'
+        LeaveItem
+        DeleteItem
+        LeaveItem
+    |]
