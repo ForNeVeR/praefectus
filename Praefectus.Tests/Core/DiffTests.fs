@@ -50,7 +50,9 @@ let ``Simple shortest edit script test 4``(): unit = doSimpleSesLengthTest "abc"
 let ``Simple shortest edit script test 5``(): unit = doSimpleSesLengthTest "abcabc" "abc" 3
 
 let private createPositionedSequence(numberedItems: IReadOnlyList<_>) =
-    let maxPosition = numberedItems |> Seq.map fst |> Seq.max
+    let maxPosition =
+        if numberedItems.Count = 0 then 0
+        else numberedItems |> Seq.map fst |> Seq.max
     let itemsByPosition = Map.ofSeq numberedItems
     { new IPositionedSequence<_> with
         member _.AllowedToInsertAtArbitraryPlaces = false
@@ -173,10 +175,8 @@ let ``Constrained decyphered backtrace test 0``(): unit =
         4, 'B'
         5, 'D'
     |] "ABCD" [|
-        4, 4
-        4, 3
+        5, 4
         3, 3
-        0, 0
     |]
 
 let private doDiffAndAssert initial target (initialString: string) allowedToInsert =
@@ -255,6 +255,13 @@ let ``Constrained diff test 4``(): unit =
         2, 'C'
         3, 'B'
         4, 'D'
+    |] "ABCDE"
+
+[<Fact>]
+let ``Constrained diff test 5``(): unit =
+    doConstrainedDiffTest [|
+        3, 'B'
+        5, 'D'
     |] "ABCDE"
 
 
