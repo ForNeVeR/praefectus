@@ -142,6 +142,7 @@ type EditInstruction<'a> =
     | LeaveItem
 
 type IPositionedSequence<'a> =
+    // TODO: Drop this flag, since it is the only mode we use in production code
     abstract AllowedToInsertAtArbitraryPlaces: bool
     abstract MaxOrder: int
     abstract GetItem: index: int -> 'a option
@@ -173,11 +174,35 @@ let shortestEditScriptTrace<'a when 'a : equality> (a: IPositionedSequence<'a>)
             | false when D % 2 = 0 -> 0
             | _ -> 1
         for k in lowerBoundary .. 2 .. D do
-            let mutable x =
-                if k = -D || (a.AllowedToInsertAtArbitraryPlaces && (k <> D && V_get(k - 1) < V_get(k + 1))) then
-                    V_get(k + 1)
-                else
-                    V_get(k - 1) + 1
+            // Here, we may come from three different directions:
+            // - from the top (diagonal k + 1)
+            // - from the left (diagonal k - 1)
+            // - with special maneuver from diagonal k
+            let moveFromTopAllowed =
+                k = -D // condition for the first move
+                // Since move from the top is always "insert", then it is always allowed if the insert is always
+                // allowed, except for cases when we're at the rightmost diagonal; there's no way we came here from the
+                // top, since it requires us to always move to the right.
+                || a.AllowedToInsertAtArbitraryPlaces && k <> D
+            let moveFromLeftAllowed =
+                // Move from the left is always allowed, except for cases when we're at the leftmost diagonal: there's
+                // no way we came here from the left.
+                k <> -D
+            let diagonalMoveFromPastAllowed =
+                // This is actually 2 moves: to the right, and then to the bottom. It is allowed if we aren't at the
+                // leftmost or topmost diagonals:
+                k <> D && k <> -D
+
+            let possibleXs = [|
+                if moveFromTopAllowed then
+                    V_get(k + 1) // we keep the previous x of the top diagonal if we come from the top
+                if moveFromLeftAllowed then
+                    V_get(k - 1) + 1 // we add 1 to x of the left diagonal since we're moving to the right
+                if diagonalMoveFromPastAllowed then
+                    V_get k + 1 // we add 1 to x of the current diagonal from 2 steps
+            |]
+
+            let mutable x = Seq.max possibleXs
             let mutable y = x - k
             let acceptedOn x value =
                 if a.AllowedToInsertAtArbitraryPlaces
@@ -214,7 +239,7 @@ let decypherBacktrace (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnly
         let level = vHistory.[d]
         abs k <= d && level.GetLowerBound 0 <= k && level.GetUpperBound 0 >= k
 
-    seq {
+    upcast [|
         let mutable k = lastK
         for d = sesLength downto 0 do
             let x, y = getXYFromDK d k
@@ -223,14 +248,14 @@ let decypherBacktrace (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnly
                 let possibleCandidates = seq {
                     if validIndex (d - 1) (k - 1) then
                         k - 1, getXYFromDK (d - 1) (k - 1)
-                    if sequenceA.AllowedToInsertAtArbitraryPlaces && validIndex (d - 1) (k + 1) then
+                    if validIndex (d - 1) (k + 1) then
                         k + 1, getXYFromDK (d - 1) (k + 1)
                 }
 
                 let bestCandidate = possibleCandidates |> Seq.maxBy (fun (_, (x, _)) -> x)
                 let k', _ = bestCandidate
                 k <- k'
-    }
+    |]
 
 let diff (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnlyList<'a>): EditInstruction<'a> seq =
     let forwardtrace = decypherBacktrace sequenceA sequenceB |> Seq.rev

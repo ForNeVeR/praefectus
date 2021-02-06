@@ -92,6 +92,16 @@ let ``Constrained shortest edit script test 1``(): unit =
         2, 'A'
     |] "AB" 1
 
+[<Fact>]
+let ``Constrained shortest edit script test 2``(): unit =
+    doConstrainedSesLengthTest [|
+        2, 'A'
+        4, 'D'
+        5, 'E'
+        6, 'B'
+        7, 'C'
+    |] "ABCDE" 4
+
 let private convertHistory a b array2d =
     let max = Array.length a + Array.length b
     array2d
@@ -153,7 +163,7 @@ let ``Trace array test from the paper``(): unit =
     assertHistoryEqual expectedHistory history
 
 let private assertDecypheredBacktraceEqual a b (expectedTrace: (int * int) seq) allowedToInsert =
-    let trace = decypherBacktrace a (Seq.toArray b)
+    let trace = decypherBacktrace a (Seq.toArray b) |> Seq.toArray
     Assert.Equal<int * int>(expectedTrace, trace)
 
 let private assertSimpleDecypheredBacktraceEqual a b expectedTrace =
@@ -201,6 +211,25 @@ let ``Constrained decyphered backtrace test 1``(): unit =
     |] "AB" [|
         3, 2
         0, 0
+    |]
+
+[<Fact>]
+let ``Constrained decyphered backtrace test 2``(): unit =
+    assertConditionalDecypheredBacktraceEqual [|
+        2, 'A'
+        4, 'D'
+        5, 'E'
+        6, 'F'
+        7, 'G'
+        8, 'B'
+        9, 'C'
+    |] "ABCDEFG" [|
+        9, 7
+        8, 7
+        7, 7
+        2, 2
+        2, 1
+        1, 1
     |]
 
 let private doDiffAndAssert initial target (initialString: string) allowedToInsert =
@@ -313,6 +342,18 @@ let ``Constrained diff test 8``(): unit =
         7, 'D'
         9, 'A'
     |] "0ABCD"
+
+[<Fact>]
+let ``Constrained diff test 9``(): unit =
+    doConstrainedDiffTest [|
+        2, 'A'
+        4, 'D'
+        5, 'E'
+        6, 'F'
+        7, 'G'
+        8, 'B'
+        9, 'C'
+    |] "ABCDEFG"
 
 let private doDiffInstructionTest initial required (initialString: string) expectedInstructions allowedToInsert =
     let instructions = doDiffAndAssert initial required initialString allowedToInsert

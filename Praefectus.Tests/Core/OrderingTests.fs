@@ -93,7 +93,7 @@ let private testTaskOrdering initialFileNames orderedFileNames =
     let tasks =
         initialFileNames
         |> Seq.map (fun fileName ->
-            let attributes =  FileSystemStorage.readFsAttributes fileName
+            let attributes = FileSystemStorage.readFsAttributes fileName
             generateTaskByAttributes fileName attributes
         )
     let tasksByNameMap =
@@ -119,7 +119,7 @@ let ``applyOrderInStorage order test case 0``(): unit =
 [<Fact>]
 let ``applyOrderInStorage order test case 1``(): unit =
     testTaskOrdering [| "1.b.md"; "2.c.md"; "3.d.md"; "4.a.md" |]
-                     [| "1.a.md"; "2.b.md"; "3.c.md"; "4.d.md" |]
+                     [| "4.a.md"; "5.b.md"; "6.c.md"; "7.d.md" |]
 
 [<Fact>]
 let ``applyOrderInStorage order test case 2``(): unit =
@@ -133,17 +133,17 @@ let ``applyOrderInStorage order test case 3``(): unit =
 
 [<Fact>]
 let ``applyOrderInStorage order test case 4``(): unit =
-    testTaskOrdering [| "1.a.md"; "4.d.md"; "5.e.md"; "6.b.md"; "7.c.md" |]
-                     [| "1.a.md"; "2.b.md"; "3.c.md"; "5.d.md"; "6.e.md" |]
+    testTaskOrdering [| "1.a.md";                     "4.d.md"; "5.e.md"; "6.b.md"; "7.c.md" |]
+                     [| "1.a.md"; "2.b.md"; "3.c.md"; "4.d.md"; "5.e.md" |]
 
 [<Fact>]
 let ``applyOrderInStorage order test case 5``(): unit =
     testTaskOrdering [| "1.a.md"; "3.d.md"; "4.e.md"; "6.b.md"; "7.c.md" |]
-                     [| "1.a.md"; "2.b.md"; "3.c.md"; "5.d.md"; "6.e.md" |]
+                     [| "1.a.md"; "2.b.md"; "3.c.md"; "4.d.md"; "5.e.md" |]
 
 [<Fact>]
 let ``applyOrderInStorage order test case 6``(): unit =
-    testTaskOrdering [| "2.a.md"; "4.d.md"; "5.e.md"; "6.f.md"; "7.g.md"; "8.b.md"; "9.c.md" |]
+    testTaskOrdering [|           "2.a.md";           "4.d.md"; "5.e.md"; "6.f.md"; "7.g.md"; "8.b.md"; "9.c.md" |]
                      [| "1.a.md"; "2.b.md"; "3.c.md"; "4.d.md"; "5.e.md"; "6.f.md"; "7.g.md" |]
 
 [<Fact>]
