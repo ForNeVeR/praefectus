@@ -144,6 +144,7 @@ type EditInstruction<'a> =
 type IPositionedSequence<'a> =
     abstract AllowedToInsertAtArbitraryPlaces: bool
     abstract MaxOrder: int
+    abstract GetItem: index: int -> 'a option
     abstract AcceptsOn: index: int * item: 'a -> bool
 
 /// Fig. 2. The greedy LCS/SES algorithm [1].
@@ -166,19 +167,23 @@ let shortestEditScriptTrace<'a when 'a : equality> (a: IPositionedSequence<'a>)
     let mutable sesLengthAndLastK = None
     let mutable D = 0
     while D <= MAX && sesLengthAndLastK.IsNone do
-        let lowerBoundary, pointOfNoReturn =
+        let lowerBoundary =
             match a.AllowedToInsertAtArbitraryPlaces with
-            | true -> -D, -D
-            | false when D % 2 = 0 -> 0, 0
-            | _ -> 1, 0
+            | true -> -D
+            | false when D % 2 = 0 -> 0
+            | _ -> 1
         for k in lowerBoundary .. 2 .. D do
             let mutable x =
-                if k = pointOfNoReturn || (k <> D && V_get(k - 1) < V_get(k + 1)) then
+                if k = -D || (a.AllowedToInsertAtArbitraryPlaces && (k <> D && V_get(k - 1) < V_get(k + 1))) then
                     V_get(k + 1)
                 else
                     V_get(k - 1) + 1
             let mutable y = x - k
-            while x < N && y < M && a.AcceptsOn(x, b.[y]) do
+            let acceptedOn x value =
+                if a.AllowedToInsertAtArbitraryPlaces
+                then x < N && a.AcceptsOn(x, value)
+                else x >= N || a.AcceptsOn(x, value)
+            while y < M && acceptedOn x b.[y] do
                 x <- x + 1
                 y <- y + 1
             V_set k x
@@ -212,18 +217,18 @@ let decypherBacktrace (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnly
     seq {
         let mutable k = lastK
         for d = sesLength downto 0 do
-            let (x, y) = getXYFromDK d k
+            let x, y = getXYFromDK d k
             yield x, y
             if d <> 0 then
                 let possibleCandidates = seq {
                     if validIndex (d - 1) (k - 1) then
                         k - 1, getXYFromDK (d - 1) (k - 1)
-                    if validIndex (d - 1) (k + 1) then
+                    if sequenceA.AllowedToInsertAtArbitraryPlaces && validIndex (d - 1) (k + 1) then
                         k + 1, getXYFromDK (d - 1) (k + 1)
                 }
 
                 let bestCandidate = possibleCandidates |> Seq.maxBy (fun (_, (x, _)) -> x)
-                let (k', _) = bestCandidate
+                let k', _ = bestCandidate
                 k <- k'
     }
 
@@ -231,10 +236,7 @@ let diff (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnlyList<'a>): Ed
     let forwardtrace = decypherBacktrace sequenceA sequenceB |> Seq.rev
     seq {
         let mutable x, y = 0, 0
-        use enumerator = forwardtrace.GetEnumerator()
-        while enumerator.MoveNext() do
-            let x', y' = enumerator.Current
-
+        for x', y' in forwardtrace do
             let isOnSnake() = x' - x = y' - y
 
             // Here, (x', y') always points towards the end of a snake. Calculate whether snake starts from point to the
@@ -244,7 +246,7 @@ let diff (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnlyList<'a>): Ed
             let y_0 = y' - x'
             let snake x = y_0 + x
             let snakeToRight = snake x < y
-            let snakeToBottom = snake x > y
+            let snakeToBottom = sequenceA.AllowedToInsertAtArbitraryPlaces && snake x > y
 
             while snakeToRight && not(isOnSnake()) do
                 yield DeleteItem
@@ -253,7 +255,11 @@ let diff (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnlyList<'a>): Ed
                 yield InsertItem sequenceB.[y]
                 y <- y + 1
             while x < x' && y < y' do // snake body itself
-                yield LeaveItem
+                yield
+                    match sequenceA.GetItem x with
+                    | Some _ -> LeaveItem
+                    | None -> InsertItem sequenceB.[y]
+
                 x <- x + 1
                 y <- y + 1
     }

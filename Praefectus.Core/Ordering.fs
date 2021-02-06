@@ -15,7 +15,11 @@ let reorder<'ss when 'ss : equality>(ordering: IReadOnlyCollection<TaskPredicate
         |> Option.defaultValue ordering.Count // move any unmatched items to the end
     Seq.sortBy getOrder tasks
 
-let private createPositionedSequence tasks =
+let private createPositionedSequence (tasks: IReadOnlyList<Task<'a>>) =
+    let itemDictionary =
+        tasks
+        |> Seq.map(fun t -> Option.defaultValue 0 t.Order, t)
+        |> fun seq -> Enumerable.ToDictionary(seq, fst, snd)
     let orderDictionary =
         tasks
         |> Seq.map(fun t -> t, Option.defaultValue 0 t.Order)
@@ -28,6 +32,10 @@ let private createPositionedSequence tasks =
     { new Diff.IPositionedSequence<_> with
         member _.AllowedToInsertAtArbitraryPlaces = false
         member _.MaxOrder = maxOrder
+        member _.GetItem index =
+            match itemDictionary.TryGetValue(indexToOrder index) with
+            | true, item -> Some item
+            | false, _ -> None
         member _.AcceptsOn(index, item) =
             let position = indexToOrder index
             if not(Set.contains position occupiedIndices) then true

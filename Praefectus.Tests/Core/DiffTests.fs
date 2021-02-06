@@ -27,6 +27,10 @@ let private toSimplePositionedSequence items =
     { new IPositionedSequence<_> with
         member _.AllowedToInsertAtArbitraryPlaces = true
         member _.MaxOrder = itemArray.Length
+        member _.GetItem index =
+            if index >= 0 && index < itemArray.Length
+            then Some itemArray.[index]
+            else None
         member _.AcceptsOn(index, item) =
             itemArray.[index] = item
     }
@@ -49,7 +53,7 @@ let ``Simple shortest edit script test 4``(): unit = doSimpleSesLengthTest "abc"
 [<Fact>]
 let ``Simple shortest edit script test 5``(): unit = doSimpleSesLengthTest "abcabc" "abc" 3
 
-let private createPositionedSequence(numberedItems: IReadOnlyList<_>) =
+let private createPositionedSequence(numberedItems: IReadOnlyList<int * char>) =
     let maxPosition =
         if numberedItems.Count = 0 then 0
         else numberedItems |> Seq.map fst |> Seq.max
@@ -57,6 +61,9 @@ let private createPositionedSequence(numberedItems: IReadOnlyList<_>) =
     { new IPositionedSequence<_> with
         member _.AllowedToInsertAtArbitraryPlaces = false
         member _.MaxOrder = maxPosition
+        member _.GetItem index =
+            let position = index + 1
+            Map.tryFind position itemsByPosition
         member _.AcceptsOn(index, item) =
             let position = index + 1
             match Map.tryFind position itemsByPosition with
@@ -77,6 +84,13 @@ let ``Constrained shortest edit script test 0``(): unit =
         4, 'B'
         5, 'D'
     |] "ABCD" 1
+
+[<Fact>]
+let ``Constrained shortest edit script test 1``(): unit =
+    doConstrainedSesLengthTest [|
+        1, 'B'
+        2, 'A'
+    |] "AB" 1
 
 let private convertHistory a b array2d =
     let max = Array.length a + Array.length b
@@ -179,6 +193,16 @@ let ``Constrained decyphered backtrace test 0``(): unit =
         3, 3
     |]
 
+[<Fact>]
+let ``Constrained decyphered backtrace test 1``(): unit =
+    assertConditionalDecypheredBacktraceEqual [|
+        1, 'B'
+        2, 'A'
+    |] "AB" [|
+        3, 2
+        0, 0
+    |]
+
 let private doDiffAndAssert initial target (initialString: string) allowedToInsert =
     let instructions = diff initial (Seq.toArray target) |> Seq.cache
     let result = applyInstructions instructions initialString |> Seq.toArray |> String
@@ -264,6 +288,31 @@ let ``Constrained diff test 5``(): unit =
         5, 'D'
     |] "ABCDE"
 
+[<Fact>]
+let ``Constrained diff test 6``(): unit =
+    doConstrainedDiffTest [|
+        1, 'B'
+        2, 'A'
+    |] "AB"
+
+[<Fact>]
+let ``Constrained diff test 7``(): unit =
+    doConstrainedDiffTest [|
+        1, 'B'
+        3, 'C'
+        5, 'D'
+        7, 'A'
+    |] "ABCD"
+
+[<Fact>]
+let ``Constrained diff test 8``(): unit =
+    doConstrainedDiffTest [|
+        1, '0'
+        3, 'B'
+        5, 'C'
+        7, 'D'
+        9, 'A'
+    |] "0ABCD"
 
 let private doDiffInstructionTest initial required (initialString: string) expectedInstructions allowedToInsert =
     let instructions = doDiffAndAssert initial required initialString allowedToInsert
