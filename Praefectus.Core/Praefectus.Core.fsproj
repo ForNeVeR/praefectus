@@ -5,9 +5,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Compile Include="Diff\Types.fs" />
+        <Compile Include="Diff\EditGraph.fs" />
+        <Compile Include="Diff\Algorithms.fs" />
         <Compile Include="Tasks.fs" />
         <Compile Include="Database.fs" />
-        <Compile Include="Diff.fs" />
         <Compile Include="Ordering.fs" />
     </ItemGroup>
 

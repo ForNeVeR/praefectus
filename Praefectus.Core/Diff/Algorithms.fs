@@ -131,22 +131,10 @@
 ///
 /// [1]: Eugene W. Myers, An O(ND) Difference Algorithm and Its Variations: Algorithmica (1986), pp. 251-266
 /// (http://www.grantjenks.com/wiki/_media/ideas:diffalgorithmlcs.pdf)
-module Praefectus.Core.Diff
+module Praefectus.Core.Diff.Algorithms
 
 open System
 open System.Collections.Generic
-
-type EditInstruction<'a> =
-    | DeleteItem
-    | InsertItem of 'a
-    | LeaveItem
-
-type IPositionedSequence<'a> =
-    // TODO: Drop this flag, since it is the only mode we use in production code
-    abstract AllowedToInsertAtArbitraryPlaces: bool
-    abstract MaxOrder: int
-    abstract GetItem: index: int -> 'a option
-    abstract AcceptsOn: index: int * item: 'a -> bool
 
 /// Fig. 2. The greedy LCS/SES algorithm [1].
 let shortestEditScriptTrace<'a when 'a : equality> (a: IPositionedSequence<'a>)
@@ -257,7 +245,7 @@ let decypherBacktrace (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnly
                 k <- k'
     |]
 
-let diff (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnlyList<'a>): EditInstruction<'a> seq =
+let myersGeneralized (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnlyList<'a>): EditInstruction<'a> seq =
     let forwardtrace = decypherBacktrace sequenceA sequenceB |> Seq.rev
     seq {
         let mutable x, y = 0, 0

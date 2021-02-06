@@ -6,6 +6,7 @@ open System.Collections.Generic
 open Xunit
 
 open Praefectus.Core.Diff
+open Praefectus.Core.Diff.Algorithms
 
 let applyInstructions (instructions: EditInstruction<'a> seq) (sequence: 'a seq): 'a seq =
     seq {
@@ -233,7 +234,7 @@ let ``Constrained decyphered backtrace test 2``(): unit =
     |]
 
 let private doDiffAndAssert initial target (initialString: string) allowedToInsert =
-    let instructions = diff initial (Seq.toArray target) |> Seq.cache
+    let instructions = myersGeneralized initial (Seq.toArray target) |> Seq.cache
     let result = applyInstructions instructions initialString |> Seq.toArray |> String
     Assert.Equal(target, result)
     instructions

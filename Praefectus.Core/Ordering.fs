@@ -3,6 +3,8 @@ module Praefectus.Core.Ordering
 open System.Collections.Generic
 open System.Linq
 
+open Praefectus.Core.Diff.Algorithms
+
 type TaskPredicate<'ss> when 'ss : equality = Task<'ss> -> bool
 
 /// Reorders the tasks according to the ordering configured. Returns a collection in the right order, don't change the
@@ -49,7 +51,7 @@ let applyOrderInStorage<'ss when 'ss : equality>(getNewState: int -> Task<'ss> -
                                                 (orderedTasks: IReadOnlyList<Task<'ss>>): StorageInstruction<'ss> seq =
     let initialTasks = orderedTasks |> Seq.sortBy(fun t -> t.Order) |> Seq.toArray
     let positionedSequence = createPositionedSequence initialTasks
-    let instructions = Diff.diff positionedSequence orderedTasks
+    let instructions = myersGeneralized positionedSequence orderedTasks
     seq {
         use initialTaskEnumerator = (initialTasks :> IEnumerable<_>).GetEnumerator()
 
