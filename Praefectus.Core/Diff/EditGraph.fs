@@ -13,7 +13,7 @@ type EditGraph<'a>(sequenceA: IPositionedSequence<'a>, sequenceB: IReadOnlyList<
 
     let allowedStepRight = function
     | [] -> failwith "Empty route detected"
-    | (x, y) :: _ -> (getItemA(x + 1)).IsSome
+    | (x, y) :: _ -> x < maxX
 
     let allowedStepDown = function
     | [] -> failwith "Empty route detected"
@@ -86,11 +86,13 @@ type EditGraph<'a>(sequenceA: IPositionedSequence<'a>, sequenceB: IReadOnlyList<
             let mutable x, y = 0, 0
             for targetX, targetY in route do
                 while x < targetX && y = targetY do
-                    yield DeleteItem
                     x <- x + 1
+                    match getItemA x with
+                    | Some _ -> yield DeleteItem
+                    | None -> ()
                 while x = targetX && y < targetY do
-                    yield InsertItem sequenceB.[y]
                     y <- y + 1
+                    yield InsertItem(getItemB y)
                 while x < targetX && y < targetY do
                     x <- x + 1
                     y <- y + 1

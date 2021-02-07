@@ -15,7 +15,7 @@ let doRouteStepAllTest sequenceADef sequenceB steps expectedBacktraces =
 
     Assert.Equal<list<int * int>>(expectedBacktraces, currentBacktraces)
 
-let sequence = [|
+let testSequenceDef = [|
     2, 'A'
     4, 'D'
     5, 'E'
@@ -27,21 +27,22 @@ let sequence = [|
 
 [<Fact>]
 let ``EditGraph traverse test 0``() =
-    doRouteStepAllTest sequence "ABCDEFG" 0 [|
+    doRouteStepAllTest testSequenceDef "ABCDEFG" 0 [|
         [1, 1; 0, 0]
     |]
 
 [<Fact>]
 let ``EditGraph traverse test 1``() =
-    doRouteStepAllTest sequence "ABCDEFG" 1 [|
+    doRouteStepAllTest testSequenceDef "ABCDEFG" 1 [|
         [      2, 1; 1, 1; 0, 0]
         [3, 2; 2, 1; 1, 1; 0, 0]
     |]
 
 [<Fact>]
 let ``EditGraph traverse test 2``() =
-    doRouteStepAllTest sequence "ABCDEFG" 2 [|
+    doRouteStepAllTest testSequenceDef "ABCDEFG" 2 [|
         [3, 2; 2, 1; 1, 1; 0, 0]
+        [3, 1; 2, 1; 1, 1; 0, 0]
         [2, 2; 2, 1; 1, 1; 0, 0]
         [7, 7; 2, 2; 2, 1; 1, 1; 0, 0]
         [4, 2; 3, 2; 2, 1; 1, 1; 0, 0]
@@ -55,9 +56,25 @@ let doRouteOneStepTest sequenceADef sequenceB route expectedBacktraces =
     Assert.Equal<list<int * int>>(expectedBacktraces, newBacktraces)
 
 [<Fact>]
-let ``EditGraph traverse step test 0``() =
-    doRouteOneStepTest sequence "ABCDEFG" [2, 1; 1, 1; 0, 0] [|
+let ``EditGraph traverse step test 0``(): unit =
+    doRouteOneStepTest testSequenceDef "ABCDEFG" [2, 1; 1, 1; 0, 0] [|
         [3, 2; 2, 1; 1, 1; 0, 0]
+        [3, 1; 2, 1; 1, 1; 0, 0]
         [2, 2; 2, 1; 1, 1; 0, 0]
         [7, 7; 2, 2; 2, 1; 1, 1; 0, 0]
+    |]
+
+[<Fact>]
+let ``EditGraph traverse step test 1``(): unit =
+    doRouteOneStepTest [|
+        1, 'A'
+        3, 'D'
+        4, 'E'
+        6, 'B'
+        7, 'C'
+    |] "ABCDE" [1, 0; 0, 0] [|
+        [2, 1; 1, 0; 0, 0]
+        [2, 0; 1, 0; 0, 0]
+        [1, 1; 1, 0; 0, 0]
+        [2, 2; 1, 1; 1, 0; 0, 0]
     |]

@@ -337,6 +337,16 @@ let ``Constrained diff test 9``(): unit =
         9, 'C'
     |] "ABCDEFG"
 
+[<Fact>]
+let ``Constrained diff test 10``(): unit =
+    doConstrainedDiffTest [|
+        1, 'A'
+        3, 'D'
+        4, 'E'
+        6, 'B'
+        7, 'C'
+    |] "ABCDE"
+
 let private doDiffInstructionTest initial required (initialString: string) expectedInstructions allowedToInsert =
     let instructions = doDiffAndAssert initial required initialString allowedToInsert
     Assert.Equal<EditInstruction<_>>(expectedInstructions, instructions)
@@ -410,4 +420,23 @@ let ``Constrained diff instruction test 2``(): unit =
         LeaveItem
         DeleteItem
         DeleteItem
+    |]
+
+[<Fact>]
+let ``Constrained diff instruction test 3``(): unit =
+    doConstrainedDiffInstructionTest [|
+        1, 'A'
+        3, 'D'
+        4, 'E'
+        6, 'B'
+        7, 'C'
+    |] "ABCDE" [|
+        DeleteItem
+        DeleteItem
+        DeleteItem
+        InsertItem 'A'
+        LeaveItem
+        LeaveItem
+        InsertItem 'D'
+        InsertItem 'E'
     |]

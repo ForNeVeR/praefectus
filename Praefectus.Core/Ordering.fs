@@ -70,10 +70,11 @@ let applyOrderInStorage<'ss when 'ss : equality>(getNewState: int -> Task<'ss> -
                     currentFreeOrder <- currentTask.Order.Value + 1
             | Diff.InsertItem(newTask) ->
                 let newOrder = currentFreeOrder
-                let newState = getNewState newOrder newTask
-                yield {
-                    Task = { newTask with Order = Some newOrder }
-                    NewState = newState
-                }
+                if Some newOrder <> newTask.Order then
+                    let newState = getNewState newOrder newTask
+                    yield {
+                        Task = { newTask with Order = Some newOrder }
+                        NewState = newState
+                    }
                 currentFreeOrder <- newOrder + 1
     }
