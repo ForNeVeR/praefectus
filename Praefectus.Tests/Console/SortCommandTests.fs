@@ -22,7 +22,7 @@ let readTasksAfterSort database sortOptions = Async.RunSynchronously <| async {
     Assert.Equal(0, exitCode)
 
     let! database = MarkdownDirectory.readDatabase directory
-    return database.Tasks
+    return database.Tasks |> Seq.sortBy(fun t -> t.Id)
 }
 
 let private emptyTask fileName =
@@ -31,12 +31,12 @@ let private emptyTask fileName =
         Name = Some "" }
 
 let private unsortedTasks = [|
-    { emptyTask "1.2..md" with
-        Order = Some 1
-        Id = Some "2" }
     { emptyTask "2.1..md" with
         Order = Some 2
         Id = Some "1" }
+    { emptyTask "1.2..md" with
+        Order = Some 1
+        Id = Some "2" }
 |]
 
 let private sortedTasks = [|
