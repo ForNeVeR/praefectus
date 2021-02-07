@@ -29,21 +29,18 @@ let private createPositionedSequence (tasks: IReadOnlyList<Task<'a>>) =
     let occupiedIndices = Set.ofSeq orderDictionary.Values
     let maxOrder = Seq.max orderDictionary.Values
 
-    let indexToOrder i = i + 1
-
     { new Diff.IPositionedSequence<_> with
         member _.AllowedToInsertAtArbitraryPlaces = false
-        member _.MaxOrder = maxOrder
-        member _.GetItem index =
-            match itemDictionary.TryGetValue(indexToOrder index) with
+        member _.MaxCoord = maxOrder
+        member _.GetItem coord =
+            match itemDictionary.TryGetValue coord with
             | true, item -> Some item
             | false, _ -> None
-        member _.AcceptsOn(index, item) =
-            let position = indexToOrder index
-            if not(Set.contains position occupiedIndices) then true
+        member _.AcceptsOn(coord, item) =
+            if not(Set.contains coord occupiedIndices) then true
             else
                 match orderDictionary.TryGetValue item with
-                | true, order -> order = position
+                | true, order -> order = coord
                 | false, _ -> false
     }
 

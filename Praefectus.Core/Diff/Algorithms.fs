@@ -126,127 +126,45 @@
 ///
 /// So, resulting file sequence will be "1A 2B 3C 5D".
 ///
+/// In addition to that, sometimes it may be necessary to remove an item and insert something else instead of it, which
+/// allows to take the following movement:
+///
+///  0   1A
+///   ·──·
+///      │
+///      │
+/// A ·  ·
+///
+/// This movement only allows to insert a character to an occupied position when the corresponding one was deleted
+/// beforehand.
+///
 /// Implementation of the algorithm in this file works both for its constrained and the original variants. The selection
-/// is chosen based on the provided implementation of IPositionedSequence and the allowedToInsert function.
+/// is chosen based on the provided implementation of IPositionedSequence function.
 ///
 /// [1]: Eugene W. Myers, An O(ND) Difference Algorithm and Its Variations: Algorithmica (1986), pp. 251-266
 /// (http://www.grantjenks.com/wiki/_media/ideas:diffalgorithmlcs.pdf)
 module Praefectus.Core.Diff.Algorithms
 
-open System
 open System.Collections.Generic
 
-/// Fig. 2. The greedy LCS/SES algorithm [1].
-let shortestEditScriptTrace<'a when 'a : equality> (a: IPositionedSequence<'a>)
-                                                   (b: IReadOnlyList<'a>): int * IReadOnlyList<Array> * int =
-    let M = b.Count
-    let N = a.MaxOrder
-    let MAX = M + N
+let shortestEditBacktrace(graph: EditGraph<'a>) =
+    let rec traverse currentRoutes =
+        if Array.isEmpty currentRoutes then failwithf "No routes"
+        match graph.GetFinished currentRoutes with
+        | Some route -> route
+        | None ->
+            let newRoutes = graph.StepAll currentRoutes |> Seq.toArray
+            traverse newRoutes
 
-    if MAX < 1 then 0, upcast [| [| 0 |] :> Array |], 0 else
+    traverse(graph.InitialBacktraces() |> Seq.toArray)
 
-    let mutable V = Array.CreateInstance(typeof<int>, [| MAX * 2 + 1 |], [| -MAX |])
-    let V_set (index: int) value = V.SetValue(value, index)
-    let V_get (index: int) = V.GetValue(index) :?> int
+let decypherBacktrace (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnlyList<'a>): seq<(int * int)> =
+    let graph = EditGraph(sequenceA, sequenceB)
+    upcast shortestEditBacktrace graph
 
-    let vHistory = ResizeArray()
-    vHistory.Add V
-
-    V_set 1 0
-    let mutable sesLengthAndLastK = None
-    let mutable D = 0
-    while D <= MAX && sesLengthAndLastK.IsNone do
-        let lowerBoundary =
-            match a.AllowedToInsertAtArbitraryPlaces with
-            | true -> -D
-            | false when D % 2 = 0 -> 0
-            | _ -> 1
-        for k in lowerBoundary .. 2 .. D do
-            // Here, we may come from three different directions:
-            // - from the top (diagonal k + 1)
-            // - from the left (diagonal k - 1)
-            // - with special maneuver from diagonal k
-            let moveFromTopAllowed =
-                k = -D // condition for the first move
-                // Since move from the top is always "insert", then it is always allowed if the insert is always
-                // allowed, except for cases when we're at the rightmost diagonal; there's no way we came here from the
-                // top, since it requires us to always move to the right.
-                || a.AllowedToInsertAtArbitraryPlaces && k <> D
-            let moveFromLeftAllowed =
-                // Move from the left is always allowed, except for cases when we're at the leftmost diagonal: there's
-                // no way we came here from the left.
-                k <> -D
-            let diagonalMoveFromPastAllowed =
-                // This is actually 2 moves: to the right, and then to the bottom. It is allowed if we aren't at the
-                // leftmost or topmost diagonals:
-                k <> D && k <> -D
-
-            let possibleXs = [|
-                if moveFromTopAllowed then
-                    V_get(k + 1) // we keep the previous x of the top diagonal if we come from the top
-                if moveFromLeftAllowed then
-                    V_get(k - 1) + 1 // we add 1 to x of the left diagonal since we're moving to the right
-                if diagonalMoveFromPastAllowed then
-                    V_get k + 1 // we add 1 to x of the current diagonal from 2 steps
-            |]
-
-            let mutable x = Seq.max possibleXs
-            let mutable y = x - k
-            let acceptedOn x value =
-                if a.AllowedToInsertAtArbitraryPlaces
-                then x < N && a.AcceptsOn(x, value)
-                else x >= N || a.AcceptsOn(x, value)
-            while y < M && acceptedOn x b.[y] do
-                x <- x + 1
-                y <- y + 1
-            V_set k x
-            if x >= N && y >= M then
-                sesLengthAndLastK <- Some (D, k)
-
-        if sesLengthAndLastK = None then
-            V <- V.Clone() :?> Array
-            vHistory.Add V
-
-            D <- D + 1
-
-    match sesLengthAndLastK with
-    | Some(sesLength, lastK) -> sesLength, upcast vHistory, lastK
-    | None ->
-        failwithf "Algorithmic error: length of shortest edit script is greater than %d" MAX
-
-let decypherBacktrace (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnlyList<'a>): (int * int) seq =
-    let sesLength, vHistory, lastK = shortestEditScriptTrace sequenceA sequenceB
-
-    let getXYFromDK d (k: int) =
-        let level = vHistory.[d]
-        let x = level.GetValue k :?> int
-        let y = x - k
-        x, y
-
-    let validIndex d k =
-        let level = vHistory.[d]
-        abs k <= d && level.GetLowerBound 0 <= k && level.GetUpperBound 0 >= k
-
-    upcast [|
-        let mutable k = lastK
-        for d = sesLength downto 0 do
-            let x, y = getXYFromDK d k
-            yield x, y
-            if d <> 0 then
-                let possibleCandidates = seq {
-                    if validIndex (d - 1) (k - 1) then
-                        k - 1, getXYFromDK (d - 1) (k - 1)
-                    if validIndex (d - 1) (k + 1) then
-                        k + 1, getXYFromDK (d - 1) (k + 1)
-                }
-
-                let bestCandidate = possibleCandidates |> Seq.maxBy (fun (_, (x, _)) -> x)
-                let k', _ = bestCandidate
-                k <- k'
-    |]
-
-let myersGeneralized (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnlyList<'a>): EditInstruction<'a> seq =
-    let forwardtrace = decypherBacktrace sequenceA sequenceB |> Seq.rev
+let myersGeneralized' (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnlyList<'a>): EditInstruction<'a> seq =
+    let graph = EditGraph(sequenceA, sequenceB)
+    let forwardtrace = shortestEditBacktrace graph |> Seq.rev
     seq {
         let mutable x, y = 0, 0
         for x', y' in forwardtrace do
@@ -276,3 +194,16 @@ let myersGeneralized (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnlyL
                 x <- x + 1
                 y <- y + 1
     }
+let myersGeneralized (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnlyList<'a>): EditInstruction<'a> seq =
+    let graph = EditGraph(sequenceA, sequenceB)
+    let rec traverse currentRoutes =
+        if Array.isEmpty currentRoutes then failwithf "No routes"
+        match graph.GetFinished currentRoutes with
+        | Some route -> route
+        | None ->
+            let newRoutes = graph.StepAll currentRoutes |> Seq.toArray
+            traverse newRoutes
+
+    let initialRoute = [ (0, 0) ]
+    let route = traverse [| initialRoute |]
+    graph.GetInstructions route

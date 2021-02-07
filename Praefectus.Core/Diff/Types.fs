@@ -8,6 +8,6 @@ type EditInstruction<'a> =
 type IPositionedSequence<'a> =
     // TODO: Drop this flag, since it is the only mode we use in production code
     abstract AllowedToInsertAtArbitraryPlaces: bool
-    abstract MaxOrder: int
-    abstract GetItem: index: int -> 'a option
-    abstract AcceptsOn: index: int * item: 'a -> bool
+    abstract MaxCoord: int
+    abstract GetItem: coord: int -> 'a option
+    abstract AcceptsOn: coord: int * item: 'a -> bool
