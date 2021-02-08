@@ -162,38 +162,6 @@ let decypherBacktrace (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnly
     let graph = EditGraph(sequenceA, sequenceB)
     upcast shortestEditBacktrace graph
 
-let myersGeneralized' (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnlyList<'a>): EditInstruction<'a> seq =
-    let graph = EditGraph(sequenceA, sequenceB)
-    let forwardtrace = shortestEditBacktrace graph |> Seq.rev
-    seq {
-        let mutable x, y = 0, 0
-        for x', y' in forwardtrace do
-            let isOnSnake() = x' - x = y' - y
-
-            // Here, (x', y') always points towards the end of a snake. Calculate whether snake starts from point to the
-            // right or to the bottom from the current point (x, y).
-            //
-            // Snake itself is a line y = y_0 + x
-            let y_0 = y' - x'
-            let snake x = y_0 + x
-            let snakeToRight = snake x < y
-            let snakeToBottom = sequenceA.AllowedToInsertAtArbitraryPlaces && snake x > y
-
-            while snakeToRight && not(isOnSnake()) do
-                yield DeleteItem
-                x <- x + 1
-            while snakeToBottom && not(isOnSnake()) do
-                yield InsertItem sequenceB.[y]
-                y <- y + 1
-            while x < x' && y < y' do // snake body itself
-                yield
-                    match sequenceA.GetItem x with
-                    | Some _ -> LeaveItem
-                    | None -> InsertItem sequenceB.[y]
-
-                x <- x + 1
-                y <- y + 1
-    }
 let myersGeneralized (sequenceA: IPositionedSequence<'a>) (sequenceB: IReadOnlyList<'a>): EditInstruction<'a> seq =
     let graph = EditGraph(sequenceA, sequenceB)
     let rec traverse currentRoutes =
