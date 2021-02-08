@@ -11,7 +11,7 @@
         <Compile Include="TestFramework\DiffUtils.fs" />
         <Compile Include="Console\EntryPointTests.fs" />
         <Compile Include="Console\DatabaseTests.fs" />
-        <Compile Include="Console\SortCommandTests.fs" />
+        <Compile Include="Console\OrderCommandTests.fs" />
         <Compile Include="Core\OrderingTests.fs" />
         <Compile Include="Core\EditGraphTests.fs" />
         <Compile Include="Core\DiffTests.fs" />

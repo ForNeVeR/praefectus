@@ -8,7 +8,10 @@ open Praefectus.Console
 let main (argv: string[]): int =
     let config = {
         DatabaseLocation = Environment.CurrentDirectory
-        Ordering = [|  |]
+        Ordering = [|
+            fun t -> t.Name.Value.StartsWith("important")
+            fun other -> true
+        |]
     }
     use env = Environment.OpenStandard()
     EntryPoint.run config argv env

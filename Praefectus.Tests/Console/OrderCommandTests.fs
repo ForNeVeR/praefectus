@@ -1,4 +1,4 @@
-module Praefectus.Tests.Console.CommandTests
+module Praefectus.Tests.Console.OrderCommandTests
 
 open Xunit
 
@@ -18,7 +18,7 @@ let readTasksAfterSort database sortOptions = Async.RunSynchronously <| async {
             fun t -> t.Id = Some "2"
         |]
     }
-    let exitCode = ConsoleTestUtils.runMain configuration [| "sort"; yield! sortOptions |]
+    let exitCode = ConsoleTestUtils.runMain configuration [| "order"; yield! sortOptions |]
     Assert.Equal(0, exitCode)
 
     let! database = MarkdownDirectory.readDatabase directory
@@ -49,13 +49,13 @@ let private sortedTasks = [|
 |]
 
 [<Fact>]
-let ``Sort command should reorder the data``(): unit =
+let ``Order command should reorder the data``(): unit =
     let database1 = { Tasks = unsortedTasks }
     let tasksAfterSort = readTasksAfterSort database1 Array.empty
     Assert.Equal(sortedTasks, tasksAfterSort)
 
 [<Fact>]
-let ``Sort command should not change anything if called with --whatif``(): unit =
+let ``Order command should not change anything if called with --whatif``(): unit =
     let database1 = { Tasks = unsortedTasks }
     let tasksAfterSort = readTasksAfterSort database1 [| "--whatif" |]
     Assert.Equal(unsortedTasks, tasksAfterSort)

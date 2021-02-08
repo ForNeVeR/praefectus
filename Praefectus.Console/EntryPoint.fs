@@ -22,7 +22,7 @@ type ListArguments =
             match s with
             | Json -> "write output in JSON format."
 
-type SortArguments =
+type OrderArguments =
     | [<Unique>] WhatIf
     interface IArgParserTemplate with
         member s.Usage =
@@ -33,7 +33,7 @@ type SortArguments =
 type Arguments =
     | [<Unique>] Version
     | [<CliPrefix(CliPrefix.None)>] List of ParseResults<ListArguments>
-    | [<CliPrefix(CliPrefix.None)>] Sort of ParseResults<SortArguments>
+    | [<CliPrefix(CliPrefix.None)>] Order of ParseResults<OrderArguments>
     interface IArgParserTemplate with
         member s.Usage =
             match s with
@@ -42,7 +42,7 @@ type Arguments =
 
             // Commands:
             | List _ -> "List all the tasks in the database."
-            | Sort _ -> "Sort the tasks according to the configured ordering rules."
+            | Order _ -> "Order the tasks according to the configured ordering rules."
 
 [<MethodImpl(MethodImplOptions.NoInlining)>] // See https://github.com/dotnet/fsharp/issues/9283
 let getAppVersion(): Version =
@@ -79,9 +79,9 @@ let private execute application (arguments: ParseResults<Arguments>) stdOut =
                 | Arguments.List listArgs ->
                     let json = listArgs.Contains ListArguments.Json
                     Commands.doList application json stdOut |> Task.RunSynchronously
-                | Arguments.Sort sortArgs ->
-                    let whatIf = sortArgs.Contains SortArguments.WhatIf
-                    Commands.doSort application.Config whatIf |> Async.RunSynchronously
+                | Arguments.Order sortArgs ->
+                    let whatIf = sortArgs.Contains OrderArguments.WhatIf
+                    Commands.doOrder application.Config whatIf |> Async.RunSynchronously
                 | other -> failwithf "Impossible: option %A passed as a subcommand" other
 
             ExitCodes.Success

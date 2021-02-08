@@ -31,7 +31,7 @@ let doList (app: Application<FileSystemStorage.FileSystemTaskState>)
 let private printInstruction { Task = task; NewState = { FileSystemStorage.FileName = newFileName } } =
     printfn "%s -> %s" task.StorageState.FileName newFileName
 
-let doSort (config: Configuration<FileSystemStorage.FileSystemTaskState>) (whatIf: bool): Async<unit> = async {
+let doOrder (config: Configuration<FileSystemStorage.FileSystemTaskState>) (whatIf: bool): Async<unit> = async {
     let! database = MarkdownDirectory.readDatabase config.DatabaseLocation
     let reorderedTasks = Ordering.reorder config.Ordering database.Tasks |> Seq.toArray
     let instructions = Ordering.applyOrderInStorage FileSystemStorage.getNewState reorderedTasks

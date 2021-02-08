@@ -31,6 +31,7 @@ Documentation
 1. [Development Process][docs.1.development-process]
 2. [Configuration][docs.2.configuration]
 3. [Data Storage][docs.3.data-storage]
+4. [Task Ordering][docs.4.task-ordering]
 
 ### RFCs
 
@@ -239,6 +240,7 @@ And I hope it will be fun to work _with_ Praefectus for the users.
 [docs.1.development-process]: docs/1.development-process.md
 [docs.2.configuration]: docs/2.configuration.md
 [docs.3.data-storage]: docs/3.data-storage.md
+[docs.4.task-ordering]: docs/4.task-ordering.md
 [docs.rfcs.command-line-interface]: docs/rfcs/command-line-interface.md
 [docs.rfcs.tasks-and-attributes]: docs/rfcs/tasks-and-attributes.md
 [docs.rfcs.version-control]: docs/rfcs/version-control.md

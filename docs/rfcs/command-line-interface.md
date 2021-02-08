@@ -41,5 +41,8 @@ Praefectus has certain commands with their own arguments:
 
 - `list [--json]`: will list all the tasks in the current database (optionally
   in a JSON format)
+- `order [--whatif]`: will bring rasks to the specified order,
+  see [Task Ordering][docs.4.task-ordering] for details.
 
+[docs.4.task-ordering]: ../4.task-ordering.md
 [issue-13]: https://github.com/ForNeVeR/praefectus/issues/13
