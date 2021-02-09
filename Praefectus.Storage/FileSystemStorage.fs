@@ -16,7 +16,7 @@ let generateFileName(task: Task<_>): string =
     (StringBuilder()
     |> append(task.Order |> Option.map string)
     |> append task.Id
-    |> append (task.Name |> Option.orElse(Some "")))
+    |> append task.Name)
         .Append("md")
         .ToString()
 
@@ -36,20 +36,21 @@ type FsAttributes = { Order: int option; Name: string option; Id: string option 
 
 let readFsAttributes(filePath: string): FsAttributes =
     let fileName = Path.GetFileNameWithoutExtension filePath
-    let components = fileName.Split(".")
+    let components = fileName.Split "."
     match components.Length with
-    | 0 -> { Order = None; Id = None; Name = None }
+    | 0 -> failwith "Impossible"
     | _ ->
-        let (order, nextIndex) =
+        let order, idIndex =
             match Int32.TryParse(components.[0], NumberStyles.None, CultureInfo.InvariantCulture) with
-            | (true, order) -> (Some order, 1)
-            | (false, _) -> (None, 0)
+            | true, order -> (Some order, 1)
+            | false, _ -> (None, 0)
 
-        let (id, name) =
-            match components.Length - nextIndex with
+        let freeComponents = components.Length - idIndex
+        let id, name =
+            match freeComponents with
             | 0 -> None, None
-            | 1 -> None, Some components.[nextIndex]
-            | _ -> Some components.[nextIndex], Some <| String.Join('.', Seq.skip (nextIndex + 1) components)
+            | 1 -> Some components.[idIndex], None
+            | _ -> Some components.[idIndex], Some <| String.Join('.', Seq.skip (idIndex + 1) components)
 
         { Order = order; Id = id; Name = name }
 

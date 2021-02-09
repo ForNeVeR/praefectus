@@ -72,16 +72,16 @@ let private isTask fileName additionalChecks =
     )
 
 let private generateRenameRequirements initialFileNames requiredFileNames =
-    let fileNamesByTaskName =
+    let fileNamesByTaskId =
         initialFileNames
         |> Seq.map FileSystemStorage.readFsAttributes
-        |> Seq.map(fun ({ Name = name } as attrs) -> name, attrs)
+        |> Seq.map(fun ({ Id = id } as attrs) -> id, attrs)
         |> Map.ofSeq
 
     requiredFileNames
     |> Seq.choose(fun fileName ->
         let attrs = FileSystemStorage.readFsAttributes fileName
-        let oldAttrs = fileNamesByTaskName.[attrs.Name]
+        let oldAttrs = fileNamesByTaskId.[attrs.Id]
         if oldAttrs.Order <> attrs.Order then
             Some(isTask fileName ignore)
         else
@@ -96,14 +96,14 @@ let private testTaskOrdering initialFileNames orderedFileNames =
             let attributes = FileSystemStorage.readFsAttributes fileName
             generateTaskByAttributes fileName attributes
         )
-    let tasksByNameMap =
+    let tasksByIdMap =
         tasks
-        |> Seq.map (fun t -> t.Name, t)
+        |> Seq.map (fun t -> t.Id, t)
         |> Map.ofSeq
     let requiredOrder =
         orderedFileNames
         |> Seq.map FileSystemStorage.readFsAttributes
-        |> Seq.map (fun { Name = name } -> tasksByNameMap.[name])
+        |> Seq.map (fun { Id = id } -> tasksByIdMap.[id])
         |> Seq.toArray
 
     let instructions = Ordering.applyOrderInStorage FileSystemStorage.getNewState requiredOrder

@@ -13,14 +13,14 @@ let private emptyTask = Task.Empty<_> { FileName = "" }
 
 let private testDatabase = {
     Tasks = [| {
-        Id = None
+        Id = Some "id"
         Order = Some 1
-        Name = Some "task"
+        Name = None
         Title = None
         Description = Some "Foo bar baz"
         Status = Some TaskStatus.Open
         DependsOn = Array.empty
-        StorageState = { FileName = "1.task.md" }
+        StorageState = { FileName = "1.id.md" }
     } |]
 }
 
@@ -46,9 +46,9 @@ module ReadTaskTests =
     let ``readTask should parse text``(): unit =
         let content = "Foo bar baz"
         let task = {
-            Id = None
+            Id = Some "task"
             Order = None
-            Name = Some "task"
+            Name = None
             Title = None
             Description = Some content
             Status = None
@@ -61,9 +61,9 @@ module ReadTaskTests =
     [<Fact>]
     let ``readTask should read task title from Markdown``(): unit =
         let task = {
-            Id = None
+            Id = Some "task"
             Order = None
-            Name = Some "task"
+            Name = None
             Title = Some "Task title"
             Description = Some "Task content."
             Status = None
