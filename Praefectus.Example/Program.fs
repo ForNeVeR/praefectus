@@ -10,7 +10,6 @@ let main (argv: string[]): int =
         DatabaseLocation = Environment.CurrentDirectory
         Ordering = [|
             fun t -> t.Name.Value.StartsWith("important")
-            fun other -> true
         |]
     }
     use env = Environment.OpenStandard()
