@@ -22,7 +22,6 @@ type EditGraph<'a>(sequenceA: IPositionedSequence<'a>, sequenceB: IReadOnlyList<
         // only in case of previous step was a step right
         x_1 <= maxX && y_1 < maxY
     | (x, y) :: _ -> x = maxX && y < maxY
-    | _ -> false
 
     let allowedDiagonalStep = function
     | [] -> failwith "Empty route detected"
