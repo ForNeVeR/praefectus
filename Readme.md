@@ -1,14 +1,12 @@
 Praefectus [![Status Zero][status-zero]][andivionian-status-classifier]
 ==========
 
-Praefectus is a Getting Things Done (GTD) framework that helps to manage your
-tasks.
+Praefectus is an organizer application suite focusing on GTD (Getting Things Done) approach that helps to manage your tasks.
 
-**⚠ Currently the project is in the planning state, nothing is ready yet.**
+It consists of several applications described in this file.
 
-General Description
--------------------
-
+Praefectus Core
+---------------
 Praefectus is a modern GTD framework that allows you to store the information on
 all sorts of your current tasks, manage them, view their change history, import
 or export from/into various sources.
@@ -25,6 +23,12 @@ Praefectus is configured in an unorthodox way: technically, you create your own
 application that uses the Praefectus API (and configures it accordingly to your
 needs), and then execute it with your data.
 
+Taskomatic
+----------
+Taskomatic is a UI application for task import and export.
+
+See [the documentation][docs.5.taskomatic] for more information.
+
 Documentation
 -------------
 
@@ -32,6 +36,7 @@ Documentation
 2. [Configuration][docs.2.configuration]
 3. [Data Storage][docs.3.data-storage]
 4. [Task Ordering][docs.4.task-ordering]
+5. [Taskomatic][docs.5.taskomatic]
 
 ### RFCs
 
