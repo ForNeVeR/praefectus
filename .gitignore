@@ -1,0 +1,9 @@
+﻿/.idea/
+/publish/
+/publish.fd/
+
+bin/
+obj/
+
+*.received.txt
+*.user

@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="Diff\Types.fs" />
+        <Compile Include="Diff\EditGraph.fs" />
+        <Compile Include="Diff\Algorithms.fs" />
+        <Compile Include="Tasks.fs" />
+        <Compile Include="Database.fs" />
+        <Compile Include="Ordering.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="YamlDotNet" Version="9.1.0" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="Json.fs" />
+        <Compile Include="FileSystemStorage.fs" />
+        <Compile Include="MarkdownDirectory.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Praefectus.Core\Praefectus.Core.fsproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Markdig" Version="0.22.1" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+      <PackageReference Include="TaskBuilder.fs" Version="2.1.0" />
+      <PackageReference Include="YamlDotNet" Version="9.1.0" />
+    </ItemGroup>
+
+</Project>
