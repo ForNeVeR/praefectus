@@ -16,12 +16,12 @@ jobs:
     runs-on: ${{ matrix.image }}
     strategy:
       matrix:
-        image: [macos-11, ubuntu-18.04, windows-2019]
+        image: [macos-11, ubuntu-20.04, windows-2019]
         include:
           - image: macos-11
             rid: osx-x64
             executable: praefectus
-          - image: ubuntu-18.04
+          - image: ubuntu-20.04
             rid: linux-x64
             executable: praefectus
           - image: windows-2019
