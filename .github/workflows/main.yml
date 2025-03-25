@@ -56,3 +56,11 @@ jobs:
       - name: Verify encoding
         shell: pwsh
         run: scripts/Test-Encoding.ps1
+
+  licenses:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out the sources
+        uses: actions/checkout@v4
+      - name: REUSE license check
+        uses: fsfe/reuse-action@v5
