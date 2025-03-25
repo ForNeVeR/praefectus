@@ -43,6 +43,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{B0720CD7-C3D3-4FC1-986D-83D8AC8FC283}"
 ProjectSection(SolutionItems) = preProject
 	scripts\Approve-All.ps1 = scripts\Approve-All.ps1
+	scripts\Test-Encoding.ps1 = scripts\Test-Encoding.ps1
 EndProjectSection
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Praefectus.Core", "Praefectus.Core\Praefectus.Core.fsproj", "{082A0B0E-2593-4149-A420-0EC783B4EC0A}"

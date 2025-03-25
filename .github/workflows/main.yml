@@ -47,3 +47,12 @@ jobs:
         run: dotnet build --configuration Release
       - name: Test
         run: dotnet test --configuration Release
+
+  encoding:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out the sources
+        uses: actions/checkout@v4
+      - name: Verify encoding
+        shell: pwsh
+        run: scripts/Test-Encoding.ps1
