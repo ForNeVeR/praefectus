@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2024-2025 Friedrich von Never <friedrich@fornever.me>
+
+SPDX-License-Identifier: MIT
+-->
+
 Praefectus [![Status Zero][status-zero]][andivionian-status-classifier]
 ==========
 
@@ -235,12 +241,19 @@ work, and Praefectus is aware of it.
 It is a mandatory detail that working on the Praefectus project should be fun.
 And I hope it will be fun to work _with_ Praefectus for the users.
 
+License
+-------
+The project is distributed under the terms of [the MIT license][docs.license].
+
+The license indication in the project's sources is compliant with the [REUSE specification v3.3][reuse.spec].
+
 [andivionian-status-classifier]: https://github.com/ForNeVeR/andivionian-status-classifier#status-zero-
 [docs.1.development-process]: docs/1.development-process.md
 [docs.2.configuration]: docs/2.configuration.md
 [docs.3.data-storage]: docs/3.data-storage.md
 [docs.4.task-ordering]: docs/4.task-ordering.md
 [docs.contributing]: CONTRIBUTING.md
+[docs.license]: LICENSE.txt
 [docs.rfcs.command-line-interface]: docs/rfcs/command-line-interface.md
 [docs.rfcs.tasks-and-attributes]: docs/rfcs/tasks-and-attributes.md
 [docs.rfcs.version-control]: docs/rfcs/version-control.md
@@ -249,5 +262,6 @@ And I hope it will be fun to work _with_ Praefectus for the users.
 [issue-07]: https://github.com/ForNeVeR/praefectus/issues/7
 [issue-13]: https://github.com/ForNeVeR/praefectus/issues/13
 [praefectus.example]: Praefectus.Example
+[reuse.spec]: https://reuse.software/spec-3.3/
 [status-zero]: https://img.shields.io/badge/status-zero-lightgrey.svg
 [taskwarrior]: https://taskwarrior.org/
