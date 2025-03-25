@@ -22,7 +22,7 @@ SPDX-License-Identifier: MIT
 
     <ItemGroup>
       <PackageReference Include="Markdig" Version="0.22.1" />
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
       <PackageReference Include="TaskBuilder.fs" Version="2.1.0" />
       <PackageReference Include="YamlDotNet" Version="9.1.0" />
     </ItemGroup>
