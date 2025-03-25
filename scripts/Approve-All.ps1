@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Friedrich von Never <friedrich@fornever.me>
+#
+# SPDX-License-Identifier: MIT
+
 param (
     $SolutionRoot = "$PSScriptRoot/..",
     $TestResults = "$SolutionRoot/Praefectus.Tests"

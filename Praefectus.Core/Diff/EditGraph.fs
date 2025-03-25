@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Friedrich von Never <friedrich@fornever.me>
+//
+// SPDX-License-Identifier: MIT
+
 namespace Praefectus.Core.Diff
 
 open System.Collections.Generic

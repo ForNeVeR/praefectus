@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Friedrich von Never <friedrich@fornever.me>
+//
+// SPDX-License-Identifier: MIT
+
 /// Implementation of the diff algorithm for constrained conditions [1], based on Eugene W. Myers diff algorithm [2].
 ///
 /// Implementation of the algorithm in this file works both for its constrained and the original variants. The selection
