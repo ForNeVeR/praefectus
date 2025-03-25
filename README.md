@@ -52,8 +52,8 @@ Documentation
 Prerequisites
 -------------
 
-Praefectus is a .NET 5.0 library. To use it on your own, [.NET 5.0
-SDK][dotnet.download] is required.
+Praefectus is a .NET 9.0 library.
+To use it on your own, [.NET 9.0 SDK][dotnet.download] is required.
 
 Build
 -----

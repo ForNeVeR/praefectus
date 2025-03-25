@@ -46,7 +46,7 @@ module private Markdown =
 
         let readInt32 key = readValue key (fun (s: string) -> int s)
         let readString key: string option = readValue key id
-        let readEnum key = readValue key (fun s -> Enum.Parse(s, ignoreCase = true))
+        let readEnum key = readValue key (fun(s: string) -> Enum.Parse(s, ignoreCase = true))
         let readList key =
             readValue key Seq.cast<string>
             |> Option.defaultValue Seq.empty
@@ -116,7 +116,7 @@ let readTask (filePath: string) (stream: Stream): Async<Task<FileSystemTaskState
         Description = Some content
         Status = None
         DependsOn = Array.empty
-        StorageState = { FileName = Path.GetFileName filePath }
+        StorageState = { FileName = nonNull <| Path.GetFileName filePath }
     }
 
     return applyMetadata task metadata
@@ -125,7 +125,7 @@ let readTask (filePath: string) (stream: Stream): Async<Task<FileSystemTaskState
 let writeTask (task: Task<FileSystemTaskState>) (stream: Stream): Async<unit> = async {
     use writer = new StreamWriter(stream, leaveOpen = true)
 
-    let writeStatus = Option.map (fun s -> box(Enum.GetName(s).ToLowerInvariant()))
+    let writeStatus = Option.map (fun s -> box(nonNull(Enum.GetName s).ToLowerInvariant()))
     let writeDependsOn: IReadOnlyCollection<_> -> _ = function
     | collection when collection.Count = 0 -> None
     | collection -> Some(box collection)

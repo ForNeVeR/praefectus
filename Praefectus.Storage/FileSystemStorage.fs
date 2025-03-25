@@ -29,7 +29,7 @@ type FileSystemTaskState = {
 }
 
 let readMetadata(path: string): FileSystemTaskState = {
-    FileName = Path.GetFileName path
+    FileName = nonNull <| Path.GetFileName path
 }
 
 let getNewState(order: int) (task: Task<FileSystemTaskState>): FileSystemTaskState =
@@ -39,7 +39,7 @@ let getNewState(order: int) (task: Task<FileSystemTaskState>): FileSystemTaskSta
 type FsAttributes = { Order: int option; Name: string option; Id: string option }
 
 let readFsAttributes(filePath: string): FsAttributes =
-    let fileName = Path.GetFileNameWithoutExtension filePath
+    let fileName = nonNull <| Path.GetFileNameWithoutExtension filePath
     let components = fileName.Split "."
     match components.Length with
     | 0 -> failwith "Impossible"

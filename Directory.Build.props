@@ -8,6 +8,7 @@ SPDX-License-Identifier: MIT
     <PropertyGroup>
         <Version>0.0.1.0</Version>
 
+        <Nullable>enable</Nullable>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
 </Project>

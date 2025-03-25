@@ -35,7 +35,7 @@ let private testDatabase =
 let private loadDatabase(source: Stream): System.Threading.Tasks.Task<Database<FileSystemTaskState>> = task {
     use reader = new StreamReader(source)
     let serializer = JsonSerializer()
-    return serializer.Deserialize(reader, typeof<Database<FileSystemTaskState>>) :?> Database<FileSystemTaskState>
+    return nonNull(serializer.Deserialize(reader, typeof<Database<FileSystemTaskState>>)) :?> Database<FileSystemTaskState>
 }
 
 [<Fact>]

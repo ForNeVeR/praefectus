@@ -19,7 +19,7 @@ open Praefectus.Tests.TestFramework
 let private deserializeTasks(stream: Stream) = task {
     use reader = new StreamReader(stream)
     let serializer = JsonSerializer()
-    return serializer.Deserialize(reader, typeof<Task<FileSystemTaskState>[]>) :?> Task<FileSystemTaskState>[]
+    return nonNull(serializer.Deserialize(reader, typeof<Task<FileSystemTaskState>[]>)) :?> Task<FileSystemTaskState>[]
 }
 
 let private testDatabase =

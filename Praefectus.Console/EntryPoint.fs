@@ -50,7 +50,7 @@ type Arguments =
 
 [<MethodImpl(MethodImplOptions.NoInlining)>] // See https://github.com/dotnet/fsharp/issues/9283
 let getAppVersion(): Version =
-    Assembly.GetExecutingAssembly().GetName().Version
+    nonNull <| Assembly.GetExecutingAssembly().GetName().Version
 
 let private parseArguments args (terminator: ITerminator) =
     let errorHandler = { new IExiter with
