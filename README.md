@@ -27,6 +27,7 @@ needs), and then execute it with your data.
 
 Documentation
 -------------
+- [Contributor Guide][docs.contributing]
 
 1. [Development Process][docs.1.development-process]
 2. [Configuration][docs.2.configuration]
@@ -234,13 +235,12 @@ work, and Praefectus is aware of it.
 It is a mandatory detail that working on the Praefectus project should be fun.
 And I hope it will be fun to work _with_ Praefectus for the users.
 
-[status-zero]: https://img.shields.io/badge/status-zero-lightgrey.svg
-
 [andivionian-status-classifier]: https://github.com/ForNeVeR/andivionian-status-classifier#status-zero-
 [docs.1.development-process]: docs/1.development-process.md
 [docs.2.configuration]: docs/2.configuration.md
 [docs.3.data-storage]: docs/3.data-storage.md
 [docs.4.task-ordering]: docs/4.task-ordering.md
+[docs.contributing]: CONTRIBUTING.md
 [docs.rfcs.command-line-interface]: docs/rfcs/command-line-interface.md
 [docs.rfcs.tasks-and-attributes]: docs/rfcs/tasks-and-attributes.md
 [docs.rfcs.version-control]: docs/rfcs/version-control.md
@@ -249,4 +249,5 @@ And I hope it will be fun to work _with_ Praefectus for the users.
 [issue-07]: https://github.com/ForNeVeR/praefectus/issues/7
 [issue-13]: https://github.com/ForNeVeR/praefectus/issues/13
 [praefectus.example]: Praefectus.Example
+[status-zero]: https://img.shields.io/badge/status-zero-lightgrey.svg
 [taskwarrior]: https://taskwarrior.org/
