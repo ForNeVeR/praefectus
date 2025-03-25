@@ -21,17 +21,13 @@ jobs:
     runs-on: ${{ matrix.image }}
     strategy:
       matrix:
-        image: [macos-13, ubuntu-20.04, windows-2019]
-        include:
-          - image: macos-13
-            rid: osx-x64
-            executable: praefectus
-          - image: ubuntu-20.04
-            rid: linux-x64
-            executable: praefectus
-          - image: windows-2019
-            rid: win-x64
-            executable: praefectus.exe
+        image:
+          # renovate:
+          - macos-13
+          # renovate:
+          - ubuntu-20.04
+          # renovate:
+          - windows-2019
     env:
       NUGET_PACKAGES: ${{ github.workspace }}/.github/nuget-packages
     steps:
