@@ -1,4 +1,4 @@
-﻿namespace Praefectus.Core.Diff
+namespace Praefectus.Core.Diff
 
 open System.Collections.Generic
 

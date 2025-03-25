@@ -1,4 +1,4 @@
-﻿module Praefectus.Storage.MarkdownDirectory
+module Praefectus.Storage.MarkdownDirectory
 
 open System
 open System.Collections.Generic

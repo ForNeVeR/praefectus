@@ -1,4 +1,4 @@
-﻿module Praefectus.Tests.Storage.MarkdownDirectoryTests
+module Praefectus.Tests.Storage.MarkdownDirectoryTests
 
 open System.IO
 open System.Text

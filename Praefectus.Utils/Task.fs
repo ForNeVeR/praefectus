@@ -1,4 +1,4 @@
-﻿module Praefectus.Utils.Task
+module Praefectus.Utils.Task
 
 open System.Threading.Tasks
 

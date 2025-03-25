@@ -1,4 +1,4 @@
-﻿module Praefectus.Storage.Json
+module Praefectus.Storage.Json
 
 open System.IO
 

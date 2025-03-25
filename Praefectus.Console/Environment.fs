@@ -1,4 +1,4 @@
-﻿namespace Praefectus.Console
+namespace Praefectus.Console
 
 open System
 open System.IO

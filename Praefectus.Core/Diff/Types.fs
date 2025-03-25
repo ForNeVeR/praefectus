@@ -1,4 +1,4 @@
-﻿namespace Praefectus.Core.Diff
+namespace Praefectus.Core.Diff
 
 type EditInstruction<'a> =
     | DeleteItem

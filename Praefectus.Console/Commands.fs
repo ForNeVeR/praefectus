@@ -1,4 +1,4 @@
-﻿module Praefectus.Console.Commands
+module Praefectus.Console.Commands
 
 open System.IO
 

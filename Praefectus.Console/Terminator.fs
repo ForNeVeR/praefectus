@@ -1,4 +1,4 @@
-﻿namespace Praefectus.Console
+namespace Praefectus.Console
 
 type ITerminator =
     abstract Terminate: exitCode: int -> 'a

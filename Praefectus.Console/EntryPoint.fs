@@ -1,4 +1,4 @@
-﻿module Praefectus.Console.EntryPoint
+module Praefectus.Console.EntryPoint
 
 open System
 open System.Reflection

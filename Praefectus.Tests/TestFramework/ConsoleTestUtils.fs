@@ -1,4 +1,4 @@
-﻿module Praefectus.Tests.Console.ConsoleTestUtils
+module Praefectus.Tests.Console.ConsoleTestUtils
 
 open System
 open System.IO

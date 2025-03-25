@@ -1,4 +1,4 @@
-﻿module Praefectus.Tests.Storage.JsonTests
+module Praefectus.Tests.Storage.JsonTests
 
 open System.IO
 open System.Text

@@ -1,4 +1,4 @@
-﻿module Praefectus.Tests.Console.DatabaseTests
+module Praefectus.Tests.Console.DatabaseTests
 
 open System.IO
 

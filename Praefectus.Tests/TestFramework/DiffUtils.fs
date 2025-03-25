@@ -1,4 +1,4 @@
-﻿module Praefectus.Tests.TestFramework.DiffUtils
+module Praefectus.Tests.TestFramework.DiffUtils
 
 open System.Collections.Generic
 

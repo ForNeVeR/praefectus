@@ -1,4 +1,4 @@
-﻿module Praefectus.Tests.Core.EditGraphTests
+module Praefectus.Tests.Core.EditGraphTests
 
 open Xunit
 
