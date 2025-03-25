@@ -21,7 +21,6 @@ SPDX-License-Identifier: MIT
 
     <ItemGroup>
       <PackageReference Include="Argu" Version="6.2.5" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.32" />
       <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
       <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
       <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
