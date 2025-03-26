@@ -41,8 +41,8 @@ module private Markdown =
 
         let readValue key mapping =
             match metadata.TryGetValue key with
-            | (true, v) -> Some(mapping (v :?> 'a))
-            | (false, _) -> None
+            | true, v -> Some(mapping (v :?> 'a))
+            | false, _ -> None
 
         let readInt32 key = readValue key (fun (s: string) -> int s)
         let readString key: string option = readValue key id
@@ -86,7 +86,9 @@ module private Markdown =
             match Seq.tryHead document with
             | Some(:? HeadingBlock as heading) when heading.Level = 1 ->
                 document.RemoveAt 0
-                Some(toText heading.Inline)
+                heading.Inline
+                |> Option.ofObj
+                |> Option.map toText
             | _ -> None
         let content = toText document
         return metadata, title, content
@@ -107,7 +109,7 @@ let private applyMetadata task = function
 
 let readTask (filePath: string) (stream: Stream): Async<Task<FileSystemTaskState>> = async {
     let { FsAttributes.Order = order; Id = id; Name = name } = readFsAttributes filePath
-    let! (metadata, title, content) = Markdown.read stream
+    let! metadata, title, content = Markdown.read stream
     let task = {
         Order = order
         Id = id
