@@ -35,7 +35,7 @@ jobs:
       NUGET_PACKAGES: ${{ github.workspace }}/.github/nuget-packages
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: NuGet Cache
         uses: actions/cache@v4
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out the sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Verify encoding
         shell: pwsh
         run: scripts/Test-Encoding.ps1
@@ -63,6 +63,6 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out the sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: REUSE license check
         uses: fsfe/reuse-action@v5
