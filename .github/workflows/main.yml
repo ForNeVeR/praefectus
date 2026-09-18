@@ -27,7 +27,7 @@ jobs:
           # renovate:
           - macos-26
           # renovate:
-          - ubuntu-24.04
+          - ubuntu-26.04
           # renovate:
           - windows-2025
     env:
@@ -52,7 +52,7 @@ jobs:
         run: dotnet test --configuration Release
 
   encoding:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Check out the sources
         uses: actions/checkout@v7
@@ -61,7 +61,7 @@ jobs:
         run: scripts/Test-Encoding.ps1
 
   licenses:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Check out the sources
         uses: actions/checkout@v7
